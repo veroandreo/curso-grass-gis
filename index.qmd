@@ -1,0 +1,241 @@
+---
+title: "Procesamiento y análisis de series temporales con GRASS GIS"
+subtitle: "Curso de Postgrado"
+date: today
+author: "Verónica Andreo"
+toc: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+![](assets/img/logos_institucionales.png){width=80% fig-align="center"}
+
+
+Gran parte de la investigación en ecología y problemas asociados al
+ambiente en la actualidad requiere de conocimientos técnicos en el
+procesamiento avanzado de grandes conjuntos de datos espacio-temporales.
+En las dos últimas décadas se ha producido un cambio notable en la forma
+en que los datos se difunden de manera abierta y a través de Internet.
+Con esta libre disponibilidad de petabytes de datos de sensado remoto,
+modelos climáticos globales, redes de sensores y otros datos
+geoespaciales existe una urgente necesidad de formar usuarios en lo que
+respecta a su manejo eficiente y procesamiento. Las herramientas libres
+y de código abierto también han ganado gran popularidad y estabilidad,
+simultáneamente con la creciente cantidad de datos libres. Este curso
+abordará el procesamiento y análisis de datos espacio-temporales con
+GRASS GIS (<https://grass.osgeo.org/>).
+
+<img src="assets/img/grass_logo_alphab.png" align="left" width="25%"/>
+
+GRASS GIS es un software que nació hace 40 años y sigue siendo hoy en
+día uno de los SIG libre y de código abierto más potentes y versátiles.
+Sus prestaciones de alto nivel y sus capacidades analíticas tanto en el
+trabajo con datos vectoriales como en el trabajo con datos raster, hacen
+de GRASS una excelente herramienta para desempẽnar trabajos de análisis
+espacial o geográfico en muchos campos de aplicacíon, desde el análisis
+ambiental hasta el análisis de redes, pasando por la teledetección o la
+simulación de modelos. GRASS GIS consta de más de 500 módulos base a los
+que se adicionan cientos de complementos que permiten extender su
+potencialidad para el procesamiento de datos raster, vectoriales, ráster
+3D y temporales. Por otra parte, GRASS GIS puede ser un potente SIG de
+escritorio o la columna vertebral de una infraestructura SIG dadas sus
+diferentes APIs. Proporciona interfaces a muchos otros programas en
+geoestadística, bases de datos, servicios de mapas web y otros SIG como
+por ejemplo QGIS. Más aún, GRASS GIS se utiliza en el ámbito académico,
+en el escenario comercial y también en instituciones públicas de todo el
+mundo para una amplia gama de aplicaciones.
+
+![](https://grass.osgeo.org/images/news/grass83_news_screenshot.png)
+
+# Objetivos
+
+<u>General:</u>
+
+-   Proveer una introducción general al software GRASS GIS y su
+    utilización en el procesamiento y análisis de datos espaciales y
+    temporales, incluyendo datos obtenidos de sensado remoto.
+
+<u>Específicos:</u>
+
+-   Introducir los conceptos básicos y la forma de trabajo en GRASS GIS.
+-   Realizar ejercicios básicos de familiarización con el software y sus
+    particularidades.
+-   Introducir nociones sobre el manejo de datos raster en GRASS.
+-   Introducir en la generación e implementación de rutinas para el
+    procesamiento digital de imágenes y series temporales de imágenes.
+-   Afianzar y profundizar conocimientos sobre técnicas de
+    pre-procesamiento, procesamiento y análisis digital de datos
+    satelitales.
+-   Introducir conceptos y flujo de trabajo para realizar clasificación
+    basada en objetos (OBIA).
+-   Introducir en el análisis de series de tiempo de datos raster en
+    GRASS GIS.
+-   Introducir en la vinculación GRASS-Python y GRASS-R para el análisis
+    y visualización de datos espacio-temporales.\
+-   Que las personas participantes puedan aplicar conceptos y funciones
+    aprendidas a sus casos de estudio.
+
+# Metodología
+
+El curso es principalmente *práctico*. Se trabajará mayormente con
+Jupyter notebooks. Las mismas podrán ejecutarse de manera local, en
+Google Colab o en la plataforma The Whole Tale. Las personas
+participantes necesitan traer sus laptops con el software instalado, ya
+que no habrá instancia de instalación de software durante el curso. El
+curso es de un **nivel intermedio**. Se asumen conocimientos
+básicos de teledetección, SIG, línea de comandos, Python y R.
+
+# Contenidos
+
+-   **Unidad 1.** Introducción a GRASS GIS: sus características y
+    funciones. Conceptos básicos: GRASS database, proyectos (locations)
+    y mapsets. Tipos de datos. Interfaces de uso: línea de comandos,
+    interfaz gráfica, Python, R. Región computacional. Scripting.
+    Visualización de datos espaciales y espacio-temporales.
+    Interoperabilidad y reproducibilidad. Crear un proyecto e importar
+    mapas a GRASS GIS.
+-   **Unidad 2.** Procesamiento de datos satelitales en GRASS GIS. Datos
+    ráster. Datos satelitales. Semantic labels. Manejo y procesamiento.
+    Módulos y funcionalidades más relevantes. Índices espectrales.
+    Clasificación. Ejemplos de procesamiento de datos Landsat y
+    Sentinel-2.
+-   **Unidad 3.** Análisis de imágenes basado en objetos en GRASS:
+    Object based image analysis - OBIA. Conceptos básicos. Segmentación.
+    Optimización de parámetros de la segmentación. Estadística de
+    segmentos. Clasificación basada en objetos con datos de alta
+    resolución.
+-   **Unidad 4.** Series de tiempo en GRASS GIS. Conceptos básicos: base
+    de datos temporal, topología y muestreo temporal, granularidad,
+    tiempo absoluto y relativo, intervalos y eventos puntuales. Creación
+    de series de tiempo y registro de mapas. Series de tiempo de datos
+    raster, raster 3D y vectoriales. Procesamiento y análisis de series
+    de tiempo de productos satelitales. Estadística descriptiva básica.
+    Imputación de datos faltantes y reconstrucción de series de tiempo.
+    Agregados y acumulaciones. Álgebra temporal. Cálculo de
+    climatologías y anomalías. Obtención de índices fenológicos.
+    Extracción de datos: datos puntuales, estadística zonal, extracción
+    de datos temporalmente agregados.
+-   **Unidad 5.** GRASS y R. Ejemplo de modelado de nicho ecológico
+    combinando GRASS y R.
+-   **Unidad 6.** [Trabajo Integrador](trabajo_final.qmd).
+
+# Getting ready
+
+We'll run this session online within the [Whole Tale
+platform](https://wholetale.org/). Whole Tale is an NSF-funded Data
+Infrastructure Building Block (DIBBS) initiative to build a scalable,
+open source, web-based, multi-user platform for reproducible research.
+It enables the creation, publication, and execution of tales -
+executable research objects that capture data, code, and the complete
+software environment used to produce research findings. It's also great
+for teaching, as participants do not need to install all software
+packages required. They only need to register with institutional or
+personal email and they are ready to go!
+
+**Run the session online:** [Curso GRASS GIS
+2023](https://dashboard.wholetale.org/run/647a2d67131e6c800db54dd7?tab=metadata)
+
+## Software
+
+If you still want to run the workshop locally, you'll find instructions
+and requirements below.
+
+### GRASS GIS
+
+We will use **GRASS GIS 8.2+**. It can be installed either through
+standalone installers/binaries or through
+[OSGeo-Live](https://live.osgeo.org/en/index.html) (a linux based
+virtual machine which includes all OSGeo software and packages).
+
+##### MS Windows
+
+There are two different options to install GRASS GIS in MS Windows:
+
+1.  [Standalone installer
+    64-bit](https://grass.osgeo.org/grass82/binary/mswindows/native/WinGRASS-8.2.1-1-Setup.exe)
+2.  [OSGeo4W
+    64-bit](http://download.osgeo.org/osgeo4w/v2/osgeo4w-setup.exe)
+
+For Windows users, **we strongly recommend installing GRASS GIS through
+the OSGeo4W package** (second option), since it allows to install all
+OSGeo software and resolves dependencies.
+
+##### Ubuntu Linux
+
+Install GRASS GIS 8.2+ from the "unstable" package repository:
+
+``` bash
+  sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+  sudo apt-get update
+  sudo apt-get install grass grass-gui grass-dev
+```
+
+##### Fedora, openSuSe Linux
+
+For other Linux distributions including **Fedora** and **openSuSe**,
+simply install GRASS GIS with the respective package manager. See also
+[here](https://grass.osgeo.org/download/linux/)
+
+##### Mac OS
+
+Find GRASS GIS binaries on <http://grassmac.wikidot.com/> or install the
+latest available version from
+[MacPorts](https://ports.macports.org/port/grass/).
+
+#### GRASS GIS Add-ons
+
+-   [r.bioclim](https://grass.osgeo.org/grass-stable/manuals/addons/r.bioclim.html):
+    Calculates bioclimatic indices as those in
+    [WorldClim](https://www.worldclim.org/bioclim).
+
+Install with `g.extension extension=name_of_addon`
+
+### R packages
+
+The following R packages should be installed beforehand:
+
+``` r
+  install.packages(c("rgrass","terra","sf","raster","mapview","biomod2","dismo","usdm","SDMtune","zeallot","rJava","ggpubr"))
+```
+
+### Python libraries
+
+The following Python libraries should be installed beforehand:
+
+``` bash
+  pip install folium 
+```
+
+## Data
+
+Download the following ready to use *location* with reconstructed daily
+LST averages (@metz_new_2017) for Northern Italy. This dataset is
+courtesy of [mundialis GmbH & Co. KG](mundialis.de/en/).
+
+-   [Northern Italy (1.7
+    Gb)](https://drive.google.com/file/d/1z1b2NLC4Z6yzz_57RddTdRRK_gUkd7fU/view?usp=sharing)
+
+We will also use a points vector map representing *Aedes albopictus*
+presence data:
+
+-   [Mosquito occurrence data](data/aedes_albopictus.gpkg)
+
+## References
+
+::: {#refs}
+:::
+
+<!-- - https://github.com/veroandreo/foss4g2022_grass4rs -->
+
+<!-- - https://github.com/veroandreo/grass_opengeohub2021 -->
+
+<!-- - Neteler, M. and Mitasova, H. (2008): *Open Source GIS: A GRASS GIS Approach*. Third edition. ed. Springer, New York. [Book site](https://grassbook.org/) -->
+
+<!-- - Neteler, M., Bowman, M.H., Landa, M. and Metz, M. (2012): *GRASS GIS: a multi-purpose Open Source GIS*. Environmental Modelling & Software, 31: 124-130 [DOI](http://dx.doi.org/10.1016/j.envsoft.2011.11.014) -->
+
+<!-- - Gebbert, S. and Pebesma, E. (2014). *A temporal GIS for field based environmental modeling*. Environmental Modelling & Software, 53, 1-12. [DOI](https://doi.org/10.1016/j.envsoft.2013.11.001) -->
+
+<!-- - Gebbert, S. and Pebesma, E. (2017). *The GRASS GIS temporal framework*. International Journal of Geographical Information Science, 31, 1273-1292. [DOI](http://dx.doi.org/10.1080/13658816.2017.1306862) -->
+
+<!-- - Gebbert, S., Leppelt, T. and Pebesma, E. (2019). *A Topology Based Spatio-Temporal Map Algebra for Big Data Analysis*. Data, 4, 86. [DOI](https://doi.org/10.3390/data4020086) -->

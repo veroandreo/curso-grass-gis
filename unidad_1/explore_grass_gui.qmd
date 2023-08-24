@@ -1,0 +1,270 @@
+---
+title: "Explorando la GUI de GRASS GIS"
+author: "Verónica Andreo"
+title-slide-attributes: 
+  data-background-color: "#1A428A"
+format:
+  revealjs: 
+    hash-type: number 
+    slide-number: true
+    chalkboard: 
+      buttons: true
+    preview-links: auto
+    logo: "../assets/img/G-UNC-CONAE-C.png"
+    theme: [default, gulich]
+---
+
+
+## Ejercicio: Familiarizándonos con GRASS GIS
+
+
+## Contenidos
+
+- Estructura de la base de datos GRASS GIS
+- Datos de muestra: *North Carolina sample location*
+- Iniciamos GRASS y exploramos su interfaz gráfica
+- Abrir mapas raster y vectoriales
+- Consultas sobre mapas raster y vectoriales
+- Visualización 3D
+- Visualización de mapas base (WMS)
+- Composición cartográfica
+
+
+## Datos de muestra: 
+#### *North Carolina sample location*
+
+
+- [**North Carolina full**](https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip)
+- Crear un directorio en *`$HOME`* (o dentro de Documentos) con el nombre *`grassdata`*
+- Descomprimir el archivo *`nc_spm_08_grass7.zip`* dentro de *`grassdata`*
+
+
+Usuarios Windows: la descompresión crea un nivel extra de subdirectorios
+
+
+## Iniciamos GRASS GIS
+
+- Click sobre el ícono de GRASS GIS (*MS Windows: Inicio @fa[arrow-right] OSGeo4W @fa[arrow-right] GRASS GIS*)
+- Abrir una terminal o la *OSGeo4W Shell* y escribir:
+
+
+```bash
+# abrir GRASS con el GUI Location wizard
+grass
+
+# abrir GRASS en modo texto, i.e., solo veremos la terminal
+grass --text $HOME/grassdata/nc_spm_08_grass7/user1/
+```
+
+---
+
+Si no han descargado el location de North Carolina (NC)... no hay problema!
+
+![Startup-download location](../assets/img/download_location_button.png)
+
+![Download location](../assets/img/download_location.png)
+
+---
+
+GRASS GIS GUI
+
+
+<img src="../assets/img/empty_gui_explained.png" width="88%">
+
+
+---
+
+... y la Terminal
+
+
+<img src="../assets/img/empty_terminal.png" width="80%">
+
+---
+
+### Obtener información sobre el CRS
+
+<img src="../assets/img/projection_info.png" width="65%">
+
+<br>
+o simplemente desde la terminal:
+
+```bash
+g.proj -p
+```
+
+## Abrir mapas raster y vectoriales
+
+Muchas opciones:
+- Desde el menú principal: File @fa[arrow-right] Map display @fa[arrow-right] Add raster|vector
+- Desde los íconos de la barra de tareas del Layer Manager
+- Desde la pestaña *Consola* del Layer Manager
+- Doble-click sobre el mapa en la pestaña *Datos* del Layer Manager 
+- Desde la terminal, llamando monitores wx: [*d.mon*](https://grass.osgeo.org/grass-stable/manuals/d.mon.html)
+
+---
+
+> **Tarea** 
+>
+> Probar las diferentes maneras de abrir mapas en GRASS GIS
+
+
+## Invocar comandos de GRASS GIS
+
+- Desde la interfaz gráfica (GUI): 
+  - menú principal del Layer Manager
+  - pestaña *Console*
+  - pestaña *Modules*
+  
+- Desde la terminal: 
+  - tipear la primera letra o algunas letras del comando + `<tab><tab>` para opciones y autocompletado
+
+---
+
+> **Tarea**
+>
+> - Ejecutar `r.univar map=elevation` desde la GUI (Menú Raster > Reports and statistics)
+> - Ejecutar `r.univar map=elevation` desde la pestaña *Console*
+> - Escribir `r.un` en la terminal + `<tab><tab>`, luego `<Enter>`
+> - Ejecutar `r.univar map=elevation` en la terminal
+
+---
+
+2 cosas para destacar en la GUI:
+
+
+<img src="../assets/img/log_file_button.png" width="85%">
+
+*Log file* y *Save* en la consola de la GUI
+
+
+![Copy button](../assets/img/copy_button.png)
+
+Botón *Copy* en la GUI de cada comando
+
+
+## Ayuda
+
+- Desde el menú principal `Help`
+- En la GUI de cada comando
+- `<comando> --help` en la terminal para obtener la descripción de parámetros y opciones
+- `g.manual <comando>` para acceder al manual online
+
+---
+
+> **Tarea** 
+> 
+> Obtener ayuda para `r.grow.distance` y `v.what.rast`. Para qué se usan? Cuáles son sus parámetros y opciones?
+
+
+## Consultas sobre mapas raster
+
+![Query raster map](../assets/img/query_maps.png)
+
+
+## Consultas sobre mapas vectoriales
+
+![Query vector map](../assets/img/query_vector_maps.png)
+
+
+## Tabla(s) de atributos de mapas vectoriales
+
+<img src="../assets/img/vector_attr_table.png" width="85%">
+
+---
+
+> **Tarea**
+>
+> - Abrir el mapa vectorial `zipcode`
+> - Cambiar el color de las áreas
+> - Seleccionar sólo los límites y mostrarlos con otro color
+> - Mostrar sólo los valores de `cat` entre 1 y 40
+> - Construir una consulta SQL con al menos dos condiciones
+
+
+## Explorando los datos de muestra y la región computacional
+
+```bash
+# lista de los mapas raster
+g.list rast
+# lista de los mapas vectoriales
+g.list vect
+# imprimir la región computacional
+g.region -p
+```
+
+---
+
+> **Tareas**
+>
+>- Explorar la ayuda de *r.info* y *v.info* y obtener información básica sobre un mapa raster y un mapa vectorial
+>- Cambiar la región computacional actual a un mapa vectorial e imprimir los nuevos ajustes
+>- Alinear la resolución de la región computacional a un mapa raster e imprimir los nuevos ajustes para comprobar
+
+
+## Visualización 3D
+
+<img src="../assets/img/3d_view.png" width="95%">
+
+---
+
+> **Tareas**
+>
+> - Abrir el raster `elevation`
+> - Cambiar a *Vista 3D* en la ventana *Map Display*
+> - Explorar las opciones disponibles en la nueva pestaña 3D que aparece en el *Layer Manager*
+
+---
+
+## Visualizar mapas base WMS
+
+Paso 1
+<img src="../assets/img/add_wms_1.png" width="95%">
+
+
+Paso 2
+<img src="../assets/img/add_wms_2.png" width="85%">
+
+
+## Visualizar mapas base WMS
+
+<img src="../assets/img/add_wms_3.png" width="95%">
+
+---
+
+> **Tarea**
+>
+> - Explorar el área, acercar y alejar
+> - Abrir y mostrar un mapa vectorial sobre la capa WMS (**Sugerencia**: Ajustar la opacidad del mapa vectorial)
+
+
+## Composición cartográfica en la GUI
+
+> **Tarea**
+>
+>  - Desplegar los mapas `elevation` y `roadsmajor`
+>  - Superponer una grilla
+>  - Agregar *labels* a los caminos (**Sugerencia**: botón derecho sobre el nombre del mapa en el *Layer Manager*)
+>  - Agregar las leyendas para el mapa raster y vectorial
+>  - Agregar barra de escala
+>  - Agregar símbolo indicando el *Norte*
+>  - Agregar título al mapa
+
+---
+
+<img src="../assets/img/map_decorations_task.png" width="80%">
+
+---
+
+> **Tarea** 
+>
+> Crear un mapa usando el compositor cartográfico ([g.gui.psmap](https://grass.osgeo.org/grass-stable/manuals/g.gui.psmap.html)) y guardar las instrucciones en un archivo .psmap.
+
+---
+
+<img src="../assets/img/gummy-question.png" width="45%">
+
+---
+
+**Gracias por su atención!!**
+
+![GRASS GIS logo](../assets/img/grass_logo_alphab.png)

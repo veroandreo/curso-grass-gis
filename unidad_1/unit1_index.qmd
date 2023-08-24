@@ -1,0 +1,51 @@
+
+
+:::{.column-page}
+## Presentaciones Unidad 1
+
+En esta unidad vamos a ver dos presentaciones introductorias y otras dos con 
+ejercicios para familiarizarnos principalmente con la interfaz gŕafica de 
+GRASS GIS. Comencemos!
+
+:::: columns
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="intro_to_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](intro_to_grass.html){target="_blank"}
+:::
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="functions_in_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](functions_in_grass.html){target="_blank"}
+:::
+
+::::
+
+
+:::: columns
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="explore_grass_gui.html"></iframe>
+```
+
+[Ver en otra pestaña](explore_grass_gui.html){target="_blank"}
+:::
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="data_storage_and_management_in_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](data_storage_and_management_in_grass.html){target="_blank"}
+:::
+
+::::
+
+:::

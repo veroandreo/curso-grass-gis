@@ -1,0 +1,49 @@
+
+
+:::{.column-page}
+## Presentaciones Unidad 2
+
+En esta unidad nos vamos a introducir en el uso de GRASS y Python, vamos a ver 
+las nociones básicas del manejo y procesamiento de datos ráster en GRASS, y 
+finalmente, vamos a ver cómo trabajamos con datos satelitales en GRASS, 
+aplicando algunas de sus funciones específicas. 
+
+
+:::: columns
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="raster_data_in_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](raster_data_in_grass.html){target="_blank"}
+:::
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="python_and_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](python_and_grass.html){target="_blank"}
+:::
+::::
+
+
+:::: columns
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="imagery_data_in_grass.html"></iframe>
+```
+
+[Ver en otra pestaña](imagery_data_in_grass.html){target="_blank"}
+:::
+
+::: {.column width="50%"}
+```{=html}
+<iframe class="slide-deck", style="width:100%;height:400px; border:1px solid gray;" src="exercise_sentinel2.html"></iframe>
+```
+
+[Ver en otra pestaña](exercise_sentinel2.html){target="_blank"}
+:::
+::::
+
+:::

@@ -1,0 +1,430 @@
+---
+title: "Datos raster en GRASS GIS"
+author: "Verónica Andreo"
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+## Definición 
+
+Un *mapa raster* es un arreglo de celdas en forma de grilla. Tiene filas y 
+columnas y en cada celda hay un dato o un indicador de no-data (valor nulo). 
+En GRASS, los mapas raster pueden ser arreglos 2D o 3D.
+
+- Los límites se describen en los campos norte (n), sur (s), este (e) y oeste (w). 
+- La extensión se calcula a partir de los límites externos de todas las celdas 
+del mapa.
+
+
+::: {.callout-note}
+Para más info ver la página 
+[raster intro](https://grass.osgeo.org/grass-stable/manuals/rasterintro.html)
+:::
+
+
+## Precisión de datos raster
+
+La precisión de los datos raster en GRASS, se clasifica en:
+
+- **CELL DATA TYPE:** un mapa raster de tipo ENTERO (sólo números enteros)
+- **FCELL DATA TYPE:** un mapa raster de tipo FLOTANTE (4 bytes, 7-9 dígitos de precisión)
+- **DCELL DATA TYPE:** un mapa raster de tipo DOBLE (8 bytes, 15-17 dígitos de precisión)
+
+::: {.callout-note}
+Para más info ver la wiki sobre 
+[semántica de rasters](https://grasswiki.osgeo.org/wiki/GRASS_raster_semantics)
+:::
+
+
+## Reglas generales para los datos raster en GRASS
+
+- Los mapas raster de **salida u output** tienen sus *límites y resolución iguales a los de la región computacional* establecida.
+- Los mapas raster de **entrada o input** son automáticamente *cortados y reajustados a la región computacional*.
+- Mapas raster de **entrada o input** se enmascaran automáticamente si existe un
+mapa raster llamado *MASK* en el mapset.
+
+:::{.callout-warning}
+**Excepción:** Todos los módulos **r.in.\*** leen los datos celda por celda sin 
+remuestreo y con su resolución y extensión originales -a menos que se especifique
+lo contrario.
+:::
+
+
+## NULL: valores nulos en GRASS GIS
+
+- **NULL** representa "sin dato" en los mapas raster
+- Operaciones con celdas NULL producen celdas NULL
+- Los valores NULL son gestionados con 
+[r.null](https://grass.osgeo.org/grass-stable/manuals/r.null.html)
+
+```bash
+# establecer el valor no-data
+r.null map=mapname setnull=-9999
+
+# reemplazar NULL por un número 
+r.null map=mapname null=256
+```
+
+
+## Máscaras en GRASS GIS
+
+- Se puede crear un mapa raster llamado *MASK* para enmascarar ciertas áreas, 
+como por ejemplo el mar, los lagos, o el área por fuera de un polígono de 
+interés.
+- Todas las celdas que sean NULL en el mapa MASK serán ignoradas, del mismo modo
+que son ignoradas todas las celdas por fuera de la región computacional.
+- Las máscaras se gestionan con 
+[r.mask](https://grass.osgeo.org/grass-stable/manuals/r.mask.html) o creando un 
+raster con el nombre *MASK* via álgebra de mapas. 
+- Los mapas vectoriales también pueden usarse como máscaras y se pueden 
+establecer máscaras inversas.
+
+![a- Raster *elevation* y vector *lakes*. b- Sólo los datos raster dentro de la máscara son usados para análisis posteriores. c- Máscara inversa.](../assets/img/masks.png)
+
+Veamos algunos ejemplos de cómo aplicar máscaras
+
+```bash
+# usar un vector como máscara
+r.mask vector=lakes
+
+# usar un vector como máscara inversa
+r.mask -i vector=lakes
+
+# enmascarar solo algunos valores de un mapa raster 
+r.mask raster=landclass96 maskcats="5 thru 7"
+
+# crear un raster MASK
+r.mapcalc expression="MASK = if(elevation < 100, 1, null())"
+
+# remover la máscara
+r.mask -r
+```
+
+Una máscara sólo se aplica realmente cuando se lee un mapa raster, 
+es decir, cuando se usa como entrada en un módulo.
+
+Veamos un ejemplo:
+
+```bash
+g.region -p raster=elevation
+r.mask -i vector=lakes
+r.grow.distance -n input=elevation distance=distance
+r.mask -r
+```
+
+![a- Máscara activa. b- Máscara desactivada.](../assets/img/mask_applied_vs_mask_removed.png)
+
+```bash
+r.mask -i vector=lakes
+r.out.gdal input=distance output=distance.tif
+qgis distance.tif
+```
+
+![Máscara leída al exportar](../assets/img/mask_read_when_exporting.png)
+
+
+### Región computacional
+
+- La **región computacional** está definida en función de la extensión dada por 
+los límites norte, sur, este y oeste y una resolución espacial. 
+*Aplica únicamente a las operaciones con datos raster.* 
+- La **región de un mapa raster** está definida por la extensión del mapa y la 
+resolución del mapa. Cada mapa raster tiene su región, pero la región computacional
+tiene precedencia. 
+- La **región de visualizacion** es la extensión del *map display* independiente
+de la región computacional y la región del mapa raster. 
+
+![](../assets/img/region.png)
+
+La región computacional puede definirse y modificarse mediante el módulo <a href="https://grass.osgeo.org/grass-stable/manuals/g.region.html">g.region</a> 
+a la extensión de un mapa vectorial, un raster o manualmente a alguna zona de 
+interés. También puede establecerse a la extensión de un vector y alinear la
+resolución a un determinado mapa raster. Por ejemplo:
+
+```{bash}
+g.region -p vector=lakes align=elevation
+```
+
+Por otra, es posible establecer la región computacional a partir de la región de 
+visualización y guardarla con un nombre para luego volver a aplicarla.
+
+![](../assets/img/save_region_from_display.png)
+
+
+## Importar/exportar, máscara y región
+
+- **r.in.\*** y **r.import** importan siempre el mapa completo (a menos que se 
+establezca el recorte a la región). Luego, es posible establecer la región a la 
+resolución (y extensión) del mapa con `g.región -p raster=mapname`.
+- **r.out.\*** exportan mapas raster según la definición de la región computacional 
+(extensión y resolución) y respetan la máscara si está presente. Se aplica 
+interpolación por vecino más cercano por defecto.
+
+:::{.callout-important}
+**En la importación y la exportación, los mapas vectoriales se consideran siempre en toda su extensión.**
+:::
+
+
+## Reportes y estadísticas de mapas raster
+
+Existen diversos módulos que nos permiten generar reportes y estadísticas de 
+los mapas raster. Algunos de los más usados son:
+
+- [r.report](https://grass.osgeo.org/grass-stable/manuals/r.report.html): reporta área y número de celdas de un mapa raster
+- [r.coin](https://grass.osgeo.org/grass-stable/manuals/r.coin.html): reporta la matriz o tabla de coincidencia entre dos mapas raster
+- [r.univar](https://grass.osgeo.org/grass-stable/manuals/r.univar.html): calcula estadísticas descriptivas a partir de las celdas no nulas de un mapa raster
+- [r.stats](https://grass.osgeo.org/grass-stable/manuals/r.stats.html): calcula el área de cada una de las categorías o intervalos de un mapa raster
+- [r.statistics](https://grass.osgeo.org/grass-stable/manuals/r.statistics.html) y [r.stats.zonal](https://grass.osgeo.org/grass-stable/manuals/r.stats.zonal.html): estadística zonal
+- [r.neighbors](https://grass.osgeo.org/grass-stable/manuals/r.neighbors.html): estadística local basada en las celdas vecinas
+
+Veamos algunos ejemplos:
+
+```bash
+# reportes
+r.report map=zipcodes,landclass96 units=h,p
+r.coin first=zipcodes second=landclass96 units=p
+
+# estadísticas descriptivas
+r.univar map=elevation
+
+# estadística zonal: elevacion promedio por código postal
+r.stats.zonal base=zipcodes cover=elevation method=average output=zipcodes_elev_avg
+```
+
+
+## Álgebra de mapas raster
+
+El módulo [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html) 
+nos permite realizar múltiples operaciones entre mapas. Así, podemos crear 
+nuevos mapas ráster que sean expresiones aritméticas en las que intervengan 
+mapas ráster existentes, constantes enteras o de punto flotante y funciones.
+
+<img src="../assets/img/r_mapcalc_gui.png" width="70%">
+
+
+### Operadores
+
+Los operadores se aplican de izquierda a derecha, aplicándose los de mayor 
+precedencia antes que los de menor precedencia. La división por 0 y el módulo 
+por 0 son aceptables y dan un resultado NULL. Los operadores lógicos dan un 
+resultado 1 si la comparación es verdadera, 0 en caso contrario.
+
+:::{style="font-size: 0.8em;"}
+| Operator  | Meaning                   | Type        |
+|-----------|---------------------------|-------------|
+| -         | negation                  | Arithmetic  |
+| ~         | one's complement          | Bitwise     |
+| !         | not                       | Logical     |
+| ^         | exponentiation            | Arithmetic  |
+| %         | modulus                   | Arithmetic  |
+| /         | division                  | Arithmetic  |
+| *         | multiplication            | Arithmetic  |
+| +         | addition                  | Arithmetic  |
+| -         | subtraction               | Arithmetic  |
+| <<        | left shift                | Bitwise     |
+| >>        | right shift               | Bitwise     |
+| >>>       | right shift (unsigned)    | Bitwise     |
+| >         | greater than              | Logical     |
+| >=        | greater than or equal     | Logical     |
+| <         | less than                 | Logical     |
+| <=        | less than or equal        | Logical     |
+| ==        | equal                     | Logical     |
+| !=        | not equal                 | Logical     |
+| &         | bitwise and               | Bitwise     |
+| \|        | bitwise or                | Bitwise     |
+| &&        | logical and               | Logical     |
+| &&&       | logical and[^1]           | Logical     |
+| \|\|      | logical or                | Logical     |
+| \|\|\|    | logical or[^1]            | Logical     | 
+|?:         | conditional               | Logical     |
+:::
+
+[^1]: The &&& and ||| operators handle null values differently to other operators. 
+See the section entitled 
+[NULL support](https://grass.osgeo.org/grass83/manuals/r.mapcalc.html#null-support) 
+in the manual for more details.
+
+
+### Operador vecinos o índices **[row,col]**
+
+Los mapas y las imágenes son matrices bidimensionales. En r.mapcalc, los mapas 
+pueden ir seguidos de un modificador de vecindad que especifica un desplazamiento
+relativo desde la celda actual que se está evaluando. El formato es map[r,c], 
+donde r es el desplazamiento de fila y c es el desplazamiento de columna. Por
+ejemplo, map[1,2] se refiere a la celda situada una fila por debajo y dos 
+columnas a la derecha de la celda actual, map[-2,-1] se refiere a la celda 
+situada dos filas por encima y una columna a la izquierda de la celda actual, 
+y map[0,1] se refiere a la celda situada una columna a la derecha de la celda 
+actual. Esta sintaxis permite desarrollar filtros de vecindad dentro de un 
+mismo mapa o en varios mapas.
+
+```bash
+# ejemplo filtro de paso bajo con operador de vecinos
+r.mapcalc \
+expression="lsat7_2002_10_smooth = (lsat7_2002_10[-1,-1] + 
+									lsat7_2002_10[-1,0] + 
+									lsat7_2002_10[1,1] + 
+									lsat7_2002_10[0,-1] + 
+									lsat7_2002_10[0,0] + 
+									lsat7_2002_10[0,1] + 
+									lsat7_2002_10[1,-1] + 
+									lsat7_2002_10[1,0] + 
+									lsat7_2002_10[1,1]) / 9"
+```
+
+Podemos comparar con la herramienta mapswipe, por ejemplo: 
+
+```bash
+g.gui.mapswipe first=lsat7_2002_10 second=lsat7_2002_10_smooth
+```
+
+<img src="../assets/img/neighbour_operator_mapswipe.png" width="75%">
+
+
+### Funciones
+
+Las funciones actualmente admitidas se enumeran en la tabla siguiente. 
+El tipo del resultado se indica en la última columna. F significa que las 
+funciones siempre dan como resultado un valor de coma flotante, I significa 
+que la función da un resultado entero, y * indica que el resultado es flotante
+si alguno de los argumentos de la función son valores de coma flotante y entero 
+si todos los argumentos son enteros.
+
+<img src="../assets/img/r_mapcalc_functions.png" width="60%">
+
+
+### Cláusula *if*
+
+```bash
+# Ejemplo: 
+# Determinar las zonas forestales situadas por encima 
+# de una cierta elevación
+
+# establecer la región computacional
+g.region rast=landclass96
+
+# reportar las clases de cobertura
+r.report map=landclass96 units=p
+
+# estadística univariada del mapa de elevacion
+r.univar map=elevation
+
+# seleccionar áreas > 120m y con bosque
+r.mapcalc expression="forest_high = if(elevation > 120 && landclass96 == 5, 1, null())"
+```
+
+## Resampleo e interpolacion
+
+El procesamiento de mapas raster de GRASS se realiza siempre en la configuración
+actual de la región, es decir, se utiliza la extensión y resolución actual de la
+región. Si la resolución de la región difiere de la del mapa(s) raster de entrada,
+se realiza un remuestreo sobre la marcha (remuestreo del vecino más cercano). 
+Si no se desea, los mapas de entrada deben remuestrearse previamente con uno de 
+los módulos específicos.
+
+Los siguientes módulos están disponibles para la reinterpolación de mapas raster 
+"rellenos" (datos continuos) a una resolución diferente:
+
+- r.resample utiliza el remuestreo incorporado, por lo que debería producir 
+resultados idénticos al remuestreo sobre la marcha realizado a través de los 
+módulos de importación raster.
+- r.resamp.interp remuestreo con el método del vecino más cercano, bilineal y 
+bicúbico. Para r.resamp.interp method=bilinear y method=bicubic, los valores 
+ráster se tratan como muestras en el centro de cada celda ráster, definiendo 
+una superficie continua a trozos. Los valores raster resultantes se obtienen 
+muestreando la superficie en el centro de cada celda de la región. Como el 
+algoritmo sólo interpola, y no extrapola, se pierde un margen de 0,5 
+(para bilineal) o 1,5 (para bicúbica) celdas de la extensión de la trama 
+original. Cualquier muestra tomada dentro de este margen será nula.
+- r.resamp.rst (Regularized Spline with Tension - RST): Se comporta de forma 
+similar, es decir, calcula una superficie asumiendo que los valores son muestras
+en el centro de cada celda del raster, y muestrea la superficie en el centro 
+de cada celda de la región.
+- r.resamp.bspline Interpolación spline bicúbica o bilineal con regularización 
+Tykhonov.
+- Para r.resamp.stats sin -w, el valor de cada celda de región es el agregado 
+elegido de los valores de todas las celdas ráster cuyos centros caen dentro de 
+los límites de la celda de región. Con -w, las muestras se ponderan de acuerdo 
+con la proporción de la celda ráster que cae dentro de los límites de la celda 
+de la región, por lo que el resultado normalmente no se ve afectado por el error
+de redondeo.
+- r.fillnulls para el relleno de agujeros (por ejemplo, SRTM DEM).
+
+Además, hay módulos disponibles para la reinterpolación de mapas "dispersos" 
+(puntos o líneas dispersos):
+
+- Interpolación de la media ponderada de la distancia inversa (IDW) (r.surf.idw)
+- Interpolación a partir de curvas de nivel (r.contour)
+- Varios módulos vectoriales para la interpolación: v.surf.*
+- Para datos Lidar y similares, r.in.pdal y r.in.xyz permiten cargar y agrupar 
+datos ASCII x,y,z sin cuadricular en un nuevo mapa ráster. El usuario puede 
+elegir entre diversos métodos estadísticos para crear el nuevo mapa de trama.
+
+
+## Parcheo y agregaciones temporales
+
+- [r.patch](https://grass.osgeo.org/grass-stable/manuals/r.patch.html): Crea un 
+mapa raster utilizando los valores de las categorías de uno (o más) mapa(s) para
+rellenar las áreas "sin datos" en otro mapa
+
+![Parcheo de mapas raster](../assets/img/r_patch.png){width=80%}
+
+- [r.series](https://grass.osgeo.org/grass-stable/manuals/r.series.html): 
+Permite agregar una lista de mapas con diferentes métodos como promedio, mínimo,
+máximo, etc.
+
+![Operaciones con varios mapas raster](https://grass.osgeo.org/grass83/manuals/r_series.png)
+
+
+## Correlación, regresión simple y múltiple
+
+- [r.covar](https://grass.osgeo.org/grass-stable/manuals/r.covar.html): matriz 
+de covarianza o correlación entre mapas raster
+- [r.regression.line](https://grass.osgeo.org/grass-stable/manuals/r.regression.line.html): 
+regresión lineal simple
+- [r.regression.multi](https://grass.osgeo.org/grass-stable/manuals/r.regression.multi.html): 
+regresión lineal múltiple
+
+
+```bash
+# correlación
+g.region raster=elevation
+r.covar -r map=elevation,aspect,slope
+
+# regresión simple
+g.region raster=elev_srtm_30m -p
+r.regression.line mapx=elev_ned_30m mapy=elev_srtm_30m 
+
+# regresión múltiple
+g.region raster=soils_Kfactor -p
+r.regression.multi mapx=elevation,aspect,slope mapy=soils_Kfactor \
+  residuals=soils_Kfactor.resid estimates=soils_Kfactor.estim
+```
+
+## Compresión de datos
+
+Todos los tipos de mapas raster de GRASS GIS están por defecto comprimidos con 
+ZSTD si la librería está disponible, de lo contrario se usa ZLIB. 
+El método de compresión se establece a través de la variable de ambiente 
+`GRASS_COMPRESSOR`. Los métodos disponibles son: RLE, ZLIB, LZ4, BZIP2, o ZSTD.
+
+Importante: la compresión de archivos NULL puede ser desactivada con export 
+GRASS_COMPRESS_NULLS=0. La compresión de archivos NULL para un mapa raster en
+particular puede ser manejada con `r.null -z`.
+
+Los mapas raster de punto flotante (FCELL, DCELL) nunca usan compresión RLE; 
+son comprimidos con ZLIB, LZ4, BZIP2, ZSTD o sin compresión.
+
+La descompresión está controlada por el módulo 
+[r.compress](https://grass.osgeo.org/grass-stable/manuals/r.compress.html), 
+no por la variable de entorno.
+

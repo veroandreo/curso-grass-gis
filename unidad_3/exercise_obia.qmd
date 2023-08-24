@@ -1,0 +1,710 @@
+---
+title: "Ejercicio: OBIA en GRASS GIS"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+## Ejercicio: Clasificación supervisada basada en objetos con datos SPOT
+
+
+### Contenidos
+
+- Mejoramiento del contraste (ecualización del histograma)
+- Calcular índices espectrales y texturas de GLCM
+- Segmentación manual (ensayo y error)
+- Segmentación con USPO
+- Cómputo de las estadísticas de los segmentos
+- Colecta y etiquetado de datos de entrenamiento y validación
+- Clasificación supervisada por Machine Learning
+- Validación
+
+
+### Datos para el ejercicio
+
+- [SPOT 6](https://earth.esa.int/web/eoportal/satellite-missions/s/spot-6-7)
+- VIS - NIR (6 m)
+- PAN (1.5 m)
+- Datos corregidos y fusionados
+
+![](../assets/img/obia_region.png)
+
+Descargar los datos SPOT desde el [aula virtual](https://aulavirtual.ig.conae.unc.edu.ar/mod/page/view.php?id=11082) y mover a la carpeta *`$HOME/gisdata`*
+
+
+```{python}
+# paths
+grassdata='/home/veroandreo/grassdata/'
+location=''
+mapset=''
+```
+
+```{python}
+import os
+import subprocess
+import sys
+
+# Ask GRASS GIS where its Python packages are to be able to start it from the notebook
+sys.path.append(
+    subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+)
+
+# Importar los paquetes python de GRASS
+import grass.script as gs
+import grass.jupyter as gj
+
+# Iniciar GRASS
+session = gj.init(grassdata, location, mapset)
+```
+
+
+> **Tareas**
+> 
+> - Crear un mapset *`obia_spot`* en el location `posgar2007_4_cba` e importar la imagen SPOT desde la GUI forzando la resolución a 1.5m
+> - Alinear la región a la extensión y resolución de alguna de las bandas importadas 
+> - Mostrar la combinación RGB color natural (1: azul, 2: verde, 3: rojo, 4: NIR)
+> - Hacer una ecualización de histograma para mejorar el contraste de visualización
+
+### Importar datos y visualizar
+
+Crear mapset
+```{python}
+# create mapset
+g.mapset -c mapset=obia_spot
+```
+
+Importar bandas multi-espectrales
+```{python}
+# import pansharpened SPOT data
+r.import input=$HOME/gisdata/SPOT_20180621_PANSHARP_p.tif \
+  output=SPOT_20180621_PANSHARP \
+  resolution=value \
+  resolution_value=1.5
+```
+
+Importar banda pancromática
+```{python}
+# import SPOT PAN band
+r.import input=$HOME/gisdata/SPOT_20180621_PAN.tif \
+  output=SPOT_20180621_PAN \
+  resolution=value \
+  resolution_value=1.5
+```
+
+Alinear región y guardar la configuración
+```{python}
+# align region to one of the raster bands
+g.region -p raster=SPOT_20180621_PANSHARP.1 \
+  save=obia_full
+```
+
+Establecer *grey* como paleta de colores para bandas RGB
+```{python}
+# set grey color table to RGB bands
+r.colors \
+  map=SPOT_20180621_PANSHARP.1,SPOT_20180621_PANSHARP.2,SPOT_20180621_PANSHARP.3 \
+  color=grey
+```
+
+Mostrar composición RGB
+```{python}
+# display RGB
+d.mon wx0
+d.rgb red=SPOT_20180621_PANSHARP.3 \
+  green=SPOT_20180621_PANSHARP.2 \
+  blue=SPOT_20180621_PANSHARP.1
+```
+
+Ecualización de colores
+```{python}
+# enhance contrast
+i.colors.enhance red=SPOT_20180621_PANSHARP.3 \
+  green=SPOT_20180621_PANSHARP.2 \
+  blue=SPOT_20180621_PANSHARP.1 \
+  strength=95
+```
+
+Composición RGB 321 color natural - SPOT 6)
+```{python}
+
+```
+
+
+### Hay valores nulos?
+
+Valores nulos en una banda
+```{python}
+# one band
+r.univar map=SPOT_20180621_PANSHARP.2
+```
+
+Valores nulos en varias bandas
+```{python}
+# joint stats for all the bands
+r.univar \
+  map=SPOT_20180621_PANSHARP.1,SPOT_20180621_PANSHARP.2,SPOT_20180621_PANSHARP.3,SPOT_20180621_PANSHARP.4
+```
+
+
+Si hubiera valores nulos, se deben rellenar antes de comenzar @fa[exclamation-triangle text-orange]
+
+
+### Índices espectrales y texturas GLCM
+
+Estimar NDVI
+```{python}
+# estimate vegetation index
+i.vi \
+  output=SPOT_20180621_NDVI \
+  viname=ndvi \
+  red=SPOT_20180621_PANSHARP.3 \
+  nir=SPOT_20180621_PANSHARP.4
+```
+
+Instalar extensión *i.wi* y estimar NDWI
+```{python}
+# install i.wi
+g.extension i.wi
+
+# estimate water index
+i.wi \
+  output=SPOT_20180621_NDWI \
+  winame=ndwi_mf \
+  green=SPOT_20180621_PANSHARP.2 \
+  nir=SPOT_20180621_PANSHARP.4
+```
+
+Establecer la paleta de colores *ndwi*
+```{python}
+# set ndwi color palette
+r.colors map=SPOT_20180621_NDWI color=ndwi
+```
+
+Estimar medidas de textura: IDM y ASM
+```{python}
+# estimate textures measures
+r.texture \
+  input=SPOT_20180621_PAN \
+  output=SPOT_20180621 \
+  size=7 \
+  distance=3 \
+  method=idm,asm
+```
+
+Establecer paleta *grey* para bandas de textura
+```{python}
+# set color table to grey for texture bands
+r.colors -e map=SPOT_20180621_IDM color=grey
+r.colors -e map=SPOT_20180621_ASM color=grey
+```
+
+Visualizar
+```{python}
+
+```
+
+Índices espectrales y texturas GLCM a partir de bandas SPOT
+
+![](../assets/img/obia_frames.png)
+
+> Sobre qué banda calculamos las texturas?
+
+Si no contamos con una banda pancromática, podemos crearla promediando las bandas visibles
+
+```{bash}
+# create pan-vis from RGB (if no pan available)
+R=SPOT_20180621_PANSHARP.3
+G=SPOT_20180621_PANSHARP.2
+B=SPOT_20180621_PANSHARP.1
+
+r.mapcalc \
+  expression="PANVIS = round(($R + $G + $B) / 3)"
+```
+ 
+### Segmentación
+#### Búsqueda de umbrales de sub y sobre-segmentación
+
+Crear grupo con las bandas únicamente
+```{python}
+# create imagery group (only bands)
+i.group group=spot_bands \
+  input=SPOT_20180621_PANSHARP.1,SPOT_20180621_PANSHARP.2,SPOT_20180621_PANSHARP.3,SPOT_20180621_PANSHARP.4
+```
+
+Definir una región más pequeña y salvarla
+```{python}
+# set smaller region
+g.region -p \
+  n=6525171 s=6523179 \
+  w=4390557 e=4393257 \
+  save=obia_subset
+```
+
+Ejecutar una segmentación con umbral pequeño
+```{python}
+# run segmentation - small threshold
+i.segment \
+  group=spot_bands \
+  output=segment_001\
+  threshold=0.01 \
+  memory=2000
+# convert output to vector
+r.to.vect -tv input=segment_001 \
+  output=segment_001 \
+  type=area
+```
+
+Ejecutar una segmentación con umbral más grande
+```{python}
+# run segmentation - larger threshold
+i.segment \
+  group=spot_bands \
+  output=segment_005 \
+  threshold=0.05 \
+  memory=2000
+# convert output to vector
+r.to.vect -tv \
+  input=segment_005 \
+  output=segment_005 \
+  type=area
+```
+
+
+Sobre-segmentado
+
+![](../assets/img/over_segmented.png)
+
+Sub-segmentado
+
+![](../assets/img/sub_segmented.png)
+
+> **Tarea**
+>
+> Se animan a probar con otros valores y en otras regiones?
+
+
+### Segmentación
+#### Búsqueda automática de umbrales por optimización
+
+[i.segment.uspo](https://grass.osgeo.org/grass7/manuals/addons/i.segment.uspo.html)
+
+- Altamente intensivo para un área grande y muchas combinaciones de parámetros
+    - Limitar el tamaño de la región computacional
+    - Limitar el rango de los parámetros
+    - Crear **superpixels** para usarlos como semillas
+    - Cortar la imagen en *tiles* ([i.cutlines](https://grass.osgeo.org/grass-stable/manuals/addons/i.cutlines.html)) y paralelizar la USPO
+
+#### Generación de semillas
+
+[i.superpixels.slic](https://grass.osgeo.org/grass-stable/manuals/addons/i.superpixels.slic.html)
+
+- También puede utilizarse para la segmentación real
+- Muy rápido para reagrupar pequeñas cantidades de píxeles similares
+- Usar para reducir el número de píxeles en un factor de 4-5 y acelerar *i.segment.uspo*
+- Baja compactación para mantener la separación espectral
+
+
+### USPO con superpixels como semillas
+
+Instalar la extensión
+```{python}
+# install i.superpixels.slic
+g.extension i.superpixels.slic
+```
+
+Ejecutar *i.superpixels.slic* con bajo valor de compactación
+```{python}
+# run superpixel segm to use as seeds
+i.superpixels.slic \
+  input=spot_bands \
+  output=superpixels \
+  step=2 \
+  compactness=0.7 \
+  memory=2000
+```
+
+
+RGB y resultado de la ejecución de *i.superpixels.slic*
+
+![](../assets/img/superpixels.png)
+
+> Cuántas semillas se generaron? Qué factor de reducción se consigue en comparación a usar todos los pixeles?
+
+Dar una mirada a [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) y [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html)
+
+
+### USPO con superpixels como semillas
+
+Instalar las extensiones
+```{python}
+# install extensions
+g.extension r.neighborhoodmatrix
+g.extension i.segment.uspo
+```
+
+Ejecutar la segmentación con optimización
+```{python}
+# run segmentation with uspo
+i.segment.uspo group=spot_bands \
+  output=uspo_parameters.csv \
+  region=obia_subset \
+  seeds=superpixels \
+  segment_map=segs \
+  threshold_start=0.005 \
+  threshold_stop=0.05 \
+  threshold_step=0.005 \
+  minsizes=3 number_best=5 \
+  memory=2000 processes=4
+```
+
+Convertir el "mejor" resultado a vector
+```{python}
+# convert to vector the rank1
+r.to.vect -tv \
+  input=segs_obia_subset_rank1 \
+  output=segs \
+  type=area
+```
+
+
+Zoom al resultado de ejecutar la segmentación con USPO
+
+![](../assets/img/result_uspo.png)
+
+> Cuántos segmentos obtuvieron?
+
+Dar una mirada a [v.info](https://grass.osgeo.org/grass-stable/manuals/v.info.html)
+
+
+### Estadísticas: [i.segment.stats](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.stats.html)
+
+
+Instalar las extensiones
+```{python}
+# install extensions
+g.extension i.segment.stats
+g.extension r.object.geometry
+```
+
+Ejecutar *i.segment.stats*
+```{python}
+# extract stats for segments
+i.segment.stats \
+  map=segs_obia_subset_rank1 \
+  rasters=SPOT_20180621_ASM,SPOT_20180621_IDM,SPOT_20180621_NDVI,SPOT_20180621_NDWI,SPOT_20180621_PAN \
+  raster_statistics=mean,stddev \
+  area_measures=area,perimeter,compact_circle,compact_square \
+  vectormap=segs_stats \
+  processes=4
+```
+
+
+Tabla de atributos con las estadísticas estimadas para cada objeto
+
+![](../assets/img/segs_stats_attr_table.png)
+
+### Datos de entrenamiento
+
+Info básica de los puntos de entrenamiento provistos
+```{python}
+# get info of labeled points
+v.info labeled_points
+```
+
+Copiarse el vector al mapset `obia_spot`
+```{python}
+# copy vector to current mapset (access to tables from different mapsets is not allowed)
+g.copy vector=labeled_points@PERMANENT,labeled_points
+```
+
+Cuántos puntos de cada clase tenemos?
+```{python}
+# get number of points per class
+db.select \
+  sql="SELECT train_class,COUNT(cat) as count_class
+       FROM labeled_points
+       GROUP BY train_class"
+```
+
+Seleccionar segmentos sobre los cuales tenemos puntos de entrenamiento
+```{python}
+# select segments that are below labeled points
+v.select \
+  ainput=segs_stats \
+  binput=labeled_points \
+  output=train_segments \
+  operator=overlap
+```
+
+Cuántos segmentos contienen puntos de entrenamiento?
+```{python}
+# get info of segments
+v.info train_segments
+```
+
+Selección de segmentos con puntos de entrenamiento
+
+![](../assets/img/points_in_segments.png)
+
+
+### Datos de entrenamiento
+
+Agregar columna al vector con los segmentos para luego transferir la clase
+```{python}
+# add column to train segments
+v.db.addcolumn train_segments \
+  column="class int"
+```
+
+Asignar la clase de los puntos a los segmentos
+```{python}
+# assign label from points to segments
+v.distance from=train_segments \
+  to=labeled_points \
+  upload=to_attr \
+  column=class \
+  to_column=train_class
+```
+
+Cuántos segmentos de cada clase tenemos?
+```{python}
+# group training segments per class
+db.select \
+  sql="SELECT class,COUNT(cat) as count_class
+       FROM train_segments
+       GROUP BY class"
+```
+
+
+#### Datos de entrenamiento
+
+![](../assets/img/assign_color_to_train_segments.png)
+
+Asignación de colores interactivamente
+
+- Ir agregando valores
+- Seleccionar colores 
+- Previsualizar
+- Guardar la paleta creada como *obia_urban* para reusar posteriormente
+
+
+Selección y etiquetado de datos de entrenamiento y validación
+
+- Ejecutar una clasificación no supervisada con 10 clases
+- Extraer una *x* cantidad de puntos por clase ([r.sample.category](https://grass.osgeo.org/grass-stable/manuals/addons/r.sample.category.html))
+- Etiquetar los puntos manualmente
+- Usar puntos para transferir las etiquetas a los segmentos como ya vimos
+
+```{python}
+# Unsupervised classification
+i.group group=spot_all \
+  input=SPOT_20180621_ASM,SPOT_20180621_IDM,SPOT_20180621_NDVI,SPOT_20180621_NDWI,SPOT_20180621_PAN,SPOT_20180621_PANSHARP.1,SPOT_20180621_PANSHARP.2,SPOT_20180621_PANSHARP.3,SPOT_20180621_PANSHARP.4
+i.cluster group=spot_all signaturefile=sig classes=10
+i.maxlik group=spot_all signaturefile=sig output=uns_clas
+
+# install extension
+g.extension r.sample.category
+
+# get n points per class
+r.sample.category input=uns_clas \
+  output=uns_clas_points \
+  npoints=150
+
+# Manually label points
+```
+
+### Clasificación con Machine learning
+
+Instalar la extensión
+```{python}
+# install extension
+g.extension v.class.mlR
+```
+
+Ejecutar la clasificación
+```{python}
+# run classification
+v.class.mlR -nf \
+  segments_map=segs_stats \
+  training_map=train_segments \
+  train_class_column=class \
+  output_class_column=class_rf \
+  classified_map=classification \
+  raster_segments_map=segs_obia_subset_rank1 \
+  classifier=rf \
+  folds=5 partitions=10 tunelength=10 \
+  weighting_modes=smv \
+  weighting_metric=accuracy \
+  output_model_file=model \
+  variable_importance_file=var_imp.txt \
+  accuracy_file=accuracy.csv \
+  classification_results=all_results.csv \
+  model_details=classifier_runs.txt \
+  r_script_file=Rscript_mlR.R \
+  processes=4
+```
+
+Establecer paleta de colores
+```{python}
+# set color table that we created interactively
+r.colors \
+  map=classification_rf \
+  rules=obia_urban
+```
+
+Resultado de la clasificación supervisada con Machine Learning basada en objetos
+```{python}
+
+```
+
+> El proceso de clasificación usualmente conlleva una serie de iteraciones que implican selección de variables más importantes, búsqueda de más/mejores datos de entrenamiento y validación
+
+
+### Validación
+
+- Se usan datos independientes para validar las clasificaciones
+- Se construye una **matriz de confusión** que permite visualizar los errores por clase en los elementos que están fuera de la diagonal
+- Se estiman varias medidas relacionadas a la precisión, ej.: **overall accuracy** y **kappa**
+
+
+### Validación
+
+Distintas opciones:
+1. Generar un nuevo set de puntos y etiquetarlos
+2. Separar el set de puntos etiquetados en *train* y *test* de antemano
+
+
+#### Validación en GRASS GIS
+
+[r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html)
+
+- Necesita mapas raster como *input*
+  - Transformar los segmentos de validación a formato raster usando la columna *`class`* como fuente de valores para los pixeles
+
+
+> Tarea 
+>
+> Generar un set de validación de al menos 50 segmentos y ejecutar [**r.kappa**](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html)
+
+
+#### Validación en GRASS GIS
+
+Una vez creado el vector de segmentos con etiquetas *testing*, convertirlo a formato raster
+```{python}
+# convert labeled test segments to raster
+v.to.rast map=testing \
+  use=attr \
+  attribute_column=class \
+  output=testing
+```
+
+Ejecutar *r.kappa*
+```{python}
+# create confusion matrix and estimate precision measures
+r.kappa \
+  classification=classification_rf \
+  reference=testing
+```
+
+
+Alternativamente, podemos separar el set de puntos etiquetados en *train* y *test*. Vamos a R.
+
+Cargar librerías
+```{r}
+# load libraries
+library(rgrass7)
+library(dplyr)
+```
+
+Leer el vector desde GRASS
+```{r}
+# load vector from GRASS
+v <- read_VECT("labeled_points")
+```
+
+Crear set de validación
+```{r}
+# test dataset
+test <- v %>%
+        group_by(train_class) %>%
+        sample_frac(.3)
+
+table(test$train_class)
+```
+
+Separar set de entrenamiento
+```{r}
+# training dataset
+train <- v[!v$cat %in% test$cat,]
+```
+
+Escribir los vectores a GRASS nuevamente
+```{r}
+# write back into GRASS
+write_VECT(test, "test")
+write_VECT(train, "train")
+```
+
+
+> **Tarea**
+>
+> Ejecutar nuevamente la clasificación usando sólo el vector *train*
+
+
+Agregar columna al vector *test*
+```{python}
+# add column to test point map
+v.db.addcolumn map=test \
+  column="pred_class integer"
+```
+
+Obtener las clases predichas para los segmentos de validación
+```{python}
+# query the classified map
+v.what.rast map=test \
+  column=pred_class \
+  raster=classification_rf
+```
+
+
+#### Validación en R
+
+Leer el vector test que tiene la clase predicha
+```{r}
+# read the test vector
+test_complete <- readVECT("test")
+```
+
+Cargar la librería *caret* y obtener la matriz de confusión
+```{r}
+# confusion matrix and evaluation stats
+library(caret)
+rf_CM <- confusionMatrix(as.factor(test_complete$pred_class),
+                         as.factor(test_complete$train_class))
+print(rf_CM)
+```
+
+
+> **Tarea**
+>
+> - Explorar el módulo [v.kcv](https://grass.osgeo.org/grass-stable/manuals/v.kcv.html)
+> - Cómo se podría haber utilizado para separar los puntos etiquetados en training y test?
+> - Cuál es la diferencia entre dicho módulo y la separación que realizamos en R?
+
+Dar una mirada a [v.divide.training_validation](https://github.com/mundialis/v.divide.training_validation)
+
+
+
+**Gracias por su atención!!**
+
+![GRASS GIS logo](assets/img/grass_logo_alphab.png)
+

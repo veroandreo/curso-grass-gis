@@ -1,0 +1,564 @@
+---
+title: "Ejercicio: Datos satelitales en GRASS GIS"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+# Trabajamos con imágenes Sentinel 2 en GRASS GIS
+
+
+## Datos Sentinel 2
+
+![Sentinel 2 satellite](../assets/img/sentinel2.jpg)
+
+
+- Lanzamiento: Sentinel-2A en 2015, Sentinel-2B en 2017
+- Tiempo de revisita: ~5 días
+- Cobertura sistemática de áreas terrestres y costeras entre los 84°N y 56°S
+- 13 bandas espectrales con resolución espacial de 10 m (VIS y NIR), 20 m (red-edge y SWIR) y 60 m (otras)
+
+![Sentinels](../assets/img/sentinel_satellites.jpg)
+
+ESA - Satélites Copernicus Sentinel. Más información en: 
+<https://www.copernicus.eu/en/about-copernicus/infrastructure/discover-our-satellites>
+
+
+Distribución de bandas de Sentinel 2 comparadas con Landsat
+
+![Sentinel and Landsat bands](../assets/img/landsat_and_sentinel_bands.png)
+
+
+### Extensiones para datos Sentinel
+
+- [i.sentinel.download](https://grass.osgeo.org/grass7/manuals/addons/i.sentinel.download.html): descarga productos Copernicus Sentinel de Copernicus Open Access Hub
+- [i.sentinel.import](https://grass.osgeo.org/grass7/manuals/addons/i.sentinel.import.html): importa datos Sentinel descargados de Copernicus Open Access Hub
+- [i.sentinel.preproc](https://grass.osgeo.org/grass7/manuals/addons/i.sentinel.preproc.html): importa y realiza corrección atmosférica y topográfica de imágenes S2
+- [i.sentinel.mask](https://grass.osgeo.org/grass7/manuals/addons/i.sentinel.mask.html): crea máscaras de nubes y sombras para imágenes S2
+
+Ver <a href="https://grasswiki.osgeo.org/wiki/SENTINEL">Sentinel wiki</a> para más detalles)
+
+
+Recientemente, se sumaron nuevos miembros en la familia *i.sentinel*:
+
+- [i.sentinel.coverage](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.coverage.html): comprueba la cobertura de área de las escenas de S1 o S2 seleccionadas
+- [i.sentinel.parallel.download](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.parallel.download.html): descarga imagenes Sentinel en paralelo
+
+
+- Para conectarse al [Copernicus Open Access Hub](https://scihub.copernicus.eu/) a través de [i.sentinel.download](https://grass.osgeo.org/grass7/manuals/addons/i.sentinel.download.html), se necesita ser usuario [registrado](https://scihub.copernicus.eu/dhus/#/self-registration)
+- Crear el archivo *`SENTINEL_SETTING.txt`* en el directorio *`$HOME/gisdata/`* con el siguiente contenido:
+
+```
+your_username
+your_password
+```
+
+### Niveles de procesamiento Sentinel 2
+
+- **L1C**: Reflectancia a tope de atmósfera o Top of Atmosphere (TOA). Disponibles desde el lanzamiento.
+- **L2A**: Reflectancia Superficial o Bottom of Atmosphere (BOA), i.e., los datos han sido corregidos para remover los efectos de la atmósfera. Sólo desde 2019.
+
+
+### Archivo de datos Sentinel 
+
+> **Long Term Archive (LTA)**
+>
+> Todos los productos (1C o 2A) de más de un año son movidos fuera de línea 
+> y se requiere un tiempo de espera para ponerlos a disposición del usuario. 
+> Esto dificulta la automatización de tareas con productos de más de 12 
+> meses de antigüedad. 
+
+
+Iniciar GRASS GIS, crear nuevo mapset y establecer región computacional
+
+```{python}
+import os
+
+# data directory
+homedir = os.path.expanduser('~')
+
+# GRASS GIS database variables
+grassdata = os.path.join(homedir, "grassdata")
+project = "posgar2007_4_cba"
+mapset = "PERMANENT"
+```
+
+```{python}
+import subprocess
+import sys
+
+# Ask GRASS GIS where its Python packages are to be able to start it from the notebook
+sys.path.append(
+    subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+)
+
+# Importar los paquetes python de GRASS
+import grass.script as gs
+import grass.jupyter as gj
+
+# Iniciar GRASS
+session = gj.init(grassdata, location, mapset)
+```
+
+
+Crear un nuevo mapset *sentinel2*
+```{python}
+# Create a new mapset
+g.mapset -c mapset=sentinel2
+```
+
+Definir la región computacionalal radio urbano de Córdoba
+```{python}
+# set the computational region to the extent of Cordoba urban area
+g.region -p vector=radio_urbano_cba
+```
+
+
+### Búsqueda y descarga de datos S2
+
+
+Instalar la extensión *i.sentinel*
+```{python}
+# install i.sentinel extension
+g.extension extension=i.sentinel
+```
+
+Lista de escenas disponibles que *intersectan* la región computacional
+```{python}
+# explore list of scenes for a certain date range
+i.sentinel.download -l \
+  settings=$HOME/gisdata/SENTINEL_SETTING.txt \
+  start="2020-03-01" \
+  end="2020-04-30" \
+  producttype=S2MSI2A \
+  clouds=30
+```
+
+Lista de escenas disponibles que *contienen* la región computacional
+```{python}
+# filter list of scenes by area_relation=Contains
+i.sentinel.download -l \
+  settings=$HOME/gisdata/SENTINEL_SETTING.txt \
+  start="2020-03-01" \
+  end="2020-04-30" \
+  producttype=S2MSI2A \
+  clouds=30 \
+  area_relation=Contains
+```
+
+Descargar la escena seleccionada - NO EJECUTAR
+```{python}
+# download the scene that fully contains our region
+# i.sentinel.download \
+#   settings=$HOME/gisdata/SENTINEL_SETTING.txt \
+#   uuid=9a1ea49c-0561-4aa5-ba7a-dc820dc1a316 \
+#   output=$HOME/gisdata/s2_data
+```
+
+Como la descarga desde el Copernicus Open Access Hub toma su tiempo, vamos a descargar la escena [Sentinel 2](https://drive.google.com/file/d/1RbTMjvElQX_EOwE07GXYOq4rJohCOTvq/view?usp=sharing) que usaremos y moverla a *`HOME/gisdata/s2_data`*
+
+
+Hagamos una prueba con datos del LTA...
+
+```{python}
+i.sentinel.download -l \
+  settings=$HOME/gisdata/SENTINEL_SETTING.txt \
+  start="2019-01-01" \
+  end="2020-02-28" \
+  clouds=30
+
+i.sentinel.download \
+  settings=$HOME/gisdata/SENTINEL_SETTING.txt \
+  uuid=d4e5df0e-7ead-4407-ba82-d2583be1a6b8 \
+  output=$HOME/gisdata/s2_data
+```
+
+
+![](../assets/img/S2_LTA.png)
+
+
+### Importar datos Sentinel 2 a GRASS GIS
+
+![](../assets/img/sentinel_import_options.png)
+
+
+
+#### 1. Importar con corrección atmosférica: [i.sentinel.preproc](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.preproc.html)
+
+##### Productos nivel 1C
+
+![](../assets/img/i_sentinel_preproc.png)
+
+
+Para obtener un valor de AOD, tenemos 2 opciones:
+
+
+
+A. Estimar el valor desde un grafico
+
+![](../assets/img/S2_AOD_plot.png)
+
+
+B. Descargar un archivo y el valor sera estimado 
+<img src="../assets/img/S2_AOD_file.png" width="30%">
+
+
+[http://aeronet.gsfc.nasa.gov](https://aeronet.gsfc.nasa.gov)
+
+
+Obtener AOD de <br>
+[http://aeronet.gsfc.nasa.gov](https://aeronet.gsfc.nasa.gov)
+
+<img src="../assets/img/S2_AOD_file.png" width="65%">
+
+- Estación *ARM_Cordoba* o *Pilar_Cordoba*
+- Seleccionar fechas de inicio y final
+- Seleccionar: *`Combined file`* y *`All points`*
+- Descargar y descomprimir (el archivo final tiene extensión .dubovik)
+- Pasar el archivo con la opción `aeronet_file`
+
+
+Mapa de elevación
+
+- [r.in.srtm.region](https://grass.osgeo.org/grass-stable/manuals/addons/r.in.srtm.region.html): importa (y re-proyecta) los mosaicos SRTM que cubren la región computacional, parchea los mosaicos e interpola datos faltantes
+- [r.in.nasadem](https://grass.osgeo.org/grass-stable/manuals/addons/r.in.nasadem.html): importa (y re-proyecta) los mosaicos de NASADEM que cubren la región computacional y parchea los mosaicos
+
+> Si el DEM es más chico que la región computacional, sólo la región cubierta por el DEM será corregida 
+> atmosféricamente...
+
+Ejemplo
+
+```bash
+# enter directory with Sentinel scene and unzip file
+cd $HOME/gisdata/s2_data/
+unzip $HOME/gisdata/s2_data/name_of_S2_scene
+
+i.sentinel.preproc -atr \
+  input_dir=$HOME/gisdata/s2_data/name_of_S2_scene.SAFE \
+  elevation=NASADEM \
+  aeronet_file=$HOME/gisdata/s2_data/name_of_aeronet_station.dubovik
+```
+
+
+#### 2. Importar sin corrección atmosférica (as is): [i.sentinel.import](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.import.html)
+
+##### Productos nivel 2A
+
+Imprimir información sobre las bandas antes de importarlas
+```{python}
+# print bands info before importing
+# (1 -proj match, 0 -no proj match)
+i.sentinel.import -p input=$HOME/gisdata/s2_data
+```
+
+Importar bandas seleccionadas, recortar y reproyectar al vuelo
+```{python}
+# import bands relevant for RGB, NDVI and NDWI
+i.sentinel.import -rc \
+  input=$HOME/gisdata/s2_data \
+  pattern='B(02_1|03_1|04_1|08_1|8A_2|11_2|12_2)0m' \
+  extent=region
+```
+
+Listar bandas importadas y revisar metadatos
+```{python}
+# list raster maps
+g.list type=raster mapset=.
+
+# check metadata of some imported bands
+r.info map=T20JLL_20200330T141049_B03_10m
+r.info map=T20JLL_20200330T141049_B8A_20m
+```
+
+
+#### Balance de colores y composiciones
+
+Asignar *grey* como paleta de colores
+```{python}
+# apply grey color to RGB bands
+r.colors \
+  map=T20JLL_20200330T141049_B04_10m,T20JLL_20200330T141049_B03_10m,T20JLL_20200330T141049_B02_10m \
+  color=grey
+```
+
+Ajuste de colores para una composición RGB color natural
+```{python}
+# perform color auto-balancing for RGB bands
+i.colors.enhance \
+  red=T20JLL_20200330T141049_B04_10m \
+  green=T20JLL_20200330T141049_B03_10m \
+  blue=T20JLL_20200330T141049_B02_10m \
+  strength=95
+```
+
+Mostrar la combinación RGB 432
+```{python}
+# display the enhanced RGB combination
+d.mon wx0
+d.rgb -n \
+  red=T20JLL_20200330T141049_B04_10m \
+  green=T20JLL_20200330T141049_B03_10m \
+  blue=T20JLL_20200330T141049_B02_10m
+```
+
+
+> **Tarea** 
+>
+> Realizar balance de colores y mostrar combinacion falso color NIR-RED-GREEN
+
+
+#### Máscara de nubes y sombras de nubes
+
+
+Identificar y enmascarar nubes y sus sombras
+```{python}
+# identify and mask clouds and clouds shadows: i.sentinel.mask
+i.sentinel.mask -s --o \
+  blue=T20JLL_20200330T141049_B02_10m \
+  green=T20JLL_20200330T141049_B03_10m \
+  red=T20JLL_20200330T141049_B04_10m \
+  nir=T20JLL_20200330T141049_B08_10m \
+  nir8a=T20JLL_20200330T141049_B8A_20m \
+  swir11=T20JLL_20200330T141049_B11_20m \
+  swir12=T20JLL_20200330T141049_B12_20m \
+  cloud_mask=cloud \
+  shadow_mask=shadow \
+  scale_fac=10000 \
+  mtd=$HOME/gisdata/s2_data/S2B_MSIL2A_20200330T141049_N0214_R110_T20JLL_20200330T182252.SAFE/GRANULE/L2A_T20JLL_A016009_20200330T141532/MTD_TL.xml
+```
+
+Visualización de la salida: Nubes y sombras de nubes identificadas con [i.sentinel.mask](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.mask.html)
+
+```{python}
+# display output
+d.mon wx0
+d.rgb \
+  red=T20JLL_20200330T141049_B04_10m \
+  green=T20JLL_20200330T141049_B03_10m \
+  blue=T20JLL_20200330T141049_B02_10m
+d.vect map=cloud fill_color=red
+d.vect map=shadow fill_color=blue
+```
+
+
+### Índices de agua y vegetación
+
+Definir región computacional
+```{python}
+# set region
+g.region -p raster=T20JLL_20200330T141049_B08_10m
+```
+
+Establecer máscara
+```{python}
+# set clouds mask
+v.patch input=cloud,shadow \
+ output=cloud_shadow_mask
+r.mask -i vector=cloud_shadow_mask
+```
+
+Estimación de los índices de vegetación
+```{python}
+# estimate vegetation indices
+i.vi \
+  red=T20JLL_20200330T141049_B04_10m \
+  nir=T20JLL_20200330T141049_B08_10m \
+  output=T20JLL_20200330T141049_NDVI_10m \
+  viname=ndvi
+```
+
+Instalar extensión *i.wi*
+```{python}
+# install extension
+g.extension extension=i.wi
+```
+
+Estimación de índice de agua
+```{python}
+
+```
+
+Visualización de los resultados
+```{python}
+# estimate water indices and set color palette
+i.wi \
+  green=T20JLL_20200330T141049_B03_10m \
+  nir=T20JLL_20200330T141049_B08_10m \
+  output=T20JLL_20200330T141049_NDWI_10m \
+  winame=ndwi_mf
+r.colors map=T20JLL_20200330T141049_NDWI_10m \
+  color=ndwi
+```
+
+
+### Segmentación
+
+Instalar la extensión *i.superpixels.slic*
+```{python}
+# install extension
+g.extension extension=i.superpixels.slic
+```
+
+Listar los mapas y crear grupos y subgrupos
+```{python}
+# list maps
+g.list type=raster pattern="*20200330T141049*" \
+  mapset=. output=list.txt
+
+# create groups and subgroups
+i.group group=s2 subgroup=s2 file=list.txt
+```
+
+Ejecutar *i.superpixels.slic*
+```{python}
+# run i.superpixels.slic
+i.superpixels.slic input=s2 \
+  output=superpixels \
+  num_pixels=2000
+```
+
+Convertir el resultado a vector
+```{python}
+# convert the resulting raster to vector
+r.to.vect input=superpixels \
+  output=superpixels type=area
+```
+
+Ejecutar *i.segment*
+```{python}
+# run i.segment
+i.segment group=s2 output=segments \
+  threshold=0.5 minsize=50 memory=500
+```
+
+Convertir el resultado a vector
+```{python}
+# convert the resulting raster to vector
+r.to.vect input=segments \
+  output=segments type=area
+```
+
+Mostrar NDVI junto con las 2 salidas de la segmentación
+```{python}
+# display NDVI along with the 2 segmentation outputs
+d.mon wx0
+d.rast map=T20JLL_20200330T141049_NDVI_10m
+d.vect map=superpixels color=yellow fill_color=none
+d.vect map=segments color=red fill_color=none
+```
+
+
+> **Tarea** 
+>
+> Ejecutar cualquiera de los 2 métodos de segmentación con diferentes parámetros y comparar los resultados
+
+
+### Clasificación supervisada
+
+
+**Tarea** 
+
+- digitalizar áreas de entrenamiento para 3 clases con [g.gui.iclass](http://grass.osgeo.org/grass-stable/manuals/g.gui.iclass.html)
+- guardarlas en un mapa vectorial: `training`
+
+
+![g.gui.iclass](../assets/img/g_gui_iclass.png)
+
+
+Clasificación supervisada con Maximum Likelihood
+
+
+Convertir el vector de áreas de entrenamiento a raster
+```{python}
+# convert to raster
+v.to.rast input=training output=training \
+  use=cat label_column=class
+```
+
+Generar archivos de firma espectral
+```{python}
+# obtain signature files
+i.gensig trainingmap=training \
+  group=s2 subgroup=s2 \
+  signaturefile=sig_sentinel
+```
+
+Realizar la clasificación por Maximum Likelihood
+```{python}
+# perform ML supervised classification
+i.maxlik group=s2 subgroup=s2 \
+  signaturefile=sig_sentinel \
+  output=sentinel_maxlik
+```
+
+Añadir etiquetas a las clases
+```{python}
+# label classes
+r.category sentinel_maxlik separator=":" rules=- << EOF
+1:vegetation
+2:urban
+3:bare soil
+EOF
+```
+
+Clasificación supervisada con Maximum Likelihood
+```{python}
+
+```
+
+
+### Clasificación supervisada con Machine Learning
+
+Instalar la extensión *r.learn.ml*
+```{python}
+# install extension
+g.extension extension=r.learn.ml
+```
+
+Realizar la clasificación por RF
+```{python}
+# perform random forest classification
+r.learn.ml trainingmap=training group=s2 \
+  output=sentinel_rf n_estimators=300
+```
+
+Añadir etiquetas a las clases
+```{python}
+# label classes
+r.category sentinel_rf separator=":" rules=- << EOF
+1:vegetation
+2:urban
+3:bare soil
+EOF
+```
+
+
+Clasificación supervisada con Random Forest
+```{python}
+
+```
+
+
+> **Tarea** 
+>
+> Comparar los resultados de ambos tipos de clasificación supervisada a través del índice Kappa
+
+Hay un módulo [r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html)
+
+
+### Post-procesamiento y validación
+
+- [r.reclass.area](http://grass.osgeo.org/grass-stable/manuals/r.reclass.area.html) para eliminar pequeñas áreas, enmascarar nuevos valores y rellenar los huecos con [r.neighbors](http://grass.osgeo.org/grass-stable/manuals/r.neighbors.html) o [r.fillnulls](http://grass.osgeo.org/grass-stable/manuals/r.fillnulls.html)
+- convertir la salida en vector y ejecutar [v.clean](http://grass.osgeo.org/grass-stable/manuals/v.clean.html) con `tool=rmarea`
+- [r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html) para la validación (idealmente también digitalizar una muestra de prueba)
+
+

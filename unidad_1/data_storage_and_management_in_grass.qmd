@@ -1,0 +1,293 @@
+---
+title: "Manejo y almacenamiento de datos"
+author: "Verónica Andreo"
+title-slide-attributes: 
+  data-background-color: "#1A428A"
+format:
+  revealjs: 
+    hash-type: number 
+    slide-number: true
+    chalkboard: 
+      buttons: true
+    preview-links: auto
+    logo: "../assets/img/G-UNC-CONAE-C.png"
+    theme: [default, gulich]
+---
+
+## Ejercicio: Crear un nuevo *Location* e importar mapas
+
+
+## Contenidos
+
+- Estructura de la base de datos GRASS GIS
+- Datos para el ejercicio
+- Creación de nuevos locations y mapsets: diferentes opciones
+- Cambiar de mapset / agregar mapsets 
+- Importar mapas raster y vectoriales
+- Re-proyección de mapas
+- Exportar mapas raster y vectoriales
+
+
+## Datos para el ejercicio
+
+- Descargar los [rasters](https://gitlab.com/veroandreo/curso-grass-gis-rioiv/blob/master/data/sample_rasters.zip) y el [vector](https://gitlab.com/veroandreo/curso-grass-gis-rioiv/blob/master/data/streets.gpkg) de muestra
+- Crear un directorio en *`$HOME`* (o Documentos) y llamarlo *`gisdata`*
+- Descomprimir los archivos descargados dentro de *`$HOME/gisdata`*
+
+
+## Creación de un nuevo Location
+
+- Desde la GUI
+  - botón "Nuevo" en el *Location wizard* al inicio
+  - desde dentro de GRASS: Settings > GRASS working environment > Create new location
+
+- Desde la terminal 
+  - con la opción *`-c`* en el comando de inicio [grass](https://grass.osgeo.org/grass-stable/manuals/grass7.html) + la ruta al nuevo location y un archivo geo-referenciado o un código EPSG
+
+---
+
+### Creando un nuevo Location desde la GUI
+
+<img src="../assets/img/new_location_epsg.png" width="100%">
+
+Crear un location Lat-Long usando el código <a href="http://epsg.io/">EPSG</a>
+
+---
+
+### Creando un nuevo Location desde la línea de comandos
+
+```bash
+# Crear un nuevo location con EPSG:4326
+grass -c EPSG:4326 $HOME/grassdata/mylocation
+
+# Crear un nuevo location basado en un Shapefile 
+grass -c myvector.shp $HOME/grassdata/mylocation
+
+# Crear un nuevo location basado en un GeoTIFF
+grass -c myraster.tif $HOME/grassdata/mylocation
+```
+
+Esto puede ejecutarse desde un location diferente; GRASS cambiará al nuevo location creado.
+
+---
+
+### Creando un nuevo mapset
+
+
+- Desde la GUI
+  - botón "Nuevo" en el *Mapset wizard* al inicio 
+  - desde dentro de GRASS: Settings > GRASS working environment > Create new mapset
+
+- Desde la terminal 
+  - con el comando [g.mapset](https://grass.osgeo.org/grass-stable/manuals/g.mapset.html)
+
+
+---
+
+### Creando un nuevo mapset desde la GUI
+
+Usando el botón "Nuevo"
+
+<img src="../assets/img/new_mapset_gui.png" width="95%">
+
+Desde dentro de GRASS
+
+<img src="../assets/img/new_mapset_gui_within_grass.png" width="90%">
+
+
+---
+
+### Creando un nuevo mapset desde la línea de comandos 
+
+- Crear un nuevo mapset desde dentro de GRASS:
+
+```bash
+g.mapset -c mapset=curso
+```
+
+---
+
+> @fa[tasks] **Tarea**
+>
+>- Crear un nuevo location con código EPSG:4326 y llamarlo *latlong*
+>- Crear un nuevo mapset llamado *curso* dentro del location *latlong*
+
+Desde la terminal son sólo dos líneas!
+
+
+## Eliminar Locations y Mapsets
+
+> Simplemente se elimina el directorio o se utiliza el *Location wizard* del inicio
+
+
+## Renombrar Locations y Mapsets
+
+> Desde el *Location wizard* del inicio
+
+
+## Cambiar de mapset
+
+- Desde la GUI:
+
+<img src="../assets/img/change_mapset.png" width="60%">
+
+- Desde la terminal: 
+```bash
+# imprimir el mapset actual
+g.mapset -p
+
+# cambiar al mapset PERMANENT
+g.mapset mapset=PERMANENT
+```
+
+## Agregar mapsets a la lista de mapsets accesibles
+
+A veces se requiere *leer datos de otro mapset* y usarlos para algún procesamiento. Entonces es necesario **ver** ese mapset desde donde estamos trabajando
+<br>
+
+```bash
+# Location NC, mapset PERMANENT
+
+# imprimir el mapset actual
+g.mapset -p
+# imprimir los mapsets accesibles
+g.mapsets -p
+# agregar *user1* a la lista de mapsets accesibles
+g.mapsets mapset=user1 operation=add
+# corroborar que es visible
+g.mapsets -p
+```
+
+
+## Importar mapas raster y vectoriales
+<br>
+
+- [r.in.gdal](https://grass.osgeo.org/grass-stable/manuals/r.in.gdal.html): Importa datos raster en GRASS usando la librería GDAL 
+
+```bash
+r.in.gdal input=myraster.tif output=myraster
+```
+<br>
+
+- [v.in.ogr](https://grass.osgeo.org/grass-stable/manuals/v.in.ogr.html): Importa datos vectoriales en GRASS usando la librería OGR. 
+
+```bash
+v.in.ogr input=myvector.shp output=myvector
+```
+
+Para usar estos comandos, los mapas deben tener **el mismo sistema de coordenadas que el location al que los queremos importar**
+
+
+## Importar mapas raster y vectoriales
+<br>
+Alternativamente, podemos usar:
+
+- [r.import](https://grass.osgeo.org/grass-stable/manuals/r.import.html) 
+- [v.import](https://grass.osgeo.org/grass-stable/manuals/v.import.html)
+
+que ofrecen re-proyección al vuelo y también, remuestreo y recorte para los datos raster 
+
+---
+
+#### Importar un mapa raster en el Location NC
+
+<img src="../assets/img/r_import_1.png">
+
+<img src="../assets/img/r_import_2.png">
+
+---
+
+#### Importar un mapa vectorial en el Location NC
+
+<img src="../assets/img/v_import_1.png">
+
+<img src="assets/img/v_import_2.png">
+
+---
+
+![imported maps](../assets/img/imported_maps.png)
+
+
+## Crear location y mapset a partir de archivo con geo-referencia
+
+<img src="../assets/img/new_location_with_file_a.png" width="95%">
+
+
+## Crear location y mapset a partir de archivo con geo-referencia
+
+<img src="../assets/img/new_location_with_file_b.png" width="95%">
+
+
+## Crear location y mapset a partir de archivo con geo-referencia
+
+![](../assets/img/new_location_with_file_8.png)
+
+Cómo obtener los metadatos de cualquier mapa raster?
+
+```bash
+gdalinfo <mapname>
+```
+
+
+## Inspeccionar y definir la región computacional
+<br>
+
+```bash
+# inspeccionar la región
+g.region -p
+# definir la región a un raster
+g.region -p raster=XX
+```
+
+
+## Trabajar sin importar los mapas
+<br>
+En lugar de importar, se puede **vincular** los datos:
+
+- [r.external](https://grass.osgeo.org/grass-stable/manuals/r.external.html): Vincula datos raster en formatos soportados por GDAL como un pseudo raster de GRASS.
+- [v.external](https://grass.osgeo.org/grass-stable/manuals/v.external.html): Crea un pseudo-vector GRASS vinculando formatos vectoriales soportados por OGR o tablas de PostGIS. 
+
+
+**No renombrar, eliminar o mover los archivos vinculados...!**
+
+
+## Re-proyección de mapas
+<br>
+Cada location está definida por su CRS, así que 
+
+> re-proyectar == transferir/transformar mapas entre distintos locations
+ 
+
+## Re-proyección de mapas
+<br>
+- **Re-proyección de rasters:**
+Se definen extensión y resolución deseadas en el location de destino previo a la re-proyección.
+- **Re-proyección de vectores:**
+Se re-proyecta todo el mapa vectorial por transformación de coordenadas.
+
+>**Mecanismo:**
+>Se trabaja desde el location de destino, y desde allí se llama a los mapas en el location de origen
+
+---
+
+> **Tarea**
+>
+>- Crear un nuevo location con el nombre UTM18N a partir de una de las bandas de L8
+>- Cambiarse al location *nc_spm_08_grass7* y mapset *user1*
+>- Importar (con re-proyección al vuelo) la banda 2 de la escena L8
+>- Definir (e imprimir) la región computacional al raster importado
+
+
+## Exportar mapas raster y vectoriales
+<br>
+
+> **Tarea**
+>
+>- Explorar [r.out.gdal](https://grass.osgeo.org/grass-stable/manuals/r.out.gdal.html) y [v.out.ogr](https://grass.osgeo.org/grass-stable/manuals/v.out.ogr.html) y exportar los mapas *elevation* y *roadsmajor*
+>- Abrir los mapas exportados en QGIS
+
+---
+
+**Gracias por su atención!!**
+
+![GRASS GIS logo](../assets/img/grass_logo_alphab.png)

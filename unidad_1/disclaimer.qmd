@@ -1,0 +1,47 @@
+---
+title: "Disclaimer"
+title-slide-attributes: 
+  data-background-color: "#1A428A"
+format:
+  revealjs: 
+    hash-type: number 
+    slide-number: true
+    chalkboard: 
+      buttons: true
+    preview-links: auto
+    logo: "../assets/img/G-UNC-CONAE-C.png"
+    theme: [default, gulich]
+---
+
+## Antes de comenzar...
+
+-   Se asume que el software necesario está instalado (paquetes y versiones correctas).
+-   Se asume que los datos necesarios han sido descargados.
+-   En caso que internet falle, necesitaremos ejecutar las rutinas localmente.
+-   Se asume que las personas participantes **leyeron los requisitos básicos previo a la inscripción** en el curso y son responsables de su elección y consecuencias en caso de no alcanzarlos.
+-   Las personas participantes concurren con sus notebooks y tienen nociones básicas de línea de comandos sea en Linux o Windows.
+-   Las personas participantes tienen una cuenta de **Gmail** para poder ejecutar las notebooks en Google Colab o The Whole Tale.
+
+
+## Modalidad de trabajo del curso
+
+-   Dia 1: Trabajamos con la interfaz gráfica de GRASS. Necesitamos GRASS GIS \>= 8.2 instalado localmente.
+-   Dia 2: Empezamos a trabajar con Jupyter notebooks. Explicación sobre su funcionamiento y sobre los paquetes de GRASS para utilizar sus funcionalidades desde Python. Ejemplos. Manejo y procesamiento de datos ráster y satelitales en GRASS GIS dentro de Jupyter notebooks.
+-   Día 3: OBIA dentro de Jupyter notebooks.
+-   Día 4: Series de tiempo dentro de Jupyter notebooks.
+-   Día 5: GRASS y R. Trabajamos con Rmd notebooks. Necesitamos R y RStudio/VS code instalados.
+
+
+## Trabajo integrador
+
+-   Es requisito para aprobar el curso y obtener el certificado
+-   Se puede hacer en grupos de 2 personas
+-   2 opciones: informe o tutorial
+-   [Instrucciones](../trabajo_final.html)
+
+
+## Ahora sí... empecemos! {style="font-size: 1.5em; text-align: center"}
+
+<br><br>
+
+[{{< fa play-circle size=3x >}}](unit1_index.html)

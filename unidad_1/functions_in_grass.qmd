@@ -1,0 +1,653 @@
+---
+title: "Funciones de GRASS GIS"
+author: Verónica Andreo
+title-slide-attributes: 
+  data-background-color: "#1A428A"
+format:
+  revealjs: 
+    hash-type: number 
+    slide-number: true
+    chalkboard: 
+      buttons: true
+    preview-links: auto
+    logo: "../assets/img/G-UNC-CONAE-C.png"
+    theme: [default, gulich]
+from: markdown+emoji
+---
+
+## Contenidos
+
+- Interoperabilidad
+- Procesamiento de datos raster
+- Procesamiento de datos satelitales
+- Procesamiento de datos vectoriales
+- Manejo de bases de datos
+- Procesamiento de datos temporales
+- Modelador gráfico
+- Visualización
+
+
+## Interoperabilidad
+
+<img src="../assets/img/grass_database_vs_geodata.png" width="90%">
+
+
+## Importar y exportar mapas raster
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/File_raster_import.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/File_raster_export.png">
+:::
+:::
+
+GRASS se apoya en [GDAL](https://www.gdal.org/) para importar y exportar mapas raster
+
+
+## Importar y exportar mapas vectoriales
+
+<br>
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/File_vector_import.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/File_vector_export.png">
+:::
+:::
+
+<br><br>
+
+GRASS se apoya en [OGR](https://www.gdal.org/ogr_arch.html) para importar y exportar datos vectoriales
+
+
+## Procesamiento de datos raster
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Raster_menu.png" width="90%">
+:::
+
+:::{.column width=50%}
+- Datos raster: DEM, cobertura, clima, etc.
+- Imágenes satelitales: Landsat, Sentinel, MODIS, SPOT, QuickBird, etc.
+:::
+:::
+
+[Raster processing](https://grass.osgeo.org/grass-stable/manuals/rasterintro.html) manual
+
+---
+
+### Remuestreo
+
+- [r.resamp.interp](https://grass.osgeo.org/grass-stable/manuals/r.resamp.interp.html): Remuestrea el mapa raster a una cuadrícula más fina usando diferentes métodos de interpolación: vecino más cercano, bilinear, bicúbico (**downscaling**)
+- [r.resamp.stats](https://grass.osgeo.org/grass-stable/manuals/r.resamp.stats.html): Remuestrea el mapa raster a una cuadrícula más gruesa utilizando agregación (**upscaling**)
+
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Raster_resample_options.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/r_resamp_stats_6m_20m.png">
+:::
+:::
+
+---
+
+### Superposición de mapas raster
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Raster_overlay_options.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/r_patch.png" width="70%">
+:::
+:::
+
+- [r.series](https://grass.osgeo.org/grass-stable/manuals/r.series.html): Permite agregar una lista de mapas con diferentes métodos como promedio, mínimo, máximo, etc.
+- [r.patch](https://grass.osgeo.org/grass-stable/manuals/r.patch.html): Crea un mapa raster utilizando los valores de las categorías de uno (o más) mapa(s) para rellenar las áreas "sin datos" en otro mapa
+
+
+---
+
+### Modelado hidrológico
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Raster_hydro.png">
+:::
+
+:::{.column width=50%}
+... además de muchos otros addons, por ejemplo:
+
+<img src="../assets/img/r_stream_addons.jpg">
+:::
+:::
+
+:::{.center}
+<img src="../assets/img/r_stream_collage.png" width="65%">
+:::
+
+::: footer
+@jasiewicz_new_2011
+:::
+
+---
+
+### Análisis del terreno
+
+::: columns
+:::{.column width=55%}
+<img src="../assets/img/Raster_terrain_analysis.png">
+:::
+
+:::{.column width=45%}
+<img src="../assets/img/geo_forms.png" width="85%">
+
+Salida de [r.geomorphon](https://grass.osgeo.org/grass-stable/manuals/r.geomorphon.html)
+:::
+:::
+
+---
+
+### Análisis de paisaje
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Raster_landscape.png">
+
+<img src="../assets/img/r_pi_searchtime.png">
+
+:::{.tiny}
+r.pi.searchtime	on West	African	rainforest fragments
+:::
+:::
+
+:::{.column width=50%}
+... varios add-ons para análisis de parches
+
+<img src="../assets/img/Raster_r_pi_addons.png" width="80%">
+:::
+:::
+
+
+::: footer
+@wegmann_rpi_2018
+:::
+
+
+## Procesamiento de datos satelitales
+
+::: columns
+:::{.column width=50%}
+Menú Imagery
+
+<img src="../assets/img/Imagery_menu.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/Imaging-Spectroscopy-Concept.png" width="90%">
+:::
+:::
+
+[Image processing](https://grass.osgeo.org/grass-stable/manuals/imageryintro.html) manual
+
+
+---
+
+### Administrar colores y visualización
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Imagery_colors.png">
+::::
+
+:::{.column width=50%}
+<img src="../assets/img/i_colors_enhance.jpg" width="85%">
+:::
+:::
+
+---
+
+### Transformaciones
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Imagery_transform.png">
+:::
+
+:::{.column width=50%}
+- [i.pca](https://grass.osgeo.org/grass-stable/manuals/i.pca.html): Análisis de componentes principales
+- [i.fft](https://grass.osgeo.org/grass-stable/manuals/i.fft.html): Transformada rápida de Fourier 
+- [i.pansharpen](https://grass.osgeo.org/grass-stable/manuals/i.pansharpen.html): Algoritmos de fusión de imágenes para mejorar la resolución de los canales multiespectrales con una banda pancromática de alta resolución
+:::
+:::
+
+---
+
+### Clasificación
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Imagery_classification.png">
+
+Métodos supervisados y no supervisados, ver la wiki de <a href="https://grasswiki.osgeo.org/wiki/Image_classification">Image classification</a> para más detalles)
+:::
+
+:::{.column width=50%}
+- [r.learn.ml](https://grass.osgeo.org/grass7/manuals/addons/r.learn.ml.html): Clasificación supervisada y regresión con Machine Learning
+- [r.fuzzy.system](https://grass.osgeo.org/grass7/manuals/addons/r.fuzzy.system.html): Sistema de clasificación autónomo de lógica difusa
+- [i.ann.maskrcnn](https://grass.osgeo.org/grass7/manuals/addons/i.ann.maskrcnn.html): Clasificación supervisada con redes neuronales artificiales
+- [i.object.activelearning](https://grass.osgeo.org/grass7/manuals/addons/r.object.activelearning.html): Aprendizaje activo para la clasificación de objetos raster
+:::
+:::
+
+---
+
+### Segmentación y OBIA
+
+::: columns
+:::{.column width=50%}
+[Clasificación basada en objetos](https://github.com/tgrippa/Opensource_OBIA_processing_chain)
+
+<img src="../assets/img/remotesensing_grass_obia.png" width="75%">
+:::
+
+:::{.column width=50%} 
+- [i.segment](https://grass.osgeo.org/grass77/manuals/i.segment.html): Identifica segmentos (objetos) a partir de datos de imágenes
+- [i.segment.hierarchical](https://grass.osgeo.org/grass7/manuals/addons/i.segment.hierarchical.html): Segmentación jerárquica
+- [i.segment.stats](https://grass.osgeo.org/grass7/manuals/addons/i.segment.stats.html): Calcula estadísticas para describir segmentos u objetos
+- [i.segment.uspo](https://grass.osgeo.org/grass7/manuals/addons/i.segment.uspo.html): Optimización no supervisada de parámetros de segmentación
+- [i.superpixels.slic](https://grass.osgeo.org/grass7/manuals/addons/i.superpixels.slic.html): Realiza la segmentación de imágenes mediante el método SLIC
+:::
+:::
+
+---
+
+### Herramientas genéricas y para sensores específicos
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Imagery_satellite_especif_tools.png">
+:::
+
+:::{.column width=50%}
+Banda 2 de Sentinel-2A después de *i.atcorr*
+
+<img src="../assets/img/i_atcorr_B02_atcorr.png" width="85%">
+:::
+:::
+
+:::{.center}
+... además de diversas extensiones para MODIS, Sentinel 2, Landsat, SRTM, GPM, etc.
+:::
+
+---
+
+### Productos derivados de sensado remoto
+
+::: columns
+:::{.column width=45%}
+<img src="../assets/img/Imagery_products.png">
+
+<img src="../assets/img/ndvi.png" width="90%">
+:::
+
+:::{.column width=54%}
+- [i.wi](https://grass.osgeo.org/grass7/manuals/addons/i.wi.html): Calcula diferentes tipos de índices de agua
+- [i.lswt](https://grass.osgeo.org/grass7/manuals/addons/i.lswt.html): Calcula la temperatura de la superficie de los lagos a partir de la temperatura de brillo
+- [i.landsat8.swlst](https://grass.osgeo.org/grass7/manuals/addons/i.landsat8.swlst.html): Algoritmo split-window para estimar LST a partir de datos Landsat 8 OLI/TIRS
+- [i.rh](https://grass.osgeo.org/grass7/manuals/addons/i.rh.html): humedad relativa, vapor de agua
+- [i.water](https://grass.osgeo.org/grass7/manuals/addons/i.water.html): Detección de agua a partir de índices derivados de datos satelitales
+:::
+:::
+
+## Procesamiento de datos raster 3D
+
+::: columns
+:::{.column width=45%}
+Menú raster 3D
+
+<img src="../assets/img/3D_raster_menu.png">
+:::
+
+:::{.column width=54%}
+Sistema de coordenadas raster 3D y su disposición interna
+
+<img src="../assets/img/raster3d_layout.png" width="80%">
+:::
+:::
+
+:::{.center}
+[3D raster processing](https://grass.osgeo.org/grass-stable/manuals/raster3dintro.html) manual
+:::
+
+## Procesamiento de datos vectoriales
+
+::: columns
+:::{.column width=50%}
+Menú Vector
+
+<img src="../assets/img/Vector_menu.png" width="85%">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/vector_types.png" width="85%">
+
+Formatos vectoriales topológicos en GRASS GIS
+:::
+:::
+
+:::{.center}
+[Vector processing](https://grass.osgeo.org/grass-stable/manuals/vectorintro.html) manual
+:::
+
+---
+
+### Mantenimiento de la topología
+
+
+<img src="../assets/img/Vector_topology_maint.png" width="70%">
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/v_clean.png" width="60%">
+
+Limpieza de errores de topología en mapa vectorial
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/v_generalize_smooth.png" width="60%">
+
+Suavizado. Ver también la wiki de <a href="https://grasswiki.osgeo.org/wiki/V.generalize_tutorial">v.generalize</a>
+:::
+:::
+
+---
+
+### Selección y superposición
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Vector_select.png">
+
+<br>
+
+<img src="../assets/img/Vector_overlay.png">
+:::
+
+:::{.column width=50%}
+Operador *TOUCHES*
+
+<img src="../assets/img/v_select_op_touches.png" width="55%">
+
+Operador *NOT*
+
+<img src="../assets/img/v_overlay_op_not.png" width="50%">
+:::
+:::
+
+---
+
+### Análisis de redes
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Vector_network_analysis.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/v_net_distance.png">
+:::
+:::
+
+---
+
+### Reportes, estadísticas y actualización de atributos
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Vector_report_stats.png">
+
+<img src="../assets/img/v_univar.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/Vector_update_attr.png">
+
+<img src="../assets/img/v_rast_stats.png" width="90%">
+:::
+:::
+
+---
+
+## Manejo de bases de datos
+
+::: columns
+:::{.column width=50%}
+Menú Database
+
+<img src="../assets/img/DB_menu.png" width="95%">
+
+<img src="../assets/img/vector_db_connections.png">
+:::
+
+:::{.column width=50%}
+<img src="../assets/img/db_execute.png">
+:::
+:::
+
+
+## Procesamiento de datos temporales
+
+Menú Temporal
+
+::: columns
+:::{.column width=50%}
+<img src="../assets/img/Temporal_menu.png">
+:::
+
+:::{.column width=50%}
+- importar/exportar
+- topología temporal
+- agregación
+- acumulación
+- álgebra temporal
+- interpolación
+:::
+:::
+
+
+## Modelador gráfico 
+
+::: {.r-stack}
+![](../assets/img/graphical_modeller.png){.fragment width=750}
+
+![](../assets/img/graphical_modeller_python.png){.fragment width=680}
+
+:::
+
+::: footer
+[g.gui.gmodeler](https://grass.osgeo.org/grass-stable/manuals/wxGUI.gmodeler.html)
+:::
+
+## Visualización en la GUI
+
+<img src="../assets/img/map_display_and_gui_console.png" width="85%">
+
+---
+
+### Map display: vista 3D
+
+:::{.center}
+<img src="../assets/img/3d_view.png" width="90%">
+:::
+
+---
+
+### Monitores wx
+
+En la terminal:
+
+::: columns
+:::{.column width="50%"}
+<img src="../assets/img/terminal_wx0_call.png">
+
+Los monitores wx tienen los mismos **botones** que el Map Display en la GUI
+:::
+
+:::{.column width="50%"}
+<img src="../assets/img/wx_monitor.png">
+:::
+:::
+
+---
+
+### Map-swipe
+
+:::{.center}
+<img src="../assets/img/map_swipe.png" width="60%">
+
+[g.gui.mapswipe](https://grass.osgeo.org/grass-stable/manuals/g.gui.mapswipe.html)
+:::
+
+---
+
+### Herramienta de animación
+
+:::{.center}
+<img src="../assets/img/lsat5_animation.gif" width="75%">
+
+[g.gui.animation](https://grass.osgeo.org/grass-stable/manuals/g.gui.animation.html)
+:::
+
+---
+
+### Compositor cartográfico
+
+:::{.center}
+<img src="../assets/img/cartographic_comp_draft.png" width="55%">
+
+[g.gui.psmap](https://grass.osgeo.org/grass-stable/manuals/g.gui.psmap.html)
+:::
+
+---
+
+Exportar como .ps .eps or .pdf
+
+:::{.center}
+<img src="../assets/img/elevation.png" width="80%">
+:::
+
+---
+
+Archivo .psmap para automatizar la composición cartográfica
+
+<br>
+
+```{bash}
+# timestamp: 2018-09-19 18:10
+# location: nc_spm_08_grass7
+# mapset: user1
+# page orientation: Portrait
+# g.region raster=elevation@PERMANENT nsres=10.75697211 ewres=10.75268817
+
+maploc 0.450 0.666  4.624 4.174
+border n
+
+paper
+    width 7.48031496063
+    height 5.51181102362
+    left 0.196850393701
+    right 0.196850393701
+    bottom 0.393700787402
+    top 0.393700787402
+    end
+
+raster elevation@PERMANENT
+
+vareas lakes@PERMANENT
+    layer 1
+    masked n
+    color 136:138:133
+    width 1.0
+    fcolor 114:159:207
+    label Lakes
+    lpos 1
+    end
+vlines roadsmajor@PERMANENT
+    type line
+    layer 1
+    masked n
+    color 46:52:54
+    width 1.5
+    style solid
+    linecap butt
+    label Roads
+    lpos 2
+    end
+colortable y
+    raster elevation@PERMANENT
+    where 5.245 0.735
+    discrete n
+    tickbar n
+    font Helvetica
+    fontsize 10
+    color black
+    end
+vlegend
+    where 5.234 2.249
+    font Helvetica
+    fontsize 10
+    width 0.4
+    cols 1
+    border none
+    end
+scalebar s
+    where 6.040 4.591
+    length 5000.0
+    units auto
+    height 0.1
+    segment 5
+    numbers 1
+    fontsize 8
+    background y
+    end
+end
+```
+
+
+## Addons
+
+- [i.modis](https://grass.osgeo.org/grass-stable/manuals/addons/i.modis.html): Herramientas para la descarga y el procesamiento de productos MODIS utilizando pyModis
+- [i.sentinel](https://grass.osgeo.org/grass-stable/manuals/addons/i.sentinel.html): Herramientas para la descarga y el procesamiento de los productos de Copernicus Sentinel
+- [i.landsat](https://grass.osgeo.org/grass-stable/manuals/addons/i.landsat.html): Herramientas para la descarga y el procesamiento de datos Landsat
+- [r.hants](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html): Aproxima una serie temporal periódica con armónicos
+- [r.bioclim](https://grass.osgeo.org/grass-stable/manuals/addons/r.bioclim.html): Calcula índices bioclimáticos
+- ... y **otros 300+** en el [repo oficial](https://github.com/OSGeo/grass-addons)!!
+
+<https://grass.osgeo.org/grass-stable/manuals/addons/>
+
+
+
+## Referencias
+
+::: {#refs .tiny}
+:::
+
+---
+
+<br><br>
+
+:::{.center}
+![](../assets/img/grass_logo_alphab.png)
+:::

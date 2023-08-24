@@ -1,0 +1,68 @@
+# timestamp: 2018-09-19 18:10
+# location: nc_spm_08_grass7
+# mapset: user1
+# page orientation: Portrait
+# g.region raster=elevation@PERMANENT nsres=10.75697211 ewres=10.75268817
+
+maploc 0.450 0.666  4.624 4.174
+border n
+
+paper
+    width 7.48031496063
+    height 5.51181102362
+    left 0.196850393701
+    right 0.196850393701
+    bottom 0.393700787402
+    top 0.393700787402
+    end
+
+raster elevation@PERMANENT
+
+vareas lakes@PERMANENT
+    layer 1
+    masked n
+    color 136:138:133
+    width 1.0
+    fcolor 114:159:207
+    label Lakes
+    lpos 1
+    end
+vlines roadsmajor@PERMANENT
+    type line
+    layer 1
+    masked n
+    color 46:52:54
+    width 1.5
+    style solid
+    linecap butt
+    label Roads
+    lpos 2
+    end
+colortable y
+    raster elevation@PERMANENT
+    where 5.245 0.735
+    discrete n
+    tickbar n
+    font Helvetica
+    fontsize 10
+    color black
+    end
+vlegend
+    where 5.234 2.249
+    font Helvetica
+    fontsize 10
+    width 0.4
+    cols 1
+    border none
+    end
+scalebar s
+    where 6.040 4.591
+    length 5000.0
+    units auto
+    height 0.1
+    segment 5
+    numbers 1
+    fontsize 8
+    background y
+    end
+end

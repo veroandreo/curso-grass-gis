@@ -1,0 +1,594 @@
+---
+title: "Ejercicio: Series temporales en GRASS GIS"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+## Ejercicio: Manos a la obra con series temporales de NDVI 
+
+
+
+### Contenidos
+
+- Datos para el ejercicio
+- Uso de bandas de confiabilidad
+- Creación de serie de NDVI
+- HANTS como método de reconstrucción
+- Agregación temporal
+- Índices de fenología
+- NDWI y frecuencia de inundación
+- Regresión entre NDVI y NDWI
+
+
+### Datos para el ejercicio
+
+- Producto MODIS: <a href="https://lpdaac.usgs.gov/products/mod13c2v006/">MOD13C2 Collection 6</a>
+- Composiciones globales mensuales 
+- Resolución espacial: 5600 m
+- Mapset `modis_ndvi` 
+
+
+![](../assets/img/mod13c2_global_ndvi.png)
+
+
+### Exploramos los datos de NDVI
+
+Iniciar GRASS GIS en el mapset *modis_ndvi*
+```{python}
+# paths
+grassdata='/home/veroandreo/grassdata/'
+location='posgar2007_4_cba'
+mapset='modis_ndvi'
+```
+
+```{python}
+import os
+import subprocess
+import sys
+
+# Ask GRASS GIS where its Python packages are to be able to start it from the notebook
+sys.path.append(
+    subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+)
+
+# Importar los paquetes python de GRASS
+import grass.script as gs
+import grass.jupyter as gj
+
+# Iniciar GRASS
+session = gj.init(grassdata, location, mapset)
+```
+
+Agregar *modis_lst* a la lista de mapsets accesibles
+```{python}
+# add `modis_lst` to accessible mapsets path
+g.mapsets -p
+g.mapsets mapset=modis_lst operation=add
+```
+
+Listar los mapas y obtener información de alguno de ellos
+```{python}
+# list files and get info and stats
+g.list type=raster mapset=.
+
+r.info map=MOD13C2.A2015001.006.single_Monthly_NDVI
+r.univar map=MOD13C2.A2015001.006.single_Monthly_NDVI
+```
+
+
+> **Tarea**
+> 
+> - Mostrar los mapas de NDVI, NIR y pixel reliability.
+> - Obtener información sobre los valores mínimos y máximos
+> - ¿Qué se puede decir sobre los valores de cada banda?
+> - ¿Hay valores nulos?
+
+### Uso de la banda de confiabilidad
+
+> **Tarea**
+>
+> - Leer acerca de la banda de confiabilidad en la [Guía de usuario](https://lpdaac.usgs.gov/documents/103/MOD13_User_Guide_V6.pdf) de MOD13 (pag 27).
+> - Para una misma fecha mostrar la banda de confiabilidad y el NDVI.
+> - Seleccionar sólo los pixeles con valor 0 (Buena calidad) en la banda de confiabilidad. ¿Qué se observa?
+
+
+### Uso de la banda de confiabilidad
+
+Definir la región computacional
+```{python}
+# set computational region
+g.region -p vector=provincia_cba \
+  align=MOD13C2.A2015001.006.single_Monthly_NDVI
+```
+
+Establecer los límites provinciales como máscara
+```{python}
+# set mask
+r.mask vector=provincia_cba
+```
+
+Mantener sólo los pixeles de la mejor calidad
+```{python}
+# keep only NDVI most reliable pixels (one map) - *nix
+PR=MOD13C2.A2015274.006.single_Monthly_pixel_reliability
+NDVI=MOD13C2.A2015274.006.single_Monthly_NDVI
+
+r.mapcalc \
+  expression="${NDVI}_filt = if(${PR} != 0, null(), ${NDVI})"
+```
+
+Mantener sólo los pixeles de la mejor calidad - para todos los mapas
+```{python}
+# list of maps
+PR=`g.list type=raster pattern="*_pixel_reliability" separator=" "`
+NDVI=`g.list type=raster pattern="*_Monthly_NDVI" separator=" "`
+# convert list to array
+PR=($PR)
+NDVI=($NDVI)
+
+# iterate over the 2 arrays
+for ((i=0;i<${#PR[@]};i++)) ; do
+ r.mapcalc --o \
+  expression="${NDVI[$i]}_filt = if(${PR[$i]} != 0, null(), ${NDVI[$i]})"
+done
+```
+
+
+> **Tarea**
+>
+> Cómo podrían hacer lo mismo pero con módulos temporales?
+
+Qué les parece [t.rast.algebra](https://grass.osgeo.org/grass-stable/manuals/t.rast.algebra.html)?
+
+```{python}
+# apply pixel reliability band
+t.rast.algebra \
+  expression="NDVI_monthly_filt = if(pixel_rel_monthly != 0, null(), ndvi_monthly)"
+  basename=ndvi_monthly \
+  suffix=gran
+```
+
+> **Tarea**
+>
+> Comparar las estadísticas entre los mapas de NDVI originales y filtrados para la misma fecha
+
+
+### Creación de la serie de tiempo
+
+Crear STRDS de NDVI
+```{python}
+# create STRDS
+t.create output=ndvi_monthly \
+  type=strds temporaltype=absolute \
+  title="Filtered monthly NDVI" \
+  description="Filtered monthly NDVI - MOD13C2 - Cordoba, 2015-2019"
+```
+
+Corroborar que la STRDS fue creada
+```{python}
+# check if it was created
+t.list type=strds
+```
+
+Crear archivo con lista de mapas
+```{python}
+# list NDVI filtered files
+g.list type=raster pattern="*filt" output=ndvi_list.txt
+```
+
+Asignar fecha a los mapas, i.e., registrar
+```{python}
+# register maps
+t.register -i input=ndvi_monthly \
+  type=raster file=ndvi_list.txt \
+  start="2015-01-01" \
+  increment="1 months"
+```
+
+Imprimir info básica de la STRDS
+```{python}
+# print time series info
+t.info input=ndvi_monthly
+```
+
+Imprimir la lista de mapas en la STRDS
+```{python}
+# print list of maps in time series
+t.rast.list input=ndvi_monthly
+```
+
+
+> **Tarea**
+> 
+> Explorar visualmente los valores de las series temporales en diferentes puntos. 
+> Usar [g.gui.tplot](https://grass.osgeo.org/grass-stable/manuals/g.gui.tplot.html) y seleccionar diferentes puntos interactivamente.
+
+### Datos faltantes
+
+Obtener las estadísticas de la serie de tiempo
+```{python}
+# How much missing data we have after filtering for pixel reliability?
+t.rast.univar input=ndvi_monthly
+```
+
+Contar los datos válidos
+```{python}
+# count valid data
+t.rast.series input=ndvi_monthly \
+  method=count \
+  output=ndvi_count_valid
+```
+
+Estimar el porcentaje de datos faltantes
+```{python}
+# estimate percentage of missing data
+r.mapcalc \
+ expression="ndvi_missing = ((60 - ndvi_count_valid) * 100.0)/60"
+```
+
+
+
+Cómo guardar en una variable el numero de mapas de una serie de tiempo?
+
+
+```{python}
+t.info -g ndvi_monthly
+`eval t.info ndvi_monthly`
+echo $number_of_maps
+
+r.mapcalc \
+  expression="ndvi_missing = (($number_of_maps - ndvi_count_valid) * 100.0)/$number_of_maps"
+```
+
+
+> **Tarea**
+>
+> - Mostrar el mapa que representa el porcentaje de datos faltantes y explorar los valores. 
+> - Obtener estadísticas univariadas de este mapa.
+> - Dónde estan los mayores porcentajes de datos faltantes? Por qué creen que puede ser?
+
+### Reconstrucción temporal: HANTS
+
+- Harmonic Analysis of Time Series (HANTS)
+- Implementado en la extensión [r.hants](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html)
+
+<img src="../assets/img/evi_evi_hants.png" width="65%">
+
+
+### Reconstrucción temporal: HANTS
+
+Instalar la extensión *r.hants*
+```{python}
+# install extension
+g.extension extension=r.hants
+```
+
+Listar los mapas y aplicar r.hants
+```{python}
+# list maps
+maplist=`t.rast.list input=ndvi_monthly method=comma`
+
+# gapfill: r.hants
+r.hants input=$maplist range=-2000,10000 \
+  nf=5 fet=500 base_period=12
+```
+
+> **Tarea**
+>
+> Probar diferentes ajustes de parámetros en [r.hants](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html) y comparar los resultados
+
+
+### Reconstrucción temporal: HANTS
+
+Parcheo de serie original y reconstruída
+```{python}
+# patch original with filled (one map)
+NDVI_ORIG=MOD13C2.A2015001.006.single_Monthly_NDVI_filt
+NDVI_HANTS=MOD13C2.A2015001.006.single_Monthly_NDVI_filt_hants
+
+r.patch input=${NDVI_ORIG},${NDVI_HANTS} \
+  output=${NDVI_HANTS}_patch
+```
+
+Parcheo de serie original y reconstruída
+```{python}
+# list of maps
+ORIG=`g.list type=raster pattern="*_filt" separator=" "`
+FILL=`g.list type=raster pattern="*_hants" separator=" "`
+# convert list to array
+ORIG=($ORIG)
+FILL=($FILL)
+
+# iterate over the 2 arrays
+for ((i=0;i<${#ORIG[@]};i++)) ; do
+  r.patch input=${ORIG[$i]},${FILL[$i]} output=${FILL[$i]}_patch --o
+done
+```
+
+Crear serie de tiempo con los datos parcheados
+```{python}
+# create new time series 
+t.create output=ndvi_monthly_patch \
+  type=strds temporaltype=absolute \
+  title="Patched monthly NDVI" \
+  description="Filtered, gap-filled and patched monthly NDVI - MOD13C2 - Cordoba, 2015-2019"
+```
+
+Registrar los mapas en la serie de tiempo
+```{python}
+# list NDVI patched files
+g.list type=raster pattern="*patch" \
+  output=list_ndvi_patched.txt
+
+# register maps
+t.register -i input=ndvi_monthly_patch \
+  type=raster file=list_ndvi_patched.txt \
+  start="2015-01-01" \
+  increment="1 months"
+```
+
+Imprimir información de la serie de tiempo
+```{python}
+# print time series info
+t.info input=ndvi_monthly_patch
+```
+
+
+> **Tarea**
+>
+> - Evaluar gráficamente los resultados de la reconstrucción de HANTS en pixeles con mayor porcentaje de datos faltantes 
+> - Obtener estadísticas univariadas para las nuevas series temporales
+
+> **Tarea**
+>
+> - Ver la sección de métodos en [Metz el al. 2017](https://www.mdpi.com/2072-4292/9/12/1333) 
+> - Qué otros algoritmos existen o qué otra aproximación podría seguirse?
+
+![](https://www.mdpi.com/remotesensing/remotesensing-09-01333/article_deploy/html/images/remotesensing-09-01333-ag.png)
+
+### Agregación con granularidad
+
+> **Tarea**
+>
+> - Obtener el promedio de NDVI cada dos meses
+> - Visualizar la serie de tiempo resultante con [g.gui.animation](https://grass.osgeo.org/grass-stable/manuals/g.gui.animation.html)
+
+### Fenología
+
+Mes de máximo y mes de mínimo
+```{python}
+# get month of maximum and month of minimum
+t.rast.series input=ndvi_monthly_patch \
+  method=minimum output=ndvi_min
+t.rast.series input=ndvi_monthly_patch \
+  method=maximum output=ndvi_max
+  
+
+```
+
+Reemplazar con *start_month()* los valores en la STRDS si coinciden con el mínimo o máximo global
+```{python}
+# get month of maximum and minimum
+t.rast.mapcalc -n inputs=ndvi_monthly_patch \
+  output=month_max_ndvi \
+  expression="if(ndvi_monthly_patch == ndvi_max, start_month(), null())" \
+  basename=month_max_ndvi
+
+t.rast.mapcalc -n inputs=ndvi_monthly_patch \
+  output=month_min_ndvi \
+  expression="if(ndvi_monthly_patch == ndvi_min, start_month(), null())" \
+  basename=month_min_ndvi
+```
+
+Obtener el primer mes en el que aparecieron el máximo y el mínimo
+```{python}
+# get the earliest month in which the maximum and minimum appeared
+t.rast.series input=month_max_ndvi \
+  method=maximum output=max_ndvi_date
+t.rast.series input=month_min_ndvi \
+  method=minimum output=min_ndvi_date
+```
+
+Eliminar la serie temporal intermedia
+```{python}
+# remove month_max_lst strds 
+t.remove -rf inputs=month_max_ndvi,month_min_ndvi
+```
+
+
+> **Tarea**
+>
+> - Mostrar los mapas resultantes con [g.gui.mapswipe](https://grass.osgeo.org/grass-stable/manuals/g.gui.mapswipe.html)
+> - Cuándo se observan los mínimos y máximos? Hay algun patrón? A qué se podría deber?
+
+> **Tarea**
+>
+> Asociar el máximo de LST con el máximo de NDVI y, la fecha de la máxima LST con la fecha del máximo NDVI
+
+![](assets/img/tip.png) Ver el módulo [r.covar](https://grass.osgeo.org/grass-stable/manuals/r.covar.html)
+
+
+### Fenología
+
+Obtener series temporales de pendientes entre mapas consecutivos
+```{python}
+# time series of slopes
+t.rast.algebra \
+ expression="slope_ndvi = (ndvi_monthly_patch[1] - ndvi_monthly_patch[0]) / td(ndvi_monthly_patch)" \
+ basename=slope_ndvi suffix=gran
+```
+
+Obtener la máxima pendiente por año
+```{python}
+# get max slope per year
+t.rast.aggregate input=slope_ndvi output=ndvi_slope_yearly \
+  basename=NDVI_max_slope_year suffix=gran \
+  method=maximum \
+  granularity="1 years"
+```
+
+
+
+> **Tarea**
+>
+> - Obtener un mapa con la mayor tasa de crecimiento por píxel en el período 2015-2019
+> - Qué modulo usarían?
+
+
+### Fenología
+
+Instalar la extensión *r.seasons*
+```{python}
+# install extension
+g.extension extension=r.seasons
+```
+
+Determinar el comienzo, el final y la duración del período de crecimiento
+```{python}
+# start, end and length of growing season
+r.seasons input=`t.rast.list -u input=ndvi_monthly_patch method=comma` \
+  prefix=ndvi_season n=3 \
+  nout=ndvi_season \
+  threshold_value=3000 min_length=5
+```
+
+
+> **Tarea**
+>
+> - Qué nos dice cada mapa? Dónde es más larga la estación de crecimiento?
+> - Exportar los mapas resultantes como .png
+
+### Fenología
+
+Crear un mapa de umbrales para usar en *r.seasons*
+```{python}
+# create a threshold map: min ndvi + 0.1*ndvi
+r.mapcalc expression="threshold_ndvi = ndvi_min * 1.1"
+```
+
+
+> **Tarea**
+>
+> Utilizar el mapa de umbrales en [r.seasons](https://grass.osgeo.org/grass-stable/manuals/addons/r.seasons.html) y comparar los mapas de salida con los resultados de utilizar sólo un valor de umbral
+
+### Serie de tiempo de NDWI
+
+Crear series temporales de NIR y MIR
+```{python}
+# create time series of NIR and MIR
+t.create output=NIR \
+  type=strds temporaltype=absolute \
+  title="NIR monthly" \
+  description="NIR monthly - MOD13C2 - 2015-2019"
+
+t.create output=MIR \
+  type=strds temporaltype=absolute \
+  title="MIR monthly" \
+  description="MIR monthly - MOD13C2 - 2015-2019"
+```
+
+Listar archivos NIR y MIR
+```{python}
+# list NIR and MIR files
+g.list type=raster pattern="*NIR*" output=list_nir.txt
+g.list type=raster pattern="*MIR*" output=list_mir.txt
+```
+
+Registrar mapas
+```{python}
+# register maps
+t.register -i input=NIR \
+  type=raster file=list_nir.txt \
+  start="2015-01-01" increment="1 months"
+
+t.register -i input=MIR \
+  type=raster file=list_mir.txt \
+  start="2015-01-01" increment="1 months"
+```
+
+Imprimir información de la serie de tiempo
+```{python}
+# print time series info
+t.info input=NIR
+t.info input=MIR
+```
+
+Estimación de la serie temporal de NDWI
+```{python}
+# estimate NDWI time series
+t.rast.algebra basename=ndwi_monthly \
+  expression="ndwi_monthly = if(NIR > 0 && MIR > 0, (float(NIR - MIR) / float(NIR + MIR)), null())" \
+  suffix=gran
+```
+
+
+> **Tarea**
+>
+> Obtener valores máximos y mínimos para cada mapa de NDWI y explorar el trazado de la serie de tiempo en diferentes puntos de forma interactiva
+
+![](assets/img/tip.png) Ver el manual de [t.rast.univar](https://grass.osgeo.org/grass-stable/manuals/t.rast.univar.html)
+
+
+### Frecuencia de inundación
+
+Reclasificar los mapas según un umbral
+```{python}
+# reclassify
+t.rast.mapcalc -n input=ndwi_monthly \
+  output=flood basename=flood \
+  expression="if(ndwi_monthly > 0.8, 1, null())"
+```
+
+Obtener frecuencia de inundación
+```{python}
+# flooding frequency
+t.rast.series input=flood output=flood_freq method=sum
+```
+
+
+> **Tarea**
+>
+> Cuáles son las áreas que se han inundado con más frecuencia?
+
+
+### Regresión
+
+Instalar la extensión *r.regression.series*
+```{python}
+# install extension
+g.extension extension=r.regression.series
+```
+
+Realizar una regresión entre las series temporales de NDVI y NDWI - *nix
+```{python}
+xseries=`t.rast.list input=ndvi_monthly_patch method=comma`
+yseries=`t.rast.list input=ndwi_monthly method=comma`
+
+r.regression.series xseries=$xseries \
+  yseries=$yseries \
+  output=ndvi_ndwi_rsq \
+  method=rsq
+
+```
+
+> **Tarea**
+>
+> Determinar dónde está la mayor correlación entre NDVI y NDWI
+
+
+<img src="../assets/img/gummy-question.png" width="45%">
+
+
+**Gracias por su atención!!**
+
+![GRASS GIS logo](../assets/img/grass_logo_alphab.png)

@@ -1,0 +1,375 @@
+---
+title: Python y GRASS GIS
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+En esta notebook, nos vamos a introducir en el uso de GRASS GIS con Python. Para 
+ello, primero vamos a recorrer brevemente los principales paquetes/librerías de 
+python que son parte de GRASS y nos permiten ejcutar sus funciones, a la vez que
+podemos combinar las salidas con otras librerías más tradicionales de python.
+
+
+### ¿Por qué Jupyter Notebooks y cómo usarlas?
+
+Las Jupyter Notebook son aplicaciones servidor-cliente que permiten que el 
+código escrito en un documento de cuaderno sea
+**editado y ejecutado a través de un navegador web**. 
+Pueden ejecutarse en un ordenador local (sin necesidad de acceso a Internet) o 
+utilizarse para controlar cálculos en un servidor remoto al que se accede a 
+través de Internet ([véase la documentación](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)).
+
+Las Jupyter Notebooks pueden ser interactivas y permiten combinar código, texto 
+explicativo y resultados computacionales en un único documento. En general, son:
+
+* convenientes para el desarrollo inicial de código (prototipado)
+* ideales para la segmentación de código, con la posibilidad de volver a 
+ejecutar celdas
+* capaces de almacenar valores de variables de celdas ya ejecutadas
+
+La notebook puede guardarse como un script ejecutable de Python además del 
+formato nativo `.ipynb`, o exportarse a varios formatos de documentación 
+como PDF o Sphinx RST con un bonito estilo.
+
+#### Edición y uso interactivo
+
+Editar una Jupyter Notebook es muy fácil: en el navegador web, puedes navegar 
+entre celdas de texto o código utilizando el ratón o atajos de teclado (ver 
+Menú > Ayuda > Atajos de teclado). Se pueden ejecutar pequeños fragmentos de 
+código celda por celda, guardar la notebook en su estado actual, o 
+modificar y recalcular celdas o devolverlas a su estado anterior. 
+Además de las celdas de código ejecutables, se puede utilizar Markdown en las 
+celdas de documentación para hacerlas presentables a los demás.
+
+# Paquetes de Python en GRASS
+
+## `grass.script`
+
+El paquete **grass.script** o *GRASS GIS Python Scripting Library* provee 
+funciones para llamar módulos de GRASS dentro de scripts o rutinas Python. 
+Las funciones más comúnmente usadas incluyen:
+
+- `run_command`: usada cuando la salida de los módulos es un raster o vector, 
+no se espera una salida de tipo texto.
+- `read_command`: se utiliza cuando la salida de los módulos es de tipo texto.
+- `parse_command`: se utiliza con módulos cuya salida puede convertirse en 
+pares `key=value` o diccionarios.
+- `write_command`: se utiliza con módulos que esperan una entrada de texto, 
+ya sea en forma de archivo o desde stdin.
+
+Este paquete también proporciona varias funciones de *wrapping* para módulos de 
+uso muy frecuente en GRASS, por ejemplo:
+
+- Para obtener información de un raster, se utiliza 
+script.raster.raster_info(): `gs.raster_info('elevation')`
+- Para obtener información de un vector, se utiliza 
+script.vector.vector_info(): `gs.vector_info('roadsmajor')`
+- Para listar mapas de diferente tipo en un mapset, se utiliza 
+script.core.list_grouped(): `gs.list_grouped(type=['raster'])`
+- Para obtener la región computacional, se utiliza script.core.region():
+`gs.region()`
+
+:::{.callout-note}
+Para más detalles, ver la documentación del paquete en: 
+<https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html>
+:::
+
+## `grass.jupyter`
+
+La librería **grass.jupyter** mejora la integración de GRASS y Jupyter, y 
+proporciona diferentes clases para facilitar la visualización de mapas de GRASS
+en el entorno Jupyter. Este paquete fue desarrollado por @haedrich_grass_jupyter 
+como parte de su proyecto para 
+[Google Summer of Code](https://summerofcode.withgoogle.com/) y con una 
+[student grant](https://grasswiki.osgeo.org/wiki/Student_Grants) de GRASS. 
+
+Las classes más importantes son:
+
+- `init`: inicia una sesión de GRASS y configura todas las variables de entorno
+necesarias para ejecutar GRASS desde Python y dentro de una Notebook.
+- `Map`: renderiza mapas 2D
+- `Map3D`: renderiza mapas 3D
+- `InteractiveMap`: permite la visualización interactiva utilizando la librería
+[`folium`](https://python-visualization.github.io/folium/)
+- `TimeSeriesMap`: permite la visualización de datos espacio-temporales
+
+:::{.callout-note}
+Para más detalles, ver la documentación del paquete en: 
+<https://grass.osgeo.org/grass-stable/manuals/libpython/grass.jupyter.html>
+:::
+
+## `grass.pygrass`
+
+PyGRASS es una interfaz de programación de aplicaciones (API) de Python 
+orientada a objetos para GRASS GIS desarrollada por @zambelli_pygrass_2013. 
+PyGRASS ofrece interfaces a los módulos y funcionalidades de GRASS, así como
+a los datos vectoriales y ráster, de modo que permite acceder a cada minima 
+unidad y desarrollar nuevos módulos con funciones de más bajo nivel. 
+PyGRASS mejora la integración entre GRASS GIS y Python, haciendo el uso de 
+Python bajo GRASS más consistente con el lenguaje mismo. 
+Además, simplifica el scripting y la programación de GRASS y lo hace más 
+natural para el usuario.
+
+Dentro de esta librería, vamos a usar especialmente 
+`grass.pygrass.modules.shorcuts` que nos permite llamar a los módulos
+o funciones de GRASS de forma muy parecida a cómo lo haríamos en la consola de 
+GRASS.
+
+:::{.callout-note}
+Para más detalles, ver la documentación del paquete en: 
+<https://grass.osgeo.org/grass-stable/manuals/libpython/pygrass_index.html>
+:::
+
+## Otras librerías Python en GRASS GIS
+
+### Temporal framework
+
+El *GRASS GIS Temporal Framework* implementa la funcionalidad SIG temporal de 
+GRASS GIS y proporciona una API para implementar módulos de procesamiento 
+espacio-temporal. El framework introduce conjuntos de datos espacio-temporales
+que representan series temporales de mapas raster, raster 3D o vectoriales. 
+Este marco proporciona las siguientes funcionalidades:
+
+- Asignación de marcas de tiempo a mapas y registro de mapas en la base de datos temporal
+- Modificación de marcas de tiempo
+- Creación, cambio de nombre y supresión de conjuntos de datos espacio-temporales
+- Registro y anulación del registro de mapas en conjuntos de datos espacio-temporales
+- Consulta de mapas registrados en conjuntos de datos espacio-temporales mediante SQL
+- Análisis de la topología espacio-temporal de los conjuntos de datos espacio-temporales
+- Muestreo de conjuntos de datos espacio-temporales
+- Cálculo de las relaciones temporales y espaciales entre los mapas registrados
+- Funciones de nivel superior compartidas entre módulos
+
+:::{.callout-note}
+Para más detalles, ver la documentación de la librería en: 
+<https://grass.osgeo.org/grass-stable/manuals/libpython/temporal_framework.html>
+:::
+
+### Testing framework
+
+El *GRASS GIS Testing framework* está basado en el paquete `unittest` de Python 
+con un gran número de mejoras, extensiones y cambios específicos ajustados a 
+GRASS. Estos cambios incluyen la creación de reportes de pruebas HTML compatibles
+con GRASS, o la ejecución de pruebas de manera que las terminaciones de procesos
+potencialmente causadas por funciones de la librería C no influyan en el proceso
+principal de pruebas.
+
+Algunas pruebas se ejecutarán sin ningún dato, pero muchas pruebas requieren 
+la versión básica de los [datos de muestra](https://grass.osgeo.org/sampledata/north_carolina/nc_basic_spm_grass7.zip) 
+para Carolina del Norte.
+
+:::{.callout-note}
+Para más detalles, ver la documentación de la librería en: 
+<https://grass.osgeo.org/grass-stable/manuals/libpython/gunittest_testing.html>
+:::
+
+# Ejemplos con cada paquete
+
+Primero, iniciemos una sesión de GRASS GIS. Necesitamos definir la ruta hasta 
+un mapset, por lo tanto vamos a usar los datos de muestra de GRASS, i.e., el 
+sample dataset de North Carolina. 
+
+```{python}
+import os
+
+# data directory
+homedir = os.path.expanduser('~')
+
+# GRASS GIS database variables
+grassdata = os.path.join(homedir, "grassdata")
+project = "nc_spm_08_grass7"
+mapset = "PERMANENT"
+```
+
+```{python}
+# import standard Python packages we need
+import sys
+import subprocess
+
+# ask GRASS GIS where its Python packages are to be able to run it from the notebook
+sys.path.append(
+    subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+)
+```
+
+Ahora sí, estamos listos para importar los paquetes de GRASS e iniciar una
+sesión:
+
+```{python}
+# import the GRASS GIS packages we need
+import grass.script as gs
+import grass.jupyter as gj
+
+# Start the GRASS GIS Session
+session = gj.init(grassdata, project, mapset)
+```
+
+Notar que iniciamos sesión con `gj.init()`. No obstante, también podríamos usar
+`session = gs.setup.init("~/grassdata/nc_spm_08_grass7/PERMANENT")`.
+
+Corroboramos que GRASS inició correctamente:
+
+```{python}
+# show current GRASS GIS settings, this also checks if the session works
+gs.gisenv()
+```
+
+## Ejemplos con `grass.script`
+
+Listamos los mapas raster del mapset PERMANENT:
+
+```{python}
+lista = gs.list_grouped(type = "raster")["PERMANENT"]
+lista[:5]
+```
+
+Obtenemos info de un mapa raster:
+
+```{python}
+gs.raster_info("aspect")["cols"]
+```
+
+:::{.callout-caution title="Tarea"}
+Ahora, hagamos lo mismo pero para los mapas de tipo vectorial.
+:::
+
+```{python}
+# gs.list_grouped(type = "vector")
+```
+
+Imprimimos la region computacional actual:
+
+```{python}
+gs.region()
+```
+
+Cambiamos la región computacional al vector `urbanarea`:
+
+```{python}
+gs.region_env(vector="urbanarea")
+```
+
+Verificamos los atributos del vector seleccionado:
+
+```{python}
+gs.vector_db_select('urbanarea').values()
+```
+
+Extraemos el área urbana de Raleigh:
+
+```{python}
+gs.run_command("v.extract", 
+               input="urbanarea", 
+               where="NAME == 'Raleigh'", 
+               output="urban_area_raleigh")
+```
+
+Listamos los vectores por un patrón:
+
+```{python}
+gs.list_grouped(type="vector", pattern="urban*")
+```
+
+Verificamos los atributos del nuevo vector creado:
+
+```{python}
+gs.vector_db_select("urban_area_raleigh")
+```
+
+y obtenemos información sobre el mismo. Notar que podemos seleccionar qué 
+información queremos extraer, i.e., la salida es un diccionario.
+
+```{python}
+# show attributes
+gs.vector_info("urban_area_raleigh")
+```
+
+Usamos otra manera de establecer la región computacional:
+
+```{python}
+region = gs.parse_command("g.region", 
+                          vector="urban_area_raleigh", 
+                          flags="g")
+region
+```
+
+## Ejemplos con `grass.jupyter`
+
+Ahora vamos a demostrar el uso de las dos clases más comunes del paquete 
+`grass.jupyter` para graficar mapas. Usamos primeramente la clase interactiva
+que nos permite mostrar nuestras salidas sobre mapas base como el de
+OpenStreetMap, por ejemplo.
+
+```{python}
+raleigh_map = gj.InteractiveMap(width = 500, use_region=True, tiles="OpenStreetMap")
+raleigh_map.add_raster("elevation")
+raleigh_map.add_vector("urban_area_raleigh")
+raleigh_map.add_layer_control(position = "bottomright")
+raleigh_map.show()
+```
+
+A continuación, creamos una salida estática, utilizando la clase `Map`. Esta 
+salida es similar a utilizar el Map Display en la GUI y exportar el resultado.
+
+```{python}
+raleigh_map = gj.Map(width=500)
+raleigh_map.d_rast(map="elevation")
+raleigh_map.d_vect(map="lakes")
+raleigh_map.d_legend(raster="elevation", 
+                     title="Height (m)", 
+                     fontsize=10, 
+                     at=(70, 90, 80, 90), 
+                     flags="b")
+raleigh_map.d_barscale()
+raleigh_map.show()
+```
+
+## Ejemplos con `grass.pygrass`
+
+Finalmente, vamos a ejemplificar el uso de la interfaz `modules` dentro de 
+`grass.pygrass`. Si bien esta interfaz nos permite ejecutar comandos de GRASS
+casi como si los ejecutásemos en la terminal, las salidas no están optimizadas
+para ser usadas como entrada para otros comandos. Para ello, es más conveniente
+usar `grass.script` o funciones de más bajo nivel de `grass.pygrass` que permiten
+acceder a los componentes básicos de los objetos dentro de GRASS. 
+
+```{python}
+from grass.pygrass.modules.shortcuts import general as g
+from grass.pygrass.modules.shortcuts import raster as r
+from grass.pygrass.modules.shortcuts import vector as v
+```
+
+```{python}
+g.region(flags="p")
+```
+
+```{python}
+v.info(map="roadsmajor")
+```
+
+```{python}
+r.report(map="elevation", nsteps="10", quiet=True)
+```
+
+
+# Otras notebooks demostrando el uso de GRASS con Python
+
+- <https://github.com/OSGeo/grass/tree/main/doc/notebooks>
+- <https://grasswiki.osgeo.org/wiki/GRASS_GIS_Jupyter_notebooks>
+
+
+# Referencias
+
+::: {#refs}
+:::
+

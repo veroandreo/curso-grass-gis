@@ -1,0 +1,931 @@
+---
+title: "Intro a series de tiempo"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+## Procesamiento de series de tiempo en GRASS GIS
+
+
+### Contenidos
+
+- Nociones básicas
+- TGRASS framework
+- Creación de series de tiempo
+- Álgebra temporal y variables temporales
+- Distintos tipos de agregación
+- Estadística zonal e islas de calor urbanas
+- Conexión con R
+
+**GRASS GIS** es **el primer SIG de código abierto** que incorporó capacidades 
+para **gestionar, analizar, procesar y visualizar datos espacio-temporales**,
+así como las relaciones temporales entre series de tiempo.
+
+## TGRASS: GRASS Temporal
+
+- Completamente basado en metadatos, por lo que no hay duplicación de datos
+- Sigue una aproximación *Snapshot*, i.e., añade marcas de tiempo o *timestamps* a los mapas
+- Una colección de mapas de la misma variable con timestamps se llama space-time dataset o STDS
+- Los mapas en una STDS pueden tener diferentes extensiones espaciales y temporales
+- TGRASS utiliza una base de datos [SQLite](https://www.sqlite.org/index.html) para almacenar la extensión temporal y espacial de las STDS, así como las relaciones topológicas entre los mapas y entre las STDS en cada mapset.
+
+## Space-time datasets
+
+- Space time raster datasets (**STRDS**)
+- Space time 3D raster datasets (**STR3DS**)
+- Space time vector datasets (**STVDS**)
+
+## Otras nociones básicas en TGRASS
+
+- El tiempo puede definirse como intervalos (inicio y fin) o como instancias (sólo inicio)
+- El tiempo puede ser absoluto (por ejemplo, 2017-04-06 22:39:49) o relativo (por ejemplo, 4 años, 90 días)
+- Granularidad es el mayor divisor común de todas las extensiones temporales (y posibles gaps) de los mapas de un STDS
+- Topología se refiere a las relaciones temporales entre los intervalos de tiempo en una STDS
+
+<img src="../assets/img/temp_relation.png">
+
+- Muestreo temporal se utiliza para determinar el estado de un proceso durante un segundo proceso.
+
+<img src="../assets/img/temp_samplings.png" width="55%">
+
+## Módulos temporales
+
+- **t.\***: Módulos generales para manejar STDS de todos los tipos
+- **t.rast.\***: Módulos que tratan con STRDS
+- **t.rast3d.\***: Módulos que tratan con STR3DS
+- **t.vect.\***: Módulos que tratan con STVDS
+
+
+## TGRASS: marco general y flujo de trabajo
+
+![](../assets/img/tgrass_flowchart.png)
+
+## Manos a la obra con series de tiempo raster en GRASS GIS
+
+### Datos para la sesión
+
+- Producto MODIS: <a href="https://lpdaac.usgs.gov/products/mod11b3v006/">MOD11B3 Collection 6</a>
+- Tile: h12v12
+- Composiciones mensuales 
+- Resolución espacial: 5600m
+- Mapset *`modis_lst`* 
+
+
+![](../assets/img/mod11b3_h12v12.png)
+
+### Código para la sesión
+
+- [Comandos GRASS](https://gitlab.com/veroandreo/maie-procesamiento/-/raw/taller-grass-online/code/05_temporal_code.sh?inline=false)
+- [Comandos R](https://gitlab.com/veroandreo/maie-procesamiento/-/raw/taller-grass-online/code/05_temporal_code.r?inline=false)
+
+Iniciar GRASS GIS directamente en el mapset *`modis_lst`*
+
+```{python}
+# paths
+grassdata='/home/veroandreo/grassdata/'
+location='posgar2007_4_cba'
+mapset='modis_lst'
+```
+
+```{python}
+import os
+import subprocess
+import sys
+
+# Ask GRASS GIS where its Python packages are to be able to start it from the notebook
+sys.path.append(
+    subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+)
+
+# Importar los paquetes python de GRASS
+import grass.script as gs
+import grass.jupyter as gj
+
+# Iniciar GRASS
+session = gj.init(grassdata, location, mapset)
+```
+
+Establecer región computacional y máscara
+
+Listar los mapas raster y obtener información de uno de ellos
+
+```{python}
+# Get list of raster maps in the 'modis_lst' mapset
+g.list type=raster mapset=.
+
+# Get info from one of the raster maps
+r.info map=MOD11B3.A2015060.h12v12.single_LST_Day_6km
+```
+
+Establecer la región computacional
+
+```{python}
+# Set region to Cba boundaries with LST maps' resolution
+g.region -p vector=provincia_cba \
+  align=MOD11B3.A2015060.h12v12.single_LST_Day_6km
+```
+
+Aplicar máscara
+
+```{python}
+# Set a MASK to Cba boundary
+r.mask vector=provincia_cba
+```
+
+
+### Crear un conjunto de datos espacio-temporales (STDS)
+
+**[t.create](https://grass.osgeo.org/grass-stable/manuals/t.create.html)**
+<br>
+- Crea una tabla SQLite en la base de datos temporal 
+- Permite manejar grandes cantidades de mapas usando el STDS como entrada
+- Necesitamos especificar:
+  - *tipo de mapas* (raster, raster3d o vector)
+  - *tipo de tiempo* (absoluto o relativo)
+
+Crear la STRDS
+
+```{python}
+# Create the STRDS
+t.create type=strds temporaltype=absolute output=LST_Day_monthly \
+  title="Monthly LST Day 5.6 km" \
+  description="Monthly LST Day 5.6 km MOD11B3.006 Cordoba, 2015-2019"
+```
+
+Chequear si la STRDS fue creada
+
+```{python}
+# Check if the STRDS is created
+t.list type=strds
+```
+
+Obtener información sobre la STRDS
+
+```{python}
+# Get info about the STRDS
+t.info input=LST_Day_monthly
+```
+
+
+### Registrar mapas en una STDS (asignar *timestamps*)
+
+**[t.register](https://grass.osgeo.org/grass-stable/manuals/t.register.html)**
+<br>
+- Asigna o agrega timestamps a los mapas
+- Necesitamos: 
+  - el *STDS vacío* como entrada, i.e., la tabla SQLite contenedora, 
+  - la *lista de mapas* que se registrarán, 
+  - la *fecha de inicio*,
+  - la opción de *incremento* junto con *-i* para la creación de intervalos 
+
+Añadir timestamps a los mapas, i.e., registrar mapas
+```{python}
+# Add time stamps to maps (i.e., register maps)
+t.register -i input=LST_Day_monthly \
+ maps=`g.list type=raster pattern="MOD11B3*LST_Day*" separator=comma` \
+ start="2015-01-01" increment="1 months"
+```
+
+Chequear la información sobre la STRDS nuevamente
+```{python}
+# Check info again
+t.info input=LST_Day_monthly
+```
+
+Obtener la lista de mapas en la STRDS
+```{python}
+# Check the list of maps in the STRDS
+t.rast.list input=LST_Day_monthly
+```
+
+Chequear los valores mínimos y máximos de cada mapa
+```{python}
+# Check min and max per map
+t.rast.list input=LST_Day_monthly columns=name,min,max
+```
+
+Para más opciones, ver el manual de <a href="https://grass.osgeo.org/grass-stable/manuals/t.register.html">t.register</a> y la wiki sobre <a href="https://grasswiki.osgeo.org/wiki/Temporal_data_processing/maps_registration">opciones para registrar mapas en STDS</a>.
+
+Representación gráfica de STDS
+
+Crear una representación gráfica de la serie de tiempo
+```{python}
+# graphical representation of our STRDS
+g.gui.timeline inputs=LST_Day_monthly
+```
+
+
+![](../assets/img/g_gui_timeline_monthly.png)
+
+Ver el manual de <a href="https://grass.osgeo.org/grass-stable/manuals/g.gui.timeline.html">g.gui.timeline</a>
+
+
+### Operaciones con álgebra temporal: **[t.rast.algebra](https://grass.osgeo.org/grass-stable/manuals/t.rast.algebra.html)**
+
+- Realiza una amplia gama de operaciones de álgebra temporal y espacial basadas en la topología temporal de los mapas
+  - Operadores temporales: unión, intersección, etc.
+  - Funciones temporales: *start_time()*, *start_doy()*, etc.
+  - Operadores espaciales (subconjunto de [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html))
+  - Modificador de vecindario temporal: *[x,y,t]*
+  - Otras funciones temporales como *t_snap()*, *buff_t()* o *t_shift()*
+
+**¡pueden combinarse en expresiones complejas!**
+
+
+#### Desde K*50 a Celsius usando la calculadora temporal
+
+Re-escalar a grados Celsius
+```{python}
+# Re-scale data to degrees Celsius
+t.rast.algebra basename=LST_Day_monthly_celsius suffix=gran \
+  expression="LST_Day_monthly_celsius = LST_Day_monthly * 0.02 - 273.15"
+```
+
+Ver info de la nueva serie de tiempo
+```{python}
+# Check info
+t.info LST_Day_monthly_celsius
+```
+
+
+#### Gráfico temporal: LST vs tiempo
+
+Gráfico temporal de LST para la ciudad de Córdoba, Argentina
+```{python}
+# LST time series plot for Cba city center
+g.gui.tplot strds=LST_Day_monthly_celsius \
+  coordinates=4323478.531282977,6541664.09350761 \
+  title="Monthly LST. City center of Cordoba" \
+  xlabel="Time" ylabel="LST"
+
+```
+
+Para un único punto, ver <a href="https://grass.osgeo.org/grass-stable/manuals/g.gui.tplot.html">g.gui.tplot</a>. Para un vector de puntos, ver <a href="https://grass.osgeo.org/grass-stable/manuals/t.rast.what.html">t.rast.what</a>.
+
+![](../assets/img/g_gui_tplot_final.png)
+
+Las coordenadas del punto pueden ser escritas directamente, copiadas desde el mapa o seleccionadas interactivamente.
+
+## Listas y selecciones
+
+- **[t.list](https://grass.osgeo.org/grass-stable/manuals/t.list.html)** para listar las STDS y los mapas registrados en la base de datos temporal,
+- **[t.rast.list](https://grass.osgeo.org/grass-stable/manuals/t.rast.list.html)** para mapas en series temporales de rasters, y
+- **[t.vect.list](https://grass.osgeo.org/grass-stable/manuals/t.vect.list.html)** para mapas en series temporales de vectores.
+
+### Variables usadas para hacer las listas y selecciones
+
+STRDS:*id, name, creator, mapset, temporal_type, creation_time, start_time, end_time, north, south, west, east, nsres, ewres, cols, rows, number_of_cells, min, max*
+
+STVDS:*id, name, layer, creator, mapset, temporal_type, creation_time, start_time, end_time, north, south, west, east, points, lines, boundaries, centroids, faces, kernels, primitives, nodes, areas, islands, holes, volumes*
+
+#### Ejemplos de listas y selecciones
+
+Mapas cuyo valor mínimo es menor o igual a 10
+```{python}
+# Maps with minimum value lower than or equal to 10
+t.rast.list input=LST_Day_monthly_celsius order=min \
+ columns=name,start_time,min where="min <= '10.0'"
+```
+
+Mapas cuyo valor máximo es mayor a 30
+```{python}
+# Maps with maximum value higher than 30
+t.rast.list input=LST_Day_monthly_celsius order=max \
+ columns=name,start_time,max where="max > '30.0'"
+```
+
+Mapas contenidos entre dos fechas
+```{python}
+# Maps between two given dates
+t.rast.list input=LST_Day_monthly_celsius columns=name,start_time \
+ where="start_time >= '2015-05' and start_time <= '2015-08-01 00:00:00'"
+```
+
+Todos los mapas correspondientes al mes de Enero
+```{python}
+# Maps from January
+t.rast.list input=LST_Day_monthly_celsius columns=name,start_time \
+ where="strftime('%m', start_time)='01'"
+```
+
+
+### Estadística descriptiva de STRDS
+
+Imprimir estadísticas descriptivas univariadas para cada mapa dentro de la STRDS
+```{python}
+# Print univariate stats for maps within STRDS
+t.rast.univar input=LST_Day_monthly_celsius
+```
+
+Obtener estadísticas extendidas con la opción -e
+```{python}
+# Get extended statistics
+t.rast.univar -e input=LST_Day_monthly_celsius
+```
+
+Escribir la salida a un archivo de texto
+```{python}
+# Write the univariate stats output to a csv file
+t.rast.univar input=LST_Day_monthly_celsius separator=comma \
+  output=stats_LST_Day_monthly_celsius.csv
+```
+
+
+### Agregación temporal 1: Serie completa
+
+**[t.rast.series](https://grass.osgeo.org/grass-stable/manuals/t.rast.series.html)**
+
+- Agrega STRDS *completas* o partes de ellas usando la opción *where*.
+- Diferentes métodos disponibles: promedio, mínimo, máximo, mediana, moda, etc.
+
+
+LST máxima y mínima del período 2015-2019
+
+Obtener el mapa de la máxima LST del período
+```{python}
+# Get maximum LST in the STRDS
+t.rast.series input=LST_Day_monthly_celsius \
+  output=LST_Day_max method=maximum
+```
+
+Obtener el mapa de la mínima LST del período
+```{python}
+# Get minimum LST in the STRDS
+t.rast.series input=LST_Day_monthly_celsius \
+  output=LST_Day_min method=minimum
+```
+
+Cambiar la paleta de colores a *celsius*
+```{python}
+# Change color pallete to celsius
+r.colors map=LST_Day_min,LST_Day_max color=celsius
+```
+
+
+> Comparar mapas con la herramienta Mapswipe
+
+![](../assets/img/g_gui_mapswipe_lstmin.png)
+
+### Operaciones usando variables temporales
+
+**[t.rast.mapcalc](https://grass.osgeo.org/grass-stable/manuals/t.rast.mapcalc.html)**
+
+- Ejecuta expresiones espacio-temporales tipo *r.mapcalc*
+- Permite *operadores espaciales y temporales*, así como *variables internas* en la expresión
+- Las variables temporales incluyen: *start_time(), end_time(), start_month(), start_doy()*, etc. 
+
+
+Cuál es el mes de máxima LST?
+
+Obtener el mes en que ocurre el máximo de LST en cada pixel
+```{python}
+# Get month of maximum LST
+t.rast.mapcalc -n inputs=LST_Day_monthly_celsius \
+  output=month_max_lst \
+  expression="if(LST_Day_monthly_celsius == LST_Day_max, start_month(), null())" \
+  basename=month_max_lst
+```
+
+Obtener información del mapa resultante
+```{python}
+# Get basic info
+t.info month_max_lst
+```
+
+Obtener el primer mes en que aparece el máximo de LST
+```{python}
+# Get the earliest month in which the maximum appeared (method minimum)
+t.rast.series input=month_max_lst \
+  method=minimum \
+  output=max_lst_date
+```
+
+Remover la STRDS intermedia y los mapas que contiene: month_max_lst
+```{python}
+# Remove month_max_lst strds 
+# we were only interested in the resulting aggregated map
+t.remove -rf inputs=month_max_lst
+```
+
+
+Mostrar el mapa resultante desde la terminal
+
+Abrir un monitor wx
+```{python}
+# Open a monitor
+d.mon wx0
+```
+
+Mostrar el mapa raster
+```{python}
+# Display the raster map
+d.rast map=max_lst_date
+```
+
+Mostrar sólo los bordes del mapa vectorial de NC
+```{python}
+# Display boundary vector map
+d.vect map=provincia_cba type=boundary color=#4D4D4D width=2
+```
+
+Agregar leyenda
+```{python}
+# Add raster legend
+d.legend -t raster=max_lst_date title="Month" \
+  labelnum=6 title_fontsize=20 font=sans fontsize=16
+```
+
+Agregar barra de escala
+```{python}
+# Add scale bar
+d.barscale length=100 units=kilometers segment=4 fontsize=14
+```
+
+Agregar Norte
+```{python}
+# Add North arrow
+d.northarrow style=1b text_color=black
+```
+
+Agregar título
+```{python}
+# Add text
+d.text text="Month of maximum LST" \
+  color=black align=cc font=sans size=12
+```
+
+
+![](../assets/img/month_max_lst.png)
+
+> Podríamos haber hecho lo mismo pero anualmente para conocer en qué mes ocurre el máximo en cada año y así evaluar la ocurrencia de tendencias. Cómo lo harían?
+
+### Agregación temporal 2: granularidad
+
+**[t.rast.aggregate](https://grass.osgeo.org/grass-stable/manuals/t.rast.aggregate.html)**
+
+- Agrega mapas raster dentro de STRDS con diferentes **granularidades** 
+- La opción *where* permite establecer fechas específicas para la agregación
+- Diferentes métodos disponibles: promedio, mínimo, máximo, mediana, moda, etc.
+
+De LST mensual a estacional
+
+LST media estacional
+```{python}
+# 3-month mean LST
+t.rast.aggregate input=LST_Day_monthly_celsius \
+  output=LST_Day_mean_3month \
+  basename=LST_Day_mean_3month suffix=gran \
+  method=average granularity="3 months"
+```
+
+Chequear info
+```{python}
+# Check info
+t.info input=LST_Day_mean_3month
+```
+
+Chequear lista de mapas
+```{python}
+# Check map list
+t.rast.list input=LST_Day_mean_3month
+```
+
+
+> **Tarea** 
+> 
+> Comparar las líneas de tiempo mensual y estacional con [g.gui.timeline](https://grass.osgeo.org/grass-stable/manuals/g.gui.timeline.html)
+
+```{bash}
+g.gui.timeline inputs=LST_Day_monthly_celsius,LST_Day_mean_3month
+```
+
+Graficar LST estacional con monitores wx
+
+Establecer la paleta de colores *celsius* para la STRDS estacional
+```{python}
+# Set STRDS color table to celsius degrees
+t.rast.colors input=LST_Day_mean_3month color=celsius
+```
+
+Iniciar un monitor *Cairo*
+```{python}
+# Start a new graphics monitor
+d.mon cairo out=frames.png width=1400 height=500 resolution=4 --o
+```
+
+Crear el primer frame
+```{python}
+# create a first frame
+d.frame -c frame=first at=0,100,0,25
+d.rast map=LST_Day_mean_3month_2015_01
+d.vect map=provincia_cba type=boundary color=#4D4D4D width=2
+d.text text='Ene-Mar 2015' color=black font=sans size=6 bgcolor=white
+```
+
+Crear el segundo frame
+```{python}
+# create a second frame
+d.frame -c frame=second at=0,100,25,50
+d.rast map=LST_Day_mean_3month_2015_04
+d.vect map=provincia_cba type=boundary color=#4D4D4D width=2
+d.text text='Abr-Jun 2015' color=black font=sans size=6 bgcolor=white
+```
+
+Crear el tercer frame
+```{python}
+# create a third frame
+d.frame -c frame=third at=0,100,50,75
+d.rast map=LST_Day_mean_3month_2015_07
+d.vect map=provincia_cba type=boundary color=#4D4D4D width=2
+d.text text='Jul-Sep 2015' color=black font=sans size=6 bgcolor=white
+```
+
+Crear el cuarto frame
+```{python}
+# create a fourth frame
+d.frame -c frame=fourth at=0,100,75,100
+d.rast map=LST_Day_mean_3month_2015_10
+d.vect map=provincia_cba type=boundary color=#4D4D4D width=2
+d.text text='Oct-Dic 2015' color=black font=sans size=6 bgcolor=white
+```
+
+Liberar el monitor
+```{python}
+# release monitor
+d.mon -r
+```
+
+
+![](../assets/img/frames.png)
+
+LST estacional en 2015
+
+
+> **Tarea**
+>
+> Ahora que ya conocen [t.rast.aggregate](https://grass.osgeo.org/grass-stable/manuals/t.rast.aggregate.html), 
+> extraigan el mes de máximo LST por año y luego vean si hay alguna tendencia positiva o negativa,
+> es decir, si los valores máximos de LST se observan más tarde o más temprano con el tiempo (años)
+
+
+Una solución podría ser...
+
+```{bash}
+t.rast.aggregate \
+  input=LST_Day_monthly_celsius \
+  output=month_max_LST_per_year \
+  basename=month_max_LST suffix=gran \
+  method=max_raster \
+  granularity="1 year" 
+
+t.rast.series \
+  input=month_max_LST_per_year \
+  output=slope_month_max_LST \
+  method=slope
+```
+
+
+### Animaciones
+
+Animación de la serie estacional de LST
+```{python}
+# Animation of seasonal LST
+g.gui.animation strds=LST_Day_mean_3month
+```
+
+Ver el manual de <a href="https://grass.osgeo.org/grass-stable/manuals/g.gui.animation.html">g.gui.animation</a> para más opciones y ajustes.
+
+
+### Agregación vs Climatología
+
+<img src="../assets/img/aggregation.png" width="50%">
+
+Agregación por granularidad
+
+
+<img src="../assets/img/climatology.png" width="50%">
+
+Agregación tipo climatología
+
+
+### Climatologías mensuales
+
+LST promedio de Enero
+```{python}
+# January average LST
+t.rast.series input=LST_Day_monthly_celsius \
+  method=average \
+  where="strftime('%m', start_time)='01'" \
+  output=LST_average_jan
+```
+
+Climatología para todos los meses
+```{python}
+# for all months - *nix
+for MONTH in `seq -w 1 12` ; do 
+ t.rast.series input=LST_Day_monthly_celsius method=average \
+  where="strftime('%m', start_time)='${MONTH}'" \
+  output=LST_average_${MONTH}
+done
+```
+
+> **Tarea**
+> 
+> - Comparar las medias mensuales con las climatologías mensuales
+> - Las climatologías que creamos forman una STRDS?
+
+
+### Anomalías anuales
+
+`\[AnomaliaStd_i = \frac{Media_i - Media}{SD}\]`
+
+
+Se necesitan:
+
+- promedio y desviación estándar general de la serie
+- promedios anuales
+
+
+Obtener el promedio general de la serie
+```{python}
+# Get general average
+t.rast.series input=LST_Day_monthly_celsius \
+ method=average output=LST_average
+```
+
+Obtener el desvío estándar general de la serie
+```{python}
+# Get general SD
+t.rast.series input=LST_Day_monthly_celsius \
+ method=stddev output=LST_sd
+```
+
+Obtener los promedios anuales
+```{python}
+# Get annual averages
+t.rast.aggregate input=LST_Day_monthly_celsius \
+ method=average granularity="1 years" \
+ output=LST_yearly_average basename=LST_yearly_average
+```
+
+Estimar las anomalías anuales
+```{python}
+# Estimate annual anomalies
+t.rast.algebra basename=LST_year_anomaly \
+ expression="LST_year_anomaly = (LST_yearly_average - map(LST_average)) / map(LST_sd)"
+```
+
+Establecer la paleta de colores *differences*
+```{python}
+# Set difference color table
+t.rast.colors input=LST_year_anomaly color=difference
+```
+
+Animación
+```{python}
+# Animation of annual anomalies
+g.gui.animation strds=LST_year_anomaly
+```
+
+
+
+### Isla de calor superficial urbana (Surface Urban Heat Island - SUHI)
+
+- La temperatura del aire de una zona urbana es más alta que la de las zonas cercanas
+- La UHI tiene efectos negativos en la calidad del agua y el aire, la biodiversidad, la salud humana y el clima.
+- La SUHI también está muy relacionada con la salud, ya que influye en la UHI 
+
+
+![](https://res.mdpi.com/remotesensing/remotesensing-11-01212/article_deploy/html/images/remotesensing-11-01212-g002-550.jpg)
+
+SUHI y área rural en Buenos Aires. Fuente: <a href="https://www.mdpi.com/2072-4292/11/10/1212/htm">Wu et al, 2019.</a>
+
+### Estadística zonal en series de tiempo de datos raster
+
+**[v.strds.stats](https://grass.osgeo.org/grass7/manuals/addons/v.strds.stats.html)**
+- Permite obtener datos de series de tiempo agregados espacialmente para polígonos de un mapa vectorial
+
+
+SUHI estival para *Córdoba* y alrededores
+
+Instalar la extensión *v.strds.stats*
+```{python}
+# Install v.strds.stats add-on
+g.extension extension=v.strds.stats
+```
+
+Listar mapas
+```{python}
+# List maps in seasonal time series
+t.rast.list input=LST_Day_mean_3month
+```
+
+Extraer LST promedio de verano para el Gran Córdoba
+```{python}
+# Extract summer average LST for Cba urban area
+v.strds.stats input=area_edificada_cba \
+  strds=LST_Day_mean_3month \
+  where="fna == 'Gran Córdoba'" \
+  t_where="strftime('%m', start_time)='01'" \
+  output=cba_summer_lst \
+  method=average
+```
+
+Crear buffer externo - 30 km
+```{python}
+# Create outside buffer - 30 km
+v.buffer input=cba_summer_lst \
+  distance=30000 \
+  output=cba_summer_lst_buf30
+```
+
+Crear buffer interno - 15 km
+```{python}
+# Create inside buffer - 15 km
+v.buffer input=cba_summer_lst \
+  distance=15000 \
+  output=cba_summer_lst_buf15
+```
+
+Remover el área del buffer 15 km del buffer de 30 km
+```{python}
+# Remove 15km buffer area from the 30km buffer area
+v.overlay ainput=cba_summer_lst_buf15 \
+  binput=cba_summer_lst_buf30 \
+  operator=xor \
+  output=cba_surr
+```
+
+
+
+![](../assets/img/suhi_buffers.png)
+
+Límites del Gran Córdoba y el área rural circundante
+
+
+Extraer estadísticas para los alrededores del Gran Córdoba
+```{python}
+# Extract zonal stats for Cba surroundings
+v.strds.stats input=cba_surr \
+  strds=LST_Day_mean_3month \
+  t_where="strftime('%m', start_time)='01'" \
+  method=average \
+  output=cba_surr_summer_lst
+```
+
+Chequear la LST estival promedio para el Gran Córdoba y alrededores
+```{python}
+# Take a look at mean summer LST in Cba and surroundings
+v.db.select cba_summer_lst
+v.db.select cba_surr_summer_lst
+```
+
+
+<!-- ### GRASS y R para hacer mapas -->
+
+<!-- Vamos a usar **R** y **RStudio** para crear mapas con los vectores resultantes -->
+
+
+<!-- En la terminal de GRASS GIS: `rstudio &` -->
+
+
+<!-- Mapas en R con datos de GRASS GIS -->
+
+<!-- Cargar las librerías *rgrass7* y *sf* -->
+<!-- ```{r} -->
+<!-- # Load rgrass and sf libraries -->
+<!-- library(rgrass) -->
+<!-- library(sf) -->
+<!-- ``` -->
+
+<!-- Listar los vectores disponibles en el mapset -->
+<!-- ```{r} -->
+<!-- # List available vectors -->
+<!-- execGRASS("g.list", parameters = list(type="vector", mapset=".")) -->
+<!-- ``` -->
+
+<!-- Leer e importar los mapas vectoriales desde GRASS GIS -->
+<!-- ```{r} -->
+<!-- # Read in GRASS vector maps as sf -->
+<!-- cba_summer_lst <- read_VECT("cba_summer_lst") -->
+<!-- cba_surr_summer_lst <- read_VECT("cba_surr_summer_lst") -->
+<!-- ``` -->
+
+<!-- Remover columnas extra -->
+<!-- ```{r} -->
+<!-- # Remove columns we don't need -->
+<!-- cba_summer_lst <- cba_summer_lst[,-c(2:9)] -->
+<!-- cba_surr_summer_lst <- cba_surr_summer_lst[,-c(2:3)] -->
+<!-- ``` -->
+
+<!-- Pegar los dos vectores -->
+<!-- ```{r} -->
+<!-- # Paste the 2 vectors together -->
+<!-- cba <- rbind(cba_summer_lst,cba_surr_summer_lst) -->
+<!-- ``` -->
+
+<!-- Gráfico rápido con *sf* -->
+<!-- ```{r} -->
+<!-- # Quick sf plot -->
+<!-- plot(cba[c(2:6)], border = 'grey', axes = TRUE, key.pos = 4) -->
+<!-- ``` -->
+
+<!-- ![](../assets/img/sf_plot.png) -->
+
+<!-- Usando la librería *ggplot* -->
+<!-- ```{r} -->
+<!-- # Let's try with ggplot library -->
+<!-- library(ggplot2) -->
+<!-- library(dplyr) -->
+<!-- library(tidyr) -->
+<!-- ``` -->
+
+<!-- Arreglar los datos desde formato *wide* a *long* -->
+<!-- ```{r} -->
+<!-- # Arrange data from wide to long format -->
+<!-- cba2 <- -->
+<!--   cba %>% -->
+<!--   select(LST_Day_mean_3month_2015_01_01_average, -->
+<!--          LST_Day_mean_3month_2016_01_01_average, -->
+<!--          LST_Day_mean_3month_2017_01_01_average, -->
+<!--          LST_Day_mean_3month_2018_01_01_average, -->
+<!--          LST_Day_mean_3month_2019_01_01_average, -->
+<!--          geom) %>% -->
+<!--   gather(YEAR, LST_summer, -geom) -->
+<!-- ``` -->
+
+<!-- Reemplazar valores en la columna *YEAR* -->
+<!-- ```{r} -->
+<!-- # Replace values in YEAR column -->
+<!-- cba2$YEAR <- rep(c(2015:2019),2) -->
+<!-- ``` -->
+
+<!-- Graficar -->
+<!-- ```{r} -->
+<!-- # Plot -->
+<!-- ggplot() + -->
+<!--   geom_sf(data = cba2, aes(fill = LST_summer)) + -->
+<!--   facet_wrap(~YEAR, ncol = 3) + -->
+<!--   scale_fill_distiller(palette = "YlOrRd", -->
+<!--                        direction = 1) + -->
+<!--   scale_y_continuous() -->
+<!-- ``` -->
+
+
+<!-- ![](../assets/img/ggplot.png) -->
+
+<!-- Usando la librería *tmap* -->
+<!-- ```{r} -->
+<!-- # Let's try also with tmap -->
+<!-- library(tmap) -->
+<!-- ``` -->
+
+<!-- Graficar -->
+<!-- ```{r} -->
+<!-- # Plot -->
+<!-- tm_shape(cba2) + -->
+<!--   tm_polygons(col = "LST_summer", style = "cont") + -->
+<!--   tm_facets(by = "YEAR", nrow = 1, free.coords = FALSE) -->
+<!-- ``` -->
+
+<!-- ![](../assets/img/tmap.png) -->
+
+<!-- Visualización rápida e interactiva con *mapview* -->
+<!-- ```{r} -->
+<!-- # mapview for quick visualizations with basemaps is really cool! -->
+<!-- library(mapview) -->
+<!-- mapview(cba) -->
+<!-- ``` -->
+
+
+<!-- ![](../assets/img/mapview1.png) -->
+<!-- ![](../assets/img/mapview2.png) -->
+
+<!-- Visualización con *mapview* y diferentes mapa base -->
+
+
+## Recursos (muy) útiles 
+
+- [Temporal data processing wiki](https://grasswiki.osgeo.org/wiki/Temporal_data_processing)
+- [GRASS GIS and R for time series processing wiki](https://grasswiki.osgeo.org/wiki/Temporal_data_processing/GRASS_R_raster_time_series_processing)
+- [GRASS GIS temporal workshop at NCSU](http://ncsu-geoforall-lab.github.io/grass-temporal-workshop/)
+- [GRASS GIS workshop held in Jena 2018](http://training.gismentors.eu/grass-gis-workshop-jena-2018/index.html)
+- [GRASS GIS course IRSAE 2018](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/index.html)
+- [Space-time satellite data for disease ecology - OpenGeoHub Summer School 2019](https://www.youtube.com/watch?v=nu_ZFvmAFGw)
+
+## Referencias
+
+- Gebbert, S., Pebesma, E. (2014) *A temporal GIS for field based environmental modeling*. Environmental Modelling & Software, 53, 1-12. [DOI](https://doi.org/10.1016/j.envsoft.2013.11.001)
+- Gebbert, S., Pebesma, E. (2017) *The GRASS GIS temporal framework*. IJGIS 31, 1273-1292. [DOI](http://dx.doi.org/10.1080/13658816.2017.1306862)
+- Gebbert, S., Leppelt, T., Pebesma, E. (2019) *A Topology Based Spatio-Temporal Map Algebra for Big Data Analysis*. Data, 4, 86. [DOI](https://doi.org/10.3390/data4020086)
+
