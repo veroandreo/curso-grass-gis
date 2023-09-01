@@ -14,71 +14,132 @@ knitr::opts_chunk$set(eval = FALSE)
 # knitr::opts_chunk$set(cache = TRUE)
 ```
 
-En esta tercera parte del estudio, utilizaremos R para modelar la distribución de 
-*Aedes albopictus* en el norte de Italia. 
-Para ello, necesitamos conectarnos a GRASS mediante el paquete `rgrass` para leer
-los datos de ocurrencia y los predictores. El paquete *rgrass* está desarrollado
-por @rgrass y se puede encontrar en: 
-<https://github.com/rsbivand/rgrass/>. Véase la viñeta con más
-explicaciones y ejemplos en: <https://rsbivand.github.io/rgrass/>.
+En esta última sesión, vamos a demostrar y ejemplificar el uso combinado de 
+GRASS y R para modelar la distribución de *Aedes aegypti* en la provincia 
+de Córdoba en función de variables ambientales. Algunas de estas variables
+provienen de los ejercicios realizados en la unidad de series de tiempo y 
+otras serán generadas durante este ejercicio.
+
 
 # [**rgrass**](https://cran.r-project.org/web/packages/rgrass/index.html)
 
-- `initGRASS()`: inicia una sesión GRASS GIS desde R
-- `execGRASS()`: ejecuta comandos del SIG de GRASS 
-- `gmeta()`: muestra los metadatos de localización de GRASS
-- read_VECT()` y `read_RAST()`: leen mapas vectoriales y raster desde GRASS a objetos *terra* de R.
-- write_VECT()` y `write_RAST()`: escriben objetos R *terra* en la base de datos GRASS GIS.
+El paquete de R que hace las veces de interfaz entre R y GRASS GIS se
+denomina `rgrass`. Este paquete ha sido desarrollado y sigue siendo mantenido
+por @rgrass y se puede encontrar en: 
+<https://github.com/rsbivand/rgrass/>. 
 
-::: {.callout-note}
-El paquete `terra` es desarrollado por @terra y eventualmente reemplazará a `raster`.
+:::{.callout-note}
+Pueden ver la viñeta del paquete para más explicaciones, algo de contexto y 
+ejemplos: <https://rsbivand.github.io/rgrass/>.
 :::
 
-## Usage
+Las principales funciones que podemos encontrar en el paquete `rgrass` son las 
+siguientes:
 
-GRASS GIS and R can be used together in two ways:
-
-A. Using [R within a GRASS GIS session](https://grasswiki.osgeo.org/wiki/R_statistics/rgrass7#R_within_GRASS), i.e. starting R (or RStudio) from GRASS terminal
-<br>
-
-- type `R` or `rstudio &` in the GRASS GIS terminal
-- load `rgrass` library
-- use `read_VECT()`, `read_RAST()` to read data from GRASS into R
-- access GRASS GIS modules and database through `execGRASS()`
-- write data (back) to GRASS database with `write_VECT()` and `write_RAST()`
-
-
-![](../assets/img/studio/grass_terminal_calling_R.png){width="60%" fig-align="center"}
-
-B. Using [GRASS GIS within an R session](https://grasswiki.osgeo.org/wiki/R_statistics/rgrass7#GRASS_within_R), i.e. we connect to GRASS GIS database from within R (or RStudio).
-<br>
-
-- we need to start GRASS GIS with `initGRASS()` from R
-- we access GRASS GIS modules through `execGRASS()`
-- use `read_VECT()`, `read_RAST()`, `write_VECT()` and `write_RAST()` to read data from and to GRASS database
+- `initGRASS()`: inicia una sesión de GRASS GIS desde R, similar a 
+`gs.setup.init()` o `gj.init()`.
+- `execGRASS()`: ejecuta comandos de GRASS, similar a `gs.run_command()` 
+- `gmeta()`: muestra los metadatos de localización de GRASS.
+- `read_VECT()` y `read_RAST()`: leen mapas vectoriales y raster desde la base 
+de datos de GRASS a objetos `SpatVect` y `SpatRast` del paquete *terra* de R.
+- `write_VECT()` y `write_RAST()`: escriben objetos del paquete *terra* en la 
+base de datos de GRASS GIS.
 
 ::: {.callout-note}
-`rgrass` was originally intended to apply GRASS functions on data outside GRASS database; hence some prefer to create throw away locations
+El paquete `terra` es desarrollado y mantenido por @terra y eventualmente 
+reemplazará a `raster`. Detalles sobre el paquete *terra* pueden encontrarse en:
+<https://rspatial.github.io/terra/reference/terra-package.html> y <https://rspatial.org/spatial/index.html>.
 :::
 
-![](../assets/img/studio/grass_within_rstudio_session.png){width="70%" fig-align="center"}
 
-# SDM workflow
+## Cómo usamos `rgrass`?
 
-In this part of the Studio we'll be covering the middle and right side of the
-SDM workflow, modeling and predictions.
+GRASS GIS y R se pueden utilizar juntos de dos maneras:
 
-![](../assets/img/lecture/workflow_sdm_other.png)
+A. Usar [R dentro de una sesión de GRASS GIS](https://grasswiki.osgeo.org/wiki/R_statistics/rgrass#R_within_GRASS),
+es decir, iniciar R (o RStudio) desde una sesión de GRASS
 
-There are several packages to carry out SDM, in this case we'll be using
-[SDMtune](https://cloud.r-project.org/web/packages/SDMtune/index.html) by @sdmtune. It provides functions covering the whole SDM workflow, from data 
-preparation, to variable selection, optimization and evaluation. Have a look
-at the articles on the package website for further details: <https://consbiol-unibern.github.io/SDMtune/index.html>.
+- escribimos `R` o `rstudio &` en la terminal GRASS GIS o en la pestaña 
+*Consola* de la interfaz gráfica
+- una vez en R (o RStudio) cargamos el paquete `rgrass` (previo haberlo instalado)
+- usamos `read_VECT()`, `read_RAST()` para leer datos de GRASS en R
+- accedemos a los módulos y la base de datos de GRASS GIS a través de `execGRASS()` 
+- escribimos datos resultantes en la base de datos de GRASS con `write_VECT()` y 
+`write_RAST()`
 
 
-# Let's move to R
+![](../assets/img/grass_terminal_calling_R.png){width="60%" fig-align="center"}
 
-### Load packages needed
+::::columns
+:::{.column width="60%"}
+![](../assets/img/open_rstudio_from_grass_gui.png)
+:::
+
+:::{.column width="40%"}
+![](../assets/img/open_rstudio_from_grass_gui_b.png)
+:::
+::::
+
+B. Iniciar y usar [GRASS GIS dentro de una sesión de R](https://grasswiki.osgeo.org/wiki/R_statistics/rgrass#GRASS_within_R), es 
+decir, nos conectamos a la base de datos de GRASS GIS desde R (o RStudio).
+
+- Primero cargamos el paquete `rgrass`
+- Necesitamos iniciar GRASS GIS con `initGRASS()` desde R y para ello,
+necesitamos especificar el ejecutable de GRASS y las ubicaciones de la base 
+de datos, el proyecto (location) y mapset
+- Accedemos a los módulos GRASS GIS a través de `execGRASS()`
+- usamos `read_VECT()`, `read_RAST()`, `write_VECT()` y `write_RAST()` para 
+leer datos desde y hacia la base de datos GRASS.
+
+![](../assets/img/grass_within_rstudio_session.png){width="70%" fig-align="center"}
+
+::: {.callout-note}
+Originalmente, `rgrass` estaba destinado a aplicar funciones de GRASS en 
+datos fuera de la base de datos de GRASS; de ahí que algunos prefieran 
+crear proyectos (i.e., *locations*) desechables o temporarios. Por ejemplo:
+
+```{r}
+library(terra)
+
+f <- system.file("ex/elev.tif", package="terra")
+r <- rast(f)
+
+library(rgrass)
+initGRASS(home=tempdir(), SG=r, override=TRUE)
+```
+:::
+
+# SDM - modelado de la distribución de especies
+
+El flujo de trabajo comúnmente utilizado para el modelado de la distribución de 
+especies (*SDM por su sigla en Inglés*) consiste en la recopilación de sitios de 
+ocurrencia de la especie o evento de interés (ej., casos de una enfermedad, 
+focos de fuego, ietc.), así como de variables ambientales que puedan ser 
+relevantes para explicar su distribución.
+Los datos de ocurrencia y las variables predictoras son las entradas de algún  
+algoritmo determinado o modelo (ej., GLM, Random Forest, MaxEnt, etc.). Una vez
+estamos "contentos" con el ajuste del modelo, el próximo paso es la predicción. 
+En este caso, hablamos de prediccón ambiental cuando nos interesa explicar e 
+interpretar la relación entre las variables y la probabilidad de ocurrencia 
+(curvas de respuesta) y predicción geográfica cuando nos interesa ver plasmadas
+en el espacio geografico el resultado de esas relaciones (mapas).
+
+![](../assets/img/workflow_sdm_other.png){width=85% fig-align="center"}
+
+Existen varios paquetes para realizar SDM. En este caso usaremos
+[SDMtune](https://cloud.r-project.org/web/packages/SDMtune/index.html)
+desarrollado y mantenido por @sdmtune. Este paquete proporciona funciones 
+que cubren todo el flujo de trabajo de SDM, desde la preparación de datos
+hasta la selección de variables, la optimización y evaluación de los modelos.
+Echen un vistazo a los artículos en el sitio web del paquete para obtener
+más detalles y tutoriales: 
+<https://consbiol-unibern.github.io/SDMtune/index.html>.
+
+# Manos a la obra
+
+## Vamos a R
+
+Cargamos los paquetes necesarios
 
 ```{r load_libraries, message=FALSE}
 library(rgrass)
@@ -90,39 +151,93 @@ library(dismo)
 library(usdm)
 library(SDMtune)
 library(zeallot)
+library(tmap)
+library(tmaptools)
 ```
 
-### Initialize GRASS
+## Iniciamos GRASS
 
-We'll use **option B**, i.e., we'll launch GRASS GIS in a defined location and mapset, from R
+Usaremos la **opción B**, es decir, iniciamos GRASS GIS desde R en un proyecto y
+mapset existentes. Notar las similitudes con `gj.init()` de `grass.jupyter`
+y `gs.setup.init()` de `grass.script`.
 
 ```{r}
 #| label: grass_init
 #| message: false
-#| panel: tabset
+#| results: hide
 
 # path to GRASS binaries (run `grass --config path`)
 grassbin <- system("grass --config path", intern = TRUE)
 # path to GRASS database
-grassdata <- path.expand("~/grass_ncsu_2023/grassdata/")
-# path to location
-location <- "eu_laea"
+grassdata <- path.expand("~/grassdata/")
+# path to project
+project <- "posgar2007_4_cba"
 # path to mapset
-mapset <- "italy_LST_daily"
+mapset <- "PERMANENT"
 
 # start GRASS GIS from R
 initGRASS(gisBase = grassbin, 
-          home = tempdir(), 
           gisDbase = grassdata, 
-          location = location, 
+          location = project, 
           mapset = mapset, 
           override = TRUE,
           remove_GISRC= TRUE)
 ```
 
-### Read vector data
+Exploramos los mapas raster y vectoriales disponibles en el mapset PERMANENT:
 
-Now we read in the occurrence data and the background points hosted in GRASS, convert them to `sf` objects and display them with `mapview`.
+```{r}
+r <- execGRASS("g.list", 
+               parameters = list(type = "raster",
+                                 mapset = "."))
+v <- execGRASS("g.list", 
+               parameters = list(type = "vector",
+                                 mapset = "."))
+```
+
+## Datos de presencia/ocurrencia
+
+Para este ejercicio vamos a generar los puntos de ocurrencia del mosquito 
+*Aedes aegypti* como un sub-conjunto al azar de las localidades (áreas 
+edificadas) de la provincia de Córdoba que estén a una altura de menos 
+de 850 m. Notar que estamos trabajando en la base de datos de GRASS GIS, pero
+desde R.
+
+```{r}
+#| label: create_presences
+#| message: false
+#| warning: false
+#| results: hide
+
+# Extract centroids from built-up area polygons
+execGRASS("v.extract", 
+          parameters = list(input="area_edificada_cba", 
+                            type="centroid", 
+                            output="area_edificada_cba_centroides", 
+                            random=250))
+
+# convert centroids to points
+execGRASS("v.type", 
+          parameters = list(input="area_edificada_cba_centroides", 
+                            output="area_edificada_cba_puntos", 
+                            from_type="centroid", 
+                            to_type="point"))
+
+# extract elevation data for points
+execGRASS("v.what.rast", 
+          parameters = list(map="area_edificada_cba_puntos", 
+                            raster="elevation", 
+                            column="elevation"))
+
+# filter points by elevation, keep those <= 850m
+execGRASS("v.extract",
+          parameters = list(input="area_edificada_cba_puntos",
+                            where="elevation <= 850",
+                            output="aedes_aegypti"))
+```
+
+Ahora leemos desde GRASS los datos de ocurrencia que generamos, los convertimos 
+en un objeto `sf`, y mostramos el mapa con `mapview`.
 
 ```{r}
 #| label: read_vectors
@@ -131,21 +246,253 @@ Now we read in the occurrence data and the background points hosted in GRASS, co
 #| results: hide
 
 # Read vector layers
-presence <- st_as_sf(read_VECT("aedes_albopictus"))
-background <- st_as_sf(read_VECT("background_points"))
+presence <- st_as_sf(read_VECT("aedes_aegypti"))
 ```
 
 ```{r ref.label='plot'}
 #| warning: false
 
-# Display vectors
-mapview(presence) + 
-  mapview(background, col.regions="black", cex=2)
+# Display presence vector
+mapview(presence)
 ```
 
-#### Read raster data
+También podemos usar la función `plot()` para visualizar la geometría o la 
+geometría y los atributos (o una selección de los mismos) de los objetos `sf`.
 
-We read now all the variables that we derived from the daily LST time series.
+```{r}
+#| label: plot_with_sf
+
+# Plot only the geometry 
+plot(st_geometry(presence))
+
+# Plot geometry + attr
+plot(presence["elevation"])
+```
+
+## Datos de background
+
+El algoritmo MaxEnt que vamos a usar en este ejercicio, requiere contrastar
+las variables ambientales en los sitios de ocurrencia con el resto del ambiente
+disponible para la especie, el *background*. Entonces, necesitamos generar 
+puntos de background para caracterizar este ambiente disponible.
+
+Una opción es generar puntos al azar sobre nuestra área de estudio. No obstante,
+no es cierto que toda la extensión del área de estudio está disponible para 
+*Aedes aegypti*. Esta especie de mosquito no cría en aguas abiertas y tampoco 
+sobre las salinas. Entonces, vamos a enmascarar primero esas áreas del ambiente
+disponible. 
+
+```{r}
+# Check region
+gmeta()
+```
+
+```{r}
+#| label: create_mask_bg
+
+# Generar máscara a partir del raster de LULC
+expression <- 
+  "no_water = if(landcover_2018 == 7 || landcover_2018 == 8, null(), landcover_2018)"
+
+execGRASS("r.mapcalc",
+          parameters = list(expression=expression))
+```
+
+Luego, leemos a R la máscara creada para visualizarla
+
+```{r}
+#| warning: false
+
+# Import mask
+no_water <- raster(read_RAST("no_water"))
+mapview(no_water)
+```
+
+Como la región tiene una resolución de 30 m, vamos a llevarla a 1 km, para
+asegurarnos una mejor separación de los puntos de background, y volvemos a
+leer la máscara dentro de R. 
+
+```{r}
+#| label: create_bg_points
+
+# Change resolution
+execGRASS("g.region",
+          parameters = list(res="1000"),
+          flags = c("a","p"))
+
+# Upscale
+execGRASS("r.resamp.stats",
+          parameters = list(input="no_water",
+                            output="MASK",
+                            method="mode"))
+
+# Leer en R la mascara_spp que vive en GRASS
+mask <- raster(read_RAST("MASK"))
+```
+
+Ahora sí, generamos los puntos de background utilizando una función del paquete
+`dismo`[@dismo] y los convertimos a `sf` para luego visualizarlos.
+
+```{r}
+# Generate random points within mask
+set.seed(123)
+background <- randomPoints(mask = mask, 
+                           n = 500)
+
+# Convert to sf to plot
+background_sf <- st_as_sf(as.data.frame(background), 
+                          coords = c(1,2), 
+                          crs = st_crs(mask))
+```
+
+:::{callout-caution title="Pregunta"}
+Con qué funcion de GRASS podríamos haber hecho algo similar?
+:::
+
+Visualizamos interactivamente el mapa que usamos como máscara junto con los 
+vectores de presencia y background.
+                                  
+```{r ref.label='plot'}
+#| warning: false
+
+# Display mask and vectors
+mapview(mask) +
+  mapview(presence) + 
+  mapview(background_sf, 
+          col.regions="black", 
+          cex=2)
+```
+
+Y también demostramos cómo obtener mapas con calidad para publicaciones 
+usando la librería `tmap` [@tmap]
+
+```{r}
+# Aux data
+bbox <- st_bbox(mask)
+
+fig_puntos <- 
+  tm_shape(mask, 
+           bbox = bbox) +
+  tm_raster(title = "Classes") +
+  tm_shape(presence) +
+  tm_dots(size = 0.02) +
+  tm_layout(main.title = "Aedes aegypti",
+            main.title.fontface = "italic",
+            main.title.size = 0.7,
+            main.title.position = "left",
+            legend.show = TRUE,
+            legend.outside = TRUE)
+
+tmap_save(fig_puntos, 
+          filename = "fig_puntos_y_mascara.png", 
+          width = 1000, height = 1300)
+```
+
+![Mapa generado con tmap](fig_puntos_y_mascara.png){width=60%}
+
+## Variables ambientales 
+
+Antes de leer las variables ambientales que obtuvimos a partir de las series de
+tiempo de LST y NDVI, vamos a generar dos mapas ráster que representan la 
+distancia a fuentes de agua y rutas y caminos, respectivamente. Para eso, 
+vamos a usar mapas ya disponibles en el mapset PERMANENT. 
+
+```{r}
+#| label: create_rasters_water
+
+# Patch water lines + water bodies
+execGRASS("v.patch",
+          parameters = list(input="lineas_aguas_continentales_perennes_cba,
+                            areas_aguas_continentales_perennes_cba,
+                            embalses",
+                            output="lineas_y_cuerpos_de_agua_cba"))
+
+# Convert to raster
+execGRASS("v.to.rast",
+          parameters = list(input="lineas_y_cuerpos_de_agua_cba",
+                            output="lineas_y_cuerpos_de_agua_cba",
+                            use="val"))
+
+# Distance to water and roads
+execGRASS("r.grow.distance",
+          parameters = list(input="lineas_y_cuerpos_de_agua_cba",
+                            distance="distancia_agua"))
+```
+
+```{r}
+#| label: create_rasters_roads
+
+# Patch primary + secondary roads
+execGRASS("v.patch",
+          parameters = list(input="vial_primaria_cba,vial_secundaria_cba",
+                            output="red_vial_cba"))
+# Convert to raster
+execGRASS("v.to.rast",
+          parameters = list(input="red_vial_cba",
+                            output="red_vial_cba",
+                            use="val"))
+
+# Distance to roads
+execGRASS("r.grow.distance",
+          parameters = list(input="red_vial_cba",
+                            distance="distancia_caminos"))
+```
+
+Leemos los mapas generados y los visualizamos con `plot()`, que en este caso
+reconoce los objetos `SpatRast`.
+
+```{r}
+#| label: read_distance_maps
+
+distancia_agua <- read_RAST("distancia_agua")
+distancia_caminos <- read_RAST("distancia_caminos")
+
+plot(c(distancia_agua,distancia_caminos), 
+     main=c("Distancia agua", "Distancia rutas"))
+
+```
+
+También podemos usar `tmap` y su función `tm_facets()`
+
+```{r}
+distancia <- read_RAST(c("distancia_agua","distancia_caminos"))
+
+fig_raster_facet <- 
+  tm_shape(distancia, 
+           bbox = bbox) +
+  tm_raster(style = "cont",
+            palette = "magma",
+            legend.show = FALSE) +
+  tm_facets()
+
+fig_raster_facet
+```
+
+### Lectura de datos ráster de otros mapsets
+
+Para leer mapas de otros mapsets, necesitamos agregar esos mapsets a la lista de 
+mapsets accesibles en el mapset donde estamos ahora.
+
+```{r}
+#| label: add_mapsets
+execGRASS("g.mapsets",
+          parameters = list(mapset="modis_lst",
+                            operation="add"))
+execGRASS("g.mapsets",
+          parameters = list(mapset="modis_ndvi",
+                            operation="add"))
+execGRASS("g.mapsets",
+          flags = "p")
+```
+
+Leemos ahora algunas de las variables que derivamos de las series temporales de
+LST y NDVI. Primero, necesitamos aplicar la máscara de los límites de la 
+provincia.
+
+```{r}
+execGRASS("r.mask", 
+          parameters = list(vector="provincia_cba"))
+```
 
 ```{r}
 #| label: read_rasters
@@ -153,34 +500,36 @@ We read now all the variables that we derived from the daily LST time series.
 #| warning: false
 #| results: hide
 
-# List rasters by pattern
-worldclim <- execGRASS("g.list", 
-                       parameters = list(type = "raster", 
-                                         pattern = "worldclim*"))
-avg <- execGRASS("g.list", 
-                 parameters = list(type = "raster", 
-                                   pattern = "avg*"))
-median <- execGRASS("g.list", 
-                    parameters = list(type = "raster", 
-                                      pattern = "median*", 
-                                      exclude = "*[1-5]"))
-
-# Concatenate map lists
-to_import <- c(attributes(worldclim)$resOut, 
-               attributes(avg)$resOut, 
-               attributes(median)$resOut)
+# List rasters to import
+to_import <- c("LST_Day_minimum",
+               "LST_Day_maximum",
+               "LST_Day_average",
+               "ndvi_maximum",
+               "ndvi_minimum")
 
 # Read raster layers
 predictors <- list()
 for (i in to_import){ 
   predictors[i] <- read_RAST(i) }
-
-# Stack rasters
-predictors_r <- rast(predictors)
 ```
 
-Let's visualize imported maps. Note we convert *terra* object into *raster* 
-because `mapview` does not support terra yet. 
+Agrupamos todos los rasters de variables ambientales.
+
+```{r}
+# Stack rasters
+predictors_r <- rast(c(predictors,distancia))
+capas <- c("LST_Day_minimum", 
+           "LST_Day_maximum", 
+           "LST_Day_average",
+           "ndvi_maximum",
+           "ndvi_minimum", 
+           "distancia_agua",
+           "distancia_caminos")
+names(predictors_r) <- capas
+```
+
+Visualicemos los mapas importados. Convertimos el objeto *terra* en *raster* 
+porque `mapview` aún no es compatible con terra. 
 
 ```{r}
 #| label: quick_view
@@ -188,16 +537,16 @@ because `mapview` does not support terra yet.
 #| warning: false
 
 # Quick visualization in mapview
-mapview(raster::raster(predictors_r[['worldclim_bio01']])) + presence
+mapview(raster(predictors_r$distancia_caminos)) + presence
 ```
 
-#### Data preparation
+## Preparación de los datos
 
-Now that we have imported presence records, background points and predictor
-variables derived from LST time series, we need to prepare the data in a
-format called *samples with data* (SWD). This is basically a table with presence
-and background coordinates plus the corresponding values in the predictor
-variables.
+Ahora que hemos creado y/o importado los registros de presencia, los puntos de
+background y las variables predictivas, necesitamos preparar los datos en un 
+formato llamado *samples with data* (SWD). Éste es básicamente una tabla con 
+coordenadas de presencia y background más los valores correspondientes a las 
+variables predictoras para cada punto.
 
 ```{r}
 #| label: data_prep1
@@ -205,26 +554,27 @@ variables.
 #| warning: false
 
 # Variables for models
-sp <- "Aedes albopictus"
+sp <- "Aedes aegypti"
 presence_coords <- st_coordinates(presence)
-background <- st_coordinates(background)
+background_coords <- background
 env <- predictors_r
 
 # Prepare data: SWD
 data_sp <- prepareSWD(species = sp, 
                       p = presence_coords, 
-                      a = background, 
+                      a = background_coords, 
                       env = env)
 
 data_sp
 ```
 
-### Define relevant variables
+## Definición de parámetros
 
-We define here some of the input values required through the workflow:
+Aquí definimos algunos de los valores de entrada necesarios para el flujo de 
+trabajo:
 
 ```{r}
-seed=49
+seed=123
 perc_test = 0.2
 k = 4
 method="Maxent"
@@ -233,10 +583,10 @@ perm=10
 imp_th=10
 ```
 
-### Create train and test datasets
+## Datos de entrenamiento y evaluación
 
-We will train the model with an 80% of presence samples, and leave the remaining
-20% for evaluation at the end.
+Entrenaremos el modelo con un 80% de muestras de presencia, y dejaremos el 20% 
+restante para la evaluación al final.
 
 ```{r}
 # Create training and test sets
@@ -256,12 +606,14 @@ train_sp
 test_sp
 ```
 
-### Create folds for cross-validation
+## Creación de *folds* para validación cruzada
 
-As we will use cross-validation during the model training, we create the folds
-in advance. In this case we use random folds, but other methods exist.
-Since we are limited by the number of presence records, we will create only 
-4 folds. The algorithm will iteratively use 3 folds to train and 1 to validate.
+Como usaremos validación cruzada durante el entrenamiento del modelo, creamos 
+los *folds* con anticipación. En este caso utilizamos *folds* aleatorios, 
+pero existen otros métodos de determinarlos. Como estamos limitados por la 
+cantidad de registros de presencia, crearemos solo 4 *folds* o *subconjuntos*.
+El algoritmo utilizará iterativamente 3 subconjuntos para entrenar y 1 para 
+validar, pero siempre dentro del entrenamiento.
 
 ```{r}
 # Create folds 
@@ -271,10 +623,11 @@ ran_folds <- randomFolds(train_sp,
                          seed = seed)
 ```
 
-### Train a default Maxent model with CV
+## Entrenamiento con validación cruzada
 
-We will first train a so called *full model*, i.e., a model with all predictors,
-and from there we'll remove those that are highly correlated and not so important.
+Primero entrenaremos un llamado *modelo completo*, es decir, un modelo con todos
+los predictores, y de allí eliminaremos aquellos que estén altamente 
+correlacionados y cuya contribución a la predicción no sea importante.
 
 ```{r}
 #| message: false
@@ -288,7 +641,7 @@ full_model_sp <- train(method = method,
 full_model_sp
 ```
 
-Let's see the predictions of the full model
+Veamos las predicciones geográficas del modelo completo o *full model*
 
 ```{r}
 pred_full_model <- predict(full_model_sp,
@@ -298,20 +651,23 @@ pred_full_model <- predict(full_model_sp,
 mapview(raster::raster(pred_full_model))
 ```
 
-### Variable selection: remove highly correlated variables 
+## Selección de variables
 
-We proceed then to remove correlated predictors as they provide highly redundant
-information and might affect the performance of models, i.e., as with all 
-models, we want it to be simple and of the highest possible performance. We will
-use the area under the ROC curve (AUC) as the performance metric, and eliminate 
-correlated variables only if AUC decreases if we keep them.
+### Remover variables altamente correlacionadas 
+
+Luego procedemos a eliminar los predictores correlacionados ya que proporcionan
+información altamente redundante y pueden afectar el rendimiento de los modelos,
+es decir, como con todos los modelos, queremos que sea simple y del mayor 
+rendimiento posible. Usaremos el área bajo la curva ROC (AUC) como métrica de 
+rendimiento y eliminaremos las variables correlacionadas solo si el AUC disminuye
+si las mantenemos.
 
 ```{r}
 #| warning: false
 
 # Prepare background locations to test correlation
 bg_sp <- prepareSWD(species = sp, 
-                    a = background,
+                    a = background_coords,
                     env = env)
 
 # Remove variables with correlation higher than 0.7 
@@ -325,16 +681,17 @@ vs_sp <- varSel(full_model_sp,
 
 ```
 
-Let's explore the output object
+Exploremos el objeto de salida
 
 ```{r}
 vs_sp@data
 ```
 
-### Remove less important variables
+### Remover variables de menor importancia
 
-After discarding correlated variables, we will also remove variables that have a
-percent contribution or importance lower than 10%, again accounting for AUC.
+Después de descartar las variables correlacionadas, también eliminaremos las 
+variables que tengan una contribución porcentual o una importancia inferior al 
+10%, considerando como su mantenimiento o remoción afecta al AUC.
 
 ```{r}
 # remove less important variables only if auc does not decrease
@@ -347,14 +704,15 @@ reduc_var_sp <- reduceVar(vs_sp,
                           interactive = FALSE)
 ```
 
-Let's explore the result
+Exploremos el objeto resultante
 
 ```{r}
 reduc_var_sp
 ```
 
-We need now to recreate the SWD object and train/test datasets, but with the 
-selected variables only, in order to run the final model and make predictions.
+Ahora necesitamos recrear el objeto SWD y los conjuntos de datos de entrenamiento 
+y evaluación, pero solo con las variables seleccionadas, para poder ejecutar el 
+modelo final y hacer predicciones.
 
 ```{r}
 # Get only relevant variables from the reduced model
@@ -366,7 +724,7 @@ env <- terra::subset(env, retained_varnames)
 # SWD with the selected vars
 subset_train_sp <- prepareSWD(species = sp, 
                               p = presence_coords,
-                              a = background,
+                              a = background_coords,
                               env = env)
 
 c(train_sp, test_sp) %<-% 
@@ -376,13 +734,13 @@ c(train_sp, test_sp) %<-%
                seed = seed)
 ```
 
-### Run the best model and make predictions
+## Predicciones con el modelo seleccionado
 
-Now we train the final model with the full training set, we no longer need
-the folds at this point. Note that we also use the feature classes (fc) and
-regularization (reg) from the best model obtained before. In this case, they 
-are default values only, but if we also do hyper-parameter optimization, they
-might differ.
+Ahora entrenamos el modelo final con el conjunto de entrenamiento completo, 
+ya no necesitamos los *folds* en este punto. Tengan en cuenta que también 
+utilizamos las *feature classes* (fc) y la regularización (reg) del mejor 
+modelo obtenido anteriormente. En este caso, son solo valores predeterminados,
+pero si también realizamos una optimización de hiperparámetros, pueden diferir.
 
 ```{r}
 final_model_sp <- train(method = method, 
@@ -391,7 +749,13 @@ final_model_sp <- train(method = method,
                         reg = reduc_var_sp@models[[1]]@model@reg)
 ```
 
-Let's make predictions now and explore the result
+:::{.callout-note}
+Si les interesa conocer opciones de optimización de hiperparámetros en el 
+contexto de los SDM, puedes chequear el siguiente artículo:
+<https://consbiol-unibern.github.io/SDMtune/articles/tune-hyperparameters.html>
+:::
+
+Hagamos las predicciones en el espacio geográfico y exploremos el resultado
 
 ```{r}
 map_sp_maxent <- predict(final_model_sp,
@@ -401,18 +765,18 @@ map_sp_maxent <- predict(final_model_sp,
 mapview(raster::raster(map_sp_maxent))
 ```
 
-### Write result back to GRASS 
+## Guardamos la predicción en GRASS 
 
-We can now write the raster with the final model's predictions into the GRASS
-database.
+Ahora podemos escribir el ráster con las predicciones del modelo final en la 
+base de datos de GRASS.
 
 ```{r}
 write_RAST(map_sp_maxent, 
-           "Aedes_albopictus_maxent", 
+           "Aedes_aegypti_maxent", 
            flags = c("o","overwrite"))
 ```
 
-Check the map is there
+Corroboramos que el mapa creado esté allí
 
 ```{r}
 execGRASS("g.list", 
@@ -420,12 +784,13 @@ execGRASS("g.list",
                             pattern="Aedes*"))
 ```
 
-### Model evaluation
+## Evaluación del modelo
 
-We want to know how good our model is, so in this step we use the test dataset
-that we separated in the beginning. An AUC of 0.5 would mean the model performs
-like flipping a coin. AUC is what we call a threshold independent evaluation
-metric.
+Queremos saber qué tan bueno es nuestro modelo, por eso en este paso usamos 
+el conjunto de datos de evaluación que separamos al principio. 
+Un AUC de 0,5 significaría que el modelo funciona equivalentemente a lanzar una
+moneda al aire.
+AUC es lo que llamamos una métrica de evaluación independiente de umbral.
 
 ```{r}
 # AUC
@@ -433,8 +798,9 @@ auc_maxent <- auc(final_model_sp, test = test_sp)
 auc_maxent
 ```
 
-Usually, however, the result of SDM is converted into presence/absence maps. To
-determine which threshold to use we perform threshold dependent evaluations.
+Normalmente el resultado del SDM se convierte en mapas de presencia/ausencia. 
+Para determinar qué umbral utilizar, realizamos evaluaciones dependientes del 
+umbral.
 
 ```{r}
 # Threshold dependent evaluation
@@ -444,7 +810,8 @@ th_maxent <- thresholds(final_model_sp,
 
 knitr::kable(th_maxent, format = 'html', digits = 2)
 ```
-Let's choose one threshold and create a binary map
+
+Elegimos un umbral y creamos un mapa binario, i.e., de presencia y ausencia
 
 ```{r}
 p = map_sp_maxent >= 0.5
@@ -456,9 +823,10 @@ mapview(raster::raster(map_sp_maxent))
 ```
 
 
-### Variable importance
+## Importancia de las variables
 
-Variable importance is an indicator of variable contribution to prediction.
+La importancia de las variables es un indicador de la contribución variable 
+a la predicción.
 
 ```{r}
 vi_model_sp <- maxentVarImp(final_model_sp)
@@ -470,10 +838,10 @@ plotVarImp(vi_model_sp)
 ```
 
 
-### Response curves
+## Curvas de respuesta
 
-Response curves give us an idea of the relationship between predictor variables 
-and probability of occurrence.
+Las curvas de respuesta nos dan una idea de la relación entre las variables 
+predictoras y la probabilidad de ocurrencia del evento de interés.
 
 ```{r}
 my_rp <- function(i){
@@ -485,7 +853,7 @@ labels <- LETTERS[1:length(retained_varnames)]
 ggpubr::ggarrange(plotlist = plotlist, labels = labels)
 ```
 
-We close the mapset and done
+Cerramos el mapset y terminamos :)
 
 ```{r}
 # close the mapset
@@ -493,19 +861,19 @@ unlink_.gislock()
 ```
 
 
-### Disclaimer
+# Disclaimer
 
-This is only a simple example for doing SDM and only the beginning... 
-There are:
+Recordar que éste es sólo un ejemplo sencillo para hacer SDM y sólo el 
+comienzo... Hay:
 
-- other models to test
-- hyper-parameter tuning
-- ensemble modeling
-- uncertainty assessment: where we can predict with confidence
-- many other relevant packages: 
-  - [*dismo*](https://cran.r-project.org/web/packages/dismo/index.html), [*sdm*](https://cran.r-project.org/web/packages/sdm/index.html),  [*kuenm*](https://github.com/marlonecobos/kuenm), [*caret*](https://cran.r-project.org/web/packages/caret/index.html), [*CAST*](https://cran.r-project.org/web/packages/CAST/index.html), etc.
+- otros modelos para probar
+- ajuste/optimización de hiperparámetros
+- ensemble de modelos
+- evaluación de la incertidumbre, i.e., dónde podemos predecir con confianza
+- muchos otros paquetes relevantes:
+   - [*dismo*](https://cran.r-project.org/web/packages/dismo/index.html), [*sdm*](https://cran.r-project.org/web/ paquetes/sdm/index.html), [*kuenm*](https://github.com/marlonecobos/kuenm), [*caret*](https://cran.r-project.org/web/packages/ caret/index.html), [*CAST*](https://cran.r-project.org/web/packages/CAST/index.html), etc.
 
-## References
+# Referencias
 
 :::{#refs}
 

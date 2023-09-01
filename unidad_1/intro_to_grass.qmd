@@ -10,7 +10,7 @@ format:
     chalkboard: 
       buttons: true
     preview-links: auto
-    logo: "../assets/img/G-UNC-CONAE-C.png"
+    logo: "../assets/img/logos_para_fondo_oscuro.png"
     theme: [default, gulich]
 from: markdown+emoji
 ---

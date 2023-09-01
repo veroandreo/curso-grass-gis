@@ -14,11 +14,6 @@ format:
     theme: [default, gulich]
 ---
 
-## Object based image analysis (OBIA)
-
-
----
-
 ### Contenidos
 
 - Nociones básicas sobre OBIA
@@ -34,50 +29,71 @@ format:
 
 ### Análisis de imágenes
 
-![](../assets/img/rgb_cba.png)
-Datos
+:::: columns
+:::{.column width=50%}
+![Datos](../assets/img/rgb_cba.png)
+:::
 
-![](../assets/img/obia_cba.png)
-Información
+:::{.column width=50%}
+![Información](../assets/img/obia_cba.png)
+:::
+::::
 
 ---
 
 Alta resolución (HR) vs Muy alta resolución (VHR)
 
-![](../assets/img/HR_VHR.png)
+![](../assets/img/HR_VHR.png){width=50%}
+<br>
 
+:::: columns
+:::{.column width="50%" .tiny}
 - pixel 10 x 10 m
 - libre acceso
 - mayor res espectral
 - mayor res temporal
 - mayor extensión
+:::
 
+:::{.column width="50%" .tiny}
 - pixel 0.2 x 0.2m
 - (alto) costo
 - menor res espectral
 - menor re temporal
 - menor extension
+:::
+::::
 
 ---
 
-#### Alta resolución (HR) vs Muy alta resolución (VHR)
+### Alta resolución (HR) vs Muy alta resolución (VHR)
 
-![20m](assets/img/20m_pix.png)
+:::: columns
+:::{.column width="33%"}
+![](../assets/img/20m_pix.png)
 
 - Varios objetos geográficos en el mismo pixel
 - Respuesta espectral mixta, no hay delineación clara de los objetos
+:::
 
-![5m](assets/img/5m_pix.png)
+:::{.column width="33%"}
+![](../assets/img/5m_pix.png)
 
 - Algunos píxeles de respuesta espectral mixta y algunos puros
 - Resolución espacial ~ tamaño de algunos objetos geográficos
+:::
 
-![125cm](assets/img/125cm_pix.png)
+:::{.column width="33%"}
+![](../assets/img/125cm_pix.png)
 
 - La mayoría de los píxeles pertenecen a una única clase 
 - Un solo objeto geográfico contiene varios píxeles
+:::
+::::
 
-*Blaschke 2010. “Object Based Image Analysis for Remote Sensing.” ISPRS Journal of Photogrammetry and Remote Sensing 65:2-16.*
+::: footer
+@blaschke_object_2010
+:::
 
 ---
 
@@ -85,21 +101,27 @@ Alta resolución (HR) vs Muy alta resolución (VHR)
 
 Idea general: agrupar los píxeles en objetos antes de clasificarlos
 
+:::: columns
+:::{.column width=50%}
 **Ventajas:**
 
 - Se consideran las características de los objetos, no los píxeles
 - Salida más suave (sin efecto "sal y pimienta")
+:::
 
+:::{.column width=50%}
 **Dificultades:**
 
 - Necesidad de identificar primero los "objetos"
 - Necesidad de definir la "mejor" delimitación de los objetos
+:::
+::::
 
 ---
 
-![](../assets/img/salt_pepper.png)
-
 Ejemplo del efecto *sal y pimienta*
+
+![](../assets/img/salt_pepper.png){fig-align="center"}
 
 ---
 
@@ -136,33 +158,40 @@ Ejemplo del efecto *sal y pimienta*
 
 ---
 
-- Es necesaria una **buena segmentación para una buena clasificación**
+:::{.callout-important .tiny}
+Es necesaria una **buena segmentación para una buena clasificación**
+
   - Una mala segmentación puede afectar dramáticamente los resultados de la clasificación
   - La segmentación *óptima* no es necesariamente la misma en toda la imagen
+:::
 
 ---
 
-Sobre-segmentación, sub-segmentación y trade-off
+#### Sobre-segmentación, sub-segmentación y trade-off
 
-![](../assets/img/ejemplo_sub_sobre_segm.png)
+<br>
+
+![](../assets/img/ejemplo_sub_sobre_segm.png){fig-align="center"}
 
 ---
 
 #### Cómo seleccionar los parámetros *óptimos*
 
-- Manualmente, **ensayo y error** para ajustar iterativamente los parámetros y producir los segmentos esperados
+- Manualmente, **ensayo y error** para ajustar iterativamente los parámetros y 
+producir los segmentos esperados
 - Optimización **automatizada**
-  - *Supervisada*: con polígonos de referencia @fa[arrow-right text-green] Requiere conocimiento *a priori*
-  - *No supervisada*: sólo confiando en las estadísticas de la imagen @fa[arrow-right text-green] No requiere conocimiento *a priori*
+  - *Supervisada*: con polígonos de referencia >> Requiere conocimiento *a priori*
+  - *No supervisada*: sólo confiando en las estadísticas de la imagen >> No requiere conocimiento *a priori*
 
 ---
 
-#### Observaciones importantes
-
+:::{.callout-important title="Importante" .tiny}
 - No hay una segmentación perfecta: **es siempre un compromiso**
 - Preferencia por objetos sobre-segmentados sobre aquellos sub-segmentados
- - Los objetos sub-segmentados contienen diferentes clases de cubierta terrestre @fa[arrow-right text-green] difíciles de clasificar
+ - Los objetos sub-segmentados contienen diferentes clases de cubierta terrestre 
+ >> difíciles de clasificar
  - Los objetos sobre-segmentados pueden ser fusionados durante la clasificación
+:::
 
 ---
 
@@ -170,36 +199,36 @@ Sobre-segmentación, sub-segmentación y trade-off
 
 [i.segment](https://grass.osgeo.org/grass-stable/manuals/i.segment.html)
 
-![](../assets/img/i_segment.png)
+![](../assets/img/i_segment.png){width=50% fig-align="center"}
 
 ---
 
-### Region growing 
+#### Region growing 
 
 - Dos parámetros:
-  - threshold: similitud espectral entre segmentos adyacentes
-  - minsize: tamaño mínimo (# de píxeles) del segmento en la salida final
+  - `threshold`: similitud espectral entre segmentos adyacentes
+  - `minsize`: tamaño mínimo (# de píxeles) del segmento en la salida final
 
 ---
-
-![](../assets/img/region_growing.jpg)
 
 Diagrama explicativo del algoritmo *region growing*
 
+![](../assets/img/region_growing.jpg){width=65% fig-align="center"}
+
 ---
 
-### Mean shift
+#### Mean shift
 
 - 3 parámetros y 2 opciones:
-  - threshold: similitud espectral entre segmentos adyacentes
-  - hr: rango, sólo las celdas dentro del rango se consideran para realizar el mean shift
-  - radius: radio espacial en número de celdas
-  - -a usar rango adaptable para mean shift
-  - -p usar radio progresivo para mean shift
+  - `threshold`: similitud espectral entre segmentos adyacentes
+  - `hr`: rango, sólo las celdas dentro del rango se consideran para realizar el mean shift
+  - `radius`: radio espacial en número de celdas
+  - `-a` usar rango adaptable para mean shift
+  - `-p` usar radio progresivo para mean shift
 
 ---
 
-![](../assets/img/mean_shift.gif)
+![](../assets/img/mean_shift.gif){width=65% fig-align="center"}
 
 ---
 
@@ -209,7 +238,7 @@ Diagrama explicativo del algoritmo *region growing*
   - El valor de los píxeles corresponde al ID del segmento (único)
   - Puede transformarse en vector con el módulo [r.to.vect](https://grass.osgeo.org/grass-stable/manuals/r.to.vect.html)
 
-![](../assets/img/i_segment.png)
+![](../assets/img/i_segment.png){width=50% fig-align="center"}
 
 ---
 
@@ -226,10 +255,20 @@ Diagrama explicativo del algoritmo *region growing*
 
 [i.segment.uspo](https://grass.osgeo.org/grass7/manuals/addons/i.segment.uspo.html)
 
+:::: columns
+:::{.column width=50%}
 ![](../assets/img/uspo.png)
+:::
 
-- Primero identificar los valores extremos (sobre y sub-segmentación) @fa[arrow-right] rango de valores a evaluar
+:::{.column width=50%}
+- Primero identificar los valores extremos (sobre y sub-segmentación) >> rango de valores a evaluar
 - Con capacidad de hardware limitada, no probar demasiadas combinaciones y trabajar en una región limitada
+:::
+::::
+
+::: footer
+@georganos_scale_2018
+:::
 
 ---
 
@@ -243,18 +282,28 @@ Diagrama explicativo del algoritmo *region growing*
 
 ---
 
-*i.segment.uspo* pedirá los nombres de un grupo de imágenes y regiones
+*i.segment.uspo* pedirá los nombres de un grupo de imágenes y regiones 
+computacionales
+
 <br><br>
 
-> Qué módulos usábamos para esas tareas?
+:::{.callout-caution title="Tarea"}
+Qué módulos usábamos para esas tareas?
+:::
 
 ---
 
-Para grandes conjuntos de datos, *i.segment.uspo* se puede usar para segmentar automáticamente tiles pequeños, cada uno con un parámetro optimizado
+Para áreas extensas, *i.segment.uspo* se puede usar para segmentar 
+automáticamente tiles pequeños, cada uno con un parámetro optimizado
 
-![](../assets/img/cutlines.png)
+:::: columns
 
+:::{.colum width=80% .center}
 [i.cutlines](https://grass.osgeo.org/grass-stable/manuals/addons/i.cutlines.html)
+
+![](../assets/img/cutlines.png){width=70% fig-align="center"}
+:::
+::::
 
 ---
 
@@ -263,9 +312,8 @@ Para grandes conjuntos de datos, *i.segment.uspo* se puede usar para segmentar a
 - Índices de vegetación: [i.vi](https://grass.osgeo.org/grass-stable/manuals/i.vi.html) o [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html)
 - Índices de agua: [i.wi](https://grass.osgeo.org/grass-stable/manuals/addons/i.wi.html) o [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html)
 - Texturas: [r.texture](https://grass.osgeo.org/grass-stable/manuals/r.texture.html) o [r.texture.tiled](https://grass.osgeo.org/grass-stable/manuals/addons/r.texture.tiled.html)
-- etc.
 
-![](../assets/img/ndvi_ndwi.png)
+![](../assets/img/ndvi_ndwi.png){width="50%" fig-align="center"}
 
 ---
  
@@ -273,11 +321,18 @@ Para grandes conjuntos de datos, *i.segment.uspo* se puede usar para segmentar a
 
 - Grey-level co-occurrence matrix
 - Importante fuente de información
-- En el entorno urbano, utilizando imágenes de resolución espacial media, ayuda a identificar las estructuras/funciones urbanas (por ejemplo, los asentamientos informales)
+- En el entorno urbano, utilizando imágenes de resolución espacial media, ayuda
+a identificar las estructuras/funciones urbanas (por ejemplo, los asentamientos 
+informales)
 
+:::: columns
+:::{.column width="50%"}
 ![](../assets/img/vhr_pan.png) 
-
+:::
+:::{.column width="50%"}
 ![](../assets/img/spot_texture.png)
+:::
+::::
 
 ---
 
@@ -285,7 +340,9 @@ Para grandes conjuntos de datos, *i.segment.uspo* se puede usar para segmentar a
 
 [i.segment.stats](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.stats.html)
 
-A efectos de la clasificación, necesitamos calcular las características de los objetos (estadísticas)
+A efectos de la clasificación, necesitamos calcular las características de los 
+objetos (estadísticas)
+
 - valores raster (bandas, índices espectrales, texturas)
 - forma del objeto (área, perímetro, compact_circle, compact_square, fd)
 - objetos del vecindario (raster stats y shape stats of all neighbours)
@@ -298,23 +355,30 @@ A efectos de la clasificación, necesitamos calcular las características de los
   - Reglas estadísticas y valores de umbral definidos por un experto
   - Difícil encontrar reglas que funcionen en todas partes de la imagen
 
----
-
-### Clasificación supervisada
-
 - **Basada en modelos** (ej. Random Forest, SVM, ANN)
   - Clasificador entrenado usando una muestra de entrenamiento de objetos
-  - El clasificador encuentra las características con mayor poder de predicción y asigna clase a todos los objetos no etiquetados
+  - El clasificador encuentra las características con mayor poder de predicción 
+  y asigna clase a todos los objetos no etiquetados
 
 ---
 
 #### Clasificación basada en reglas en GRASS GIS
 
+:::: columns
+:::{.column width=50%}
 - Actualizar una columna en la tabla de atributos de una capa de vectores con [v.db.update](https://grass.osgeo.org/grass-stable/manuals/addons/v.db.update.html) o [db.execute](https://grass.osgeo.org/grass-stable/manuals/addons/db.execute.html)
 
-![](../assets/img/sql_rules.png)
+![](../assets/img/sql_rules.png){fig-align="center"}
+:::
 
+:::{.column width=50%}
 - Reclasificar un raster resultante de la segmentación con [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html)
+
+```{bash}
+r.mapcalc expression=""
+```
+:::
+::::
 
 ---
 
@@ -327,15 +391,25 @@ A efectos de la clasificación, necesitamos calcular las características de los
 - Selección de variables/features
 - Opción de combinar los resultados de distintos clasificadores a través de *majority vote*
 
-Para datos raster, la extensión <a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.learn.ml.html">r.learn.ml</a> nos permite usar algoritmos de aprendizaje automático para realizar clasificaciones supervisadas
+:::{.callout-note}
+Para datos raster, la extensión 
+[r.learn.ml](https://grass.osgeo.org/grass-stable/manuals/addons/r.learn.ml.html) 
+y [r.learn.ml2](https://grass.osgeo.org/grass-stable/manuals/addons/r.learn.ml2.html) 
+nos permite usar algoritmos de aprendizaje automático para realizar 
+clasificaciones supervisadas
+:::
 
 ---
 
 ### OBIA en GRASS GIS
 
+:::: columns
+
+:::{.column width="40%"}
 ![](../assets/img/obia_flow.png)
+:::
 
-
+:::{.column width="60%" .tiny}
 - [i.segment](https://grass.osgeo.org/grass-stable/manuals/i.segment.html) para segmentación
 - [i.segment.uspo](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.uspo.html) para optimización no supervisada de los parámetros de segmentación
 - [i.segment.stats](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.stats.html) para computar estadísticas de los segmentos
@@ -345,17 +419,24 @@ Para datos raster, la extensión <a href="https://grass.osgeo.org/grass-stable/m
 - [r.mapcalc](https://grass.osgeo.org/grass-stable/manuals/r.mapcalc.html) para cálculos raster, ej. clasificación basada en reglas
 - [v.class.mlR](https://grass.osgeo.org/grass7/manuals/addons/v.class.mlR.html) para el aprendizaje automático, basado en *caret* de R
 - [i.cutlines](https://grass.osgeo.org/grass7/manuals/addons/i.cutlines.html) para la partición automatizada (tiling) de una gran escena por líneas naturales
+:::
+::::
 
-
----
-
-<img src="assets/img/gummy-question.png" width="45%">
+::: footer
+@grippa_open_source_2017, @georganos_scale_2018
+:::
 
 ---
 
 ## Referencias
 
-- Blaschke, T. (2010). Object based image analysis for remote sensing. ISPRS JPRS, 65(1), 2–16. [DOI](https://doi.org/10.1016/j.isprsjprs.2009.06.004)
-- Grippa, T. et al. (2017). An Open-Source Semi-Automated Processing Chain for Urban Object-Based Classification. Remote Sensing, 9, 358. [DOI](https://doi.org/10.3390/rs9040358)
-- Georganos, S. et al. (2018). Scale Matters: Spatially Partitioned Unsupervised Segmentation Parameter Optimization for Large and Heterogeneous Satellite Images. Remote Sensing, 10, 1440. [DOI](http://dx.doi.org/10.3390/rs10091440)
+::: {#refs .tiny}
+:::
 
+---
+
+<br><br><br>
+
+::: {.center}
+![](../assets/img/grass_logo_alphab.png)
+:::

@@ -437,8 +437,6 @@ Operador *NOT*
 Menú Database
 
 <img src="../assets/img/DB_menu.png" width="95%">
-
-<img src="../assets/img/vector_db_connections.png">
 :::
 
 :::{.column width=50%}

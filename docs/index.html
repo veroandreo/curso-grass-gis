@@ -20,60 +20,7 @@ ul.task-list li input[type="checkbox"] {
 width: 0.8em;
 margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
 }
-
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-}
-pre.numberSource { margin-left: 3em; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-
-div.csl-bib-body { }
-div.csl-entry {
-clear: both;
-}
-.hanging-indent div.csl-entry {
-margin-left:2em;
-text-indent:-2em;
-}
-div.csl-left-margin {
-min-width:2em;
-float:left;
-}
-div.csl-right-inline {
-margin-left:2em;
-padding-left:1em;
-}
-div.csl-indent {
-margin-left: 2em;
-}</style>
+</style>
 
 
 <script>const headroomChanged = new CustomEvent("quarto-hrChanged", {
@@ -4648,18 +4595,15 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#objetivos" id="toc-objetivos" class="nav-link active" data-scroll-target="#objetivos">Objetivos</a></li>
-  <li><a href="#metodología" id="toc-metodología" class="nav-link" data-scroll-target="#metodología">Metodología</a></li>
   <li><a href="#contenidos" id="toc-contenidos" class="nav-link" data-scroll-target="#contenidos">Contenidos</a></li>
-  <li><a href="#getting-ready" id="toc-getting-ready" class="nav-link" data-scroll-target="#getting-ready">Getting ready</a>
+  <li><a href="#metodología" id="toc-metodología" class="nav-link" data-scroll-target="#metodología">Metodología</a>
   <ul class="collapse">
-  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software">Software</a>
+  <li><a href="#dia-1-localmente" id="toc-dia-1-localmente" class="nav-link" data-scroll-target="#dia-1-localmente">Dia 1: localmente</a>
   <ul class="collapse">
-  <li><a href="#grass-gis" id="toc-grass-gis" class="nav-link" data-scroll-target="#grass-gis">GRASS GIS</a></li>
-  <li><a href="#r-packages" id="toc-r-packages" class="nav-link" data-scroll-target="#r-packages">R packages</a></li>
-  <li><a href="#python-libraries" id="toc-python-libraries" class="nav-link" data-scroll-target="#python-libraries">Python libraries</a></li>
+  <li><a href="#software-necesario" id="toc-software-necesario" class="nav-link" data-scroll-target="#software-necesario">Software necesario</a></li>
+  <li><a href="#datos-necesarios" id="toc-datos-necesarios" class="nav-link" data-scroll-target="#datos-necesarios">Datos necesarios</a></li>
   </ul></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#día-2-al-5-online" id="toc-día-2-al-5-online" class="nav-link" data-scroll-target="#día-2-al-5-online">Día 2 al 5: online</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -4687,7 +4631,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">24 de agosto de 2023</p>
+      <p class="date">1 de septiembre de 2023</p>
     </div>
   </div>
   
@@ -4726,10 +4670,6 @@ vertical-align: -.125em;
 <li>Que las personas participantes puedan aplicar conceptos y funciones aprendidas a sus casos de estudio.</li>
 </ul>
 </section>
-<section id="metodología" class="level1">
-<h1>Metodología</h1>
-<p>El curso es principalmente <em>práctico</em>. Se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local, en Google Colab o en la plataforma The Whole Tale. Las personas participantes necesitan traer sus laptops con el software instalado, ya que no habrá instancia de instalación de software durante el curso. El curso es de un <strong>nivel intermedio</strong>. Se asumen conocimientos básicos de teledetección, SIG, línea de comandos, Python y R.</p>
-</section>
 <section id="contenidos" class="level1">
 <h1>Contenidos</h1>
 <ul>
@@ -4741,84 +4681,68 @@ vertical-align: -.125em;
 <li><strong>Unidad 6.</strong> <a href="./trabajo_final.html">Trabajo Integrador</a>.</li>
 </ul>
 </section>
-<section id="getting-ready" class="level1">
-<h1>Getting ready</h1>
-<p>We’ll run this session online within the <a href="https://wholetale.org/">Whole Tale platform</a>. Whole Tale is an NSF-funded Data Infrastructure Building Block (DIBBS) initiative to build a scalable, open source, web-based, multi-user platform for reproducible research. It enables the creation, publication, and execution of tales - executable research objects that capture data, code, and the complete software environment used to produce research findings. It’s also great for teaching, as participants do not need to install all software packages required. They only need to register with institutional or personal email and they are ready to go!</p>
-<p><strong>Run the session online:</strong> <a href="https://dashboard.wholetale.org/run/647a2d67131e6c800db54dd7?tab=metadata">Curso GRASS GIS 2023</a></p>
-<section id="software" class="level2">
-<h2 class="anchored" data-anchor-id="software">Software</h2>
-<p>If you still want to run the workshop locally, you’ll find instructions and requirements below.</p>
-<section id="grass-gis" class="level3">
-<h3 class="anchored" data-anchor-id="grass-gis">GRASS GIS</h3>
-<p>We will use <strong>GRASS GIS 8.2+</strong>. It can be installed either through standalone installers/binaries or through <a href="https://live.osgeo.org/en/index.html">OSGeo-Live</a> (a linux based virtual machine which includes all OSGeo software and packages).</p>
-<section id="ms-windows" class="level5">
-<h5 class="anchored" data-anchor-id="ms-windows">MS Windows</h5>
-<p>There are two different options to install GRASS GIS in MS Windows:</p>
+<section id="metodología" class="level1">
+<h1>Metodología</h1>
+<p>El curso es principalmente <em>práctico</em>. Salvo el primer día, se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local, en Google Colab o en la plataforma The Whole Tale. Las personas participantes necesitan traer sus laptops con el software instalado y los datos descargados de antemano, ya que no habrá instancia de instalación de software durante el curso.</p>
+<p>El curso es de un <strong>nivel intermedio</strong>. Se asumen conocimientos básicos de teledetección, SIG, línea de comandos, Python y R.</p>
+<section id="dia-1-localmente" class="level2">
+<h2 class="anchored" data-anchor-id="dia-1-localmente">Dia 1: localmente</h2>
+<p>Para el <strong>primer día del curso, necesitamos ejecutar GRASS GIS de manera local</strong>. Si bien la mayor parte del material del taller se puede ejecutar teóricamente en todas las plataformas, algunas partes requieren herramientas que suelen ser más difíciles de configurar en Windows. Por lo tanto, para quien desee ejecutar todo el curso de manera local recomendamos usar <strong>entornos Linux/Unix</strong>.</p>
+<section id="software-necesario" class="level3">
+<h3 class="anchored" data-anchor-id="software-necesario">Software necesario</h3>
+<ul>
+<li>GRASS GIS &gt;= v8.2.0</li>
+<li>Python &gt;= 3.7 con los siguientes paquetes:
+<ul>
+<li>jupyterlab, numpy, matplotlib, seaborn, scikit-learn, scipy, pandas, folium</li>
+</ul></li>
+<li>R &gt;= 4.2 con los siguientes paquetes:
+<ul>
+<li>rgrass, sf, terra, raster, mapview, SDMtune, biomod2, dismo, usdm, zeallot, ggpubr, rJava</li>
+</ul></li>
+<li>QGIS</li>
+</ul>
+<section id="nota-para-usuarios-ubuntu" class="level4">
+<h4 class="anchored" data-anchor-id="nota-para-usuarios-ubuntu">Nota para usuarios Ubuntu</h4>
+<p>Usar el PPA inestable de ubuntugis para obtener la última versión de GRASS GIS:</p>
+<pre><code>sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt update
+sudo apt install grass grass-gui grass-dev</code></pre>
+</section>
+</section>
+<section id="datos-necesarios" class="level3">
+<h3 class="anchored" data-anchor-id="datos-necesarios">Datos necesarios</h3>
+<ul>
+<li>Datos de muestra:
+<ul>
+<li><a href="https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip" class="uri">https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip</a></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="día-2-al-5-online" class="level2">
+<h2 class="anchored" data-anchor-id="día-2-al-5-online">Día 2 al 5: online</h2>
+<p><strong>El resto del curso se ejecutará en línea</strong> ya sea dentro de la plataforma <a href="https://wholetale.org/"><strong>Whole Tale</strong></a> o en Google Colab.</p>
+<p>Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS) financiada por NSF para construir una plataforma escalable y multiusuario de código abierto, basada en la web para investigaciones reproducibles. Permite la creación, publicación y ejecución de <em>tales</em>: objetos de investigación ejecutables que capturan datos, código y el entorno de software completo utilizado para producir los resultados de la investigación. También es fantástico para enseñar, ya que los participantes no necesitan instalar todos los paquetes de software necesarios. ¡Solo necesitan registrarse con un correo electrónico institucional o personal y ya están listos para comenzar!</p>
+<p><strong>Whole Tale:</strong></p>
 <ol type="1">
-<li><a href="https://grass.osgeo.org/grass82/binary/mswindows/native/WinGRASS-8.2.1-1-Setup.exe">Standalone installer 64-bit</a></li>
-<li><a href="http://download.osgeo.org/osgeo4w/v2/osgeo4w-setup.exe">OSGeo4W 64-bit</a></li>
+<li>Ir a <a href="https://dashboard.wholetale.org/run/647a2d67131e6c800db54dd7?tab=metadata">Curso GRASS GIS 2023</a></li>
+<li>Log in (hay diferentes opciones)</li>
+<li>Ejecutar la <em>Tale</em> (botón azul arriba a la derecha)</li>
+<li>Confirmar <em>Copy</em> y <em>Run Tale</em></li>
+<li>Si sigue mostrando “Importing…”, recargar</li>
+<li>Run Tale</li>
 </ol>
-<p>For Windows users, <strong>we strongly recommend installing GRASS GIS through the OSGeo4W package</strong> (second option), since it allows to install all OSGeo software and resolves dependencies.</p>
-</section>
-<section id="ubuntu-linux" class="level5">
-<h5 class="anchored" data-anchor-id="ubuntu-linux">Ubuntu Linux</h5>
-<p>Install GRASS GIS 8.2+ from the “unstable” package repository:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a>  <span class="fu">sudo</span> add-apt-repository ppa:ubuntugis/ubuntugis-unstable</span>
-<span id="cb1-2"><a href="#cb1-2"></a>  <span class="fu">sudo</span> apt-get update</span>
-<span id="cb1-3"><a href="#cb1-3"></a>  <span class="fu">sudo</span> apt-get install grass grass-gui grass-dev</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="fedora-opensuse-linux" class="level5">
-<h5 class="anchored" data-anchor-id="fedora-opensuse-linux">Fedora, openSuSe Linux</h5>
-<p>For other Linux distributions including <strong>Fedora</strong> and <strong>openSuSe</strong>, simply install GRASS GIS with the respective package manager. See also <a href="https://grass.osgeo.org/download/linux/">here</a></p>
-</section>
-<section id="mac-os" class="level5">
-<h5 class="anchored" data-anchor-id="mac-os">Mac OS</h5>
-<p>Find GRASS GIS binaries on <a href="http://grassmac.wikidot.com/" class="uri">http://grassmac.wikidot.com/</a> or install the latest available version from <a href="https://ports.macports.org/port/grass/">MacPorts</a>.</p>
-</section>
-<section id="grass-gis-add-ons" class="level4">
-<h4 class="anchored" data-anchor-id="grass-gis-add-ons">GRASS GIS Add-ons</h4>
-<ul>
-<li><a href="https://grass.osgeo.org/grass-stable/manuals/addons/r.bioclim.html">r.bioclim</a>: Calculates bioclimatic indices as those in <a href="https://www.worldclim.org/bioclim">WorldClim</a>.</li>
-</ul>
-<p>Install with <code>g.extension extension=name_of_addon</code></p>
-</section>
-</section>
-<section id="r-packages" class="level3">
-<h3 class="anchored" data-anchor-id="r-packages">R packages</h3>
-<p>The following R packages should be installed beforehand:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>  <span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;rgrass&quot;</span>,<span class="st">&quot;terra&quot;</span>,<span class="st">&quot;sf&quot;</span>,<span class="st">&quot;raster&quot;</span>,<span class="st">&quot;mapview&quot;</span>,<span class="st">&quot;biomod2&quot;</span>,<span class="st">&quot;dismo&quot;</span>,<span class="st">&quot;usdm&quot;</span>,<span class="st">&quot;SDMtune&quot;</span>,<span class="st">&quot;zeallot&quot;</span>,<span class="st">&quot;rJava&quot;</span>,<span class="st">&quot;ggpubr&quot;</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="python-libraries" class="level3">
-<h3 class="anchored" data-anchor-id="python-libraries">Python libraries</h3>
-<p>The following Python libraries should be installed beforehand:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a>  <span class="ex">pip</span> install folium </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="data" class="level2">
-<h2 class="anchored" data-anchor-id="data">Data</h2>
-<p>Download the following ready to use <em>location</em> with reconstructed daily LST averages (<span class="citation" data-cites="metz_new_2017">Metz et al. (<a href="#ref-metz_new_2017" role="doc-biblioref">2017</a>)</span>) for Northern Italy. This dataset is courtesy of <a href="mundialis.de/en/">mundialis GmbH &amp; Co. KG</a>.</p>
-<ul>
-<li><a href="https://drive.google.com/file/d/1z1b2NLC4Z6yzz_57RddTdRRK_gUkd7fU/view?usp=sharing">Northern Italy (1.7 Gb)</a></li>
-</ul>
-<p>We will also use a points vector map representing <em>Aedes albopictus</em> presence data:</p>
-<ul>
-<li><a href="data/aedes_albopictus.gpkg">Mosquito occurrence data</a></li>
-</ul>
-</section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-metz_new_2017" class="csl-entry" role="listitem">
-Metz, M., Andreo, V., y Neteler, M. (2017), <span>«A <span>New</span> <span>Fully</span> <span>Gap</span>-<span>Free</span> <span>Time</span> <span>Series</span> of <span>Land</span> <span>Surface</span> <span>Temperature</span> from <span>MODIS</span> <span>LST</span> <span>Data</span>»</span>, <em>Remote Sensing</em>, 9, 1333. <a href="https://doi.org/10.3390/rs9121333">https://doi.org/10.3390/rs9121333</a>.
-</div>
-</div>
-<!-- - https://github.com/veroandreo/foss4g2022_grass4rs -->
-<!-- - https://github.com/veroandreo/grass_opengeohub2021 -->
-<!-- - Neteler, M. and Mitasova, H. (2008): *Open Source GIS: A GRASS GIS Approach*. Third edition. ed. Springer, New York. [Book site](https://grassbook.org/) -->
-<!-- - Neteler, M., Bowman, M.H., Landa, M. and Metz, M. (2012): *GRASS GIS: a multi-purpose Open Source GIS*. Environmental Modelling & Software, 31: 124-130 [DOI](http://dx.doi.org/10.1016/j.envsoft.2011.11.014) -->
-<!-- - Gebbert, S. and Pebesma, E. (2014). *A temporal GIS for field based environmental modeling*. Environmental Modelling & Software, 53, 1-12. [DOI](https://doi.org/10.1016/j.envsoft.2013.11.001) -->
-<!-- - Gebbert, S. and Pebesma, E. (2017). *The GRASS GIS temporal framework*. International Journal of Geographical Information Science, 31, 1273-1292. [DOI](http://dx.doi.org/10.1080/13658816.2017.1306862) -->
-<!-- - Gebbert, S., Leppelt, T. and Pebesma, E. (2019). *A Topology Based Spatio-Temporal Map Algebra for Big Data Analysis*. Data, 4, 86. [DOI](https://doi.org/10.3390/data4020086) -->
+<p><strong>Google Colab:</strong></p>
+<ol type="1">
+<li>File -&gt; Open notebook</li>
+<li>Seleccionar Github</li>
+<li>Pegar https://github.com/veroandreo/curso-grass-gis/blob/main/install_colab.ipynb</li>
+</ol>
+<p>En Google Colab no tenemos preinstalado el software necesario, así que necesitarás ejecutar la notebook para instalarlo.</p>
+<!-- ## References -->
+<!-- ::: {#refs} -->
+<!-- ::: -->
 
 
 </section>

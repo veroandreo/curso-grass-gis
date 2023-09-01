@@ -76,15 +76,6 @@ mundo para una amplia gama de aplicaciones.
 -   Que las personas participantes puedan aplicar conceptos y funciones
     aprendidas a sus casos de estudio.
 
-# Metodología
-
-El curso es principalmente *práctico*. Se trabajará mayormente con
-Jupyter notebooks. Las mismas podrán ejecutarse de manera local, en
-Google Colab o en la plataforma The Whole Tale. Las personas
-participantes necesitan traer sus laptops con el software instalado, ya
-que no habrá instancia de instalación de software durante el curso. El
-curso es de un **nivel intermedio**. Se asumen conocimientos
-básicos de teledetección, SIG, línea de comandos, Python y R.
 
 # Contenidos
 
@@ -120,122 +111,89 @@ básicos de teledetección, SIG, línea de comandos, Python y R.
     combinando GRASS y R.
 -   **Unidad 6.** [Trabajo Integrador](trabajo_final.qmd).
 
-# Getting ready
 
-We'll run this session online within the [Whole Tale
-platform](https://wholetale.org/). Whole Tale is an NSF-funded Data
-Infrastructure Building Block (DIBBS) initiative to build a scalable,
-open source, web-based, multi-user platform for reproducible research.
-It enables the creation, publication, and execution of tales -
-executable research objects that capture data, code, and the complete
-software environment used to produce research findings. It's also great
-for teaching, as participants do not need to install all software
-packages required. They only need to register with institutional or
-personal email and they are ready to go!
+# Metodología
 
-**Run the session online:** [Curso GRASS GIS
+El curso es principalmente *práctico*. 
+Salvo el primer día, se trabajará mayormente con Jupyter notebooks. 
+Las mismas podrán ejecutarse de manera local, en Google Colab o 
+en la plataforma The Whole Tale. 
+Las personas participantes necesitan traer sus laptops con el software 
+instalado y los datos descargados de antemano, ya que no habrá instancia
+de instalación de software durante el curso. 
+
+El curso es de un **nivel intermedio**. Se asumen conocimientos
+básicos de teledetección, SIG, línea de comandos, Python y R.
+
+## Dia 1: localmente
+
+Para el **primer día del curso, necesitamos ejecutar GRASS GIS de manera local**.
+Si bien la mayor parte del material del taller se puede ejecutar teóricamente en 
+todas las plataformas, algunas partes requieren herramientas que suelen ser más 
+difíciles de configurar en Windows. Por lo tanto, para quien desee ejecutar todo
+el curso de manera local recomendamos usar **entornos Linux/Unix**.
+
+### Software necesario
+
+* GRASS GIS >= v8.2.0
+* Python >= 3.7 con los siguientes paquetes:
+  * jupyterlab, numpy, matplotlib, seaborn, scikit-learn, scipy, pandas, folium
+* R >= 4.2 con los siguientes paquetes:
+  * rgrass, sf, terra, raster, mapview, SDMtune, biomod2, dismo, usdm, zeallot, ggpubr, rJava
+* QGIS
+
+#### Nota para usuarios Ubuntu 
+
+Usar el PPA inestable de ubuntugis para obtener la última 
+versión de GRASS GIS:
+```
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt update
+sudo apt install grass grass-gui grass-dev
+```
+
+### Datos necesarios
+
+* Datos de muestra: 
+  * <https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip>
+
+## Día 2 al 5: online
+
+**El resto del curso se ejecutará en línea** ya sea dentro de la plataforma 
+[**Whole Tale**](https://wholetale.org/) o en Google Colab. 
+
+Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS) 
+financiada por NSF para construir una plataforma escalable y multiusuario de
+código abierto, basada en la web para investigaciones reproducibles. 
+Permite la creación, publicación y ejecución de *tales*: 
+objetos de investigación ejecutables que capturan datos, código y el 
+entorno de software completo utilizado para producir los resultados de la 
+investigación. También es fantástico para enseñar, ya que los participantes 
+no necesitan instalar todos los paquetes de software necesarios. 
+¡Solo necesitan registrarse con un correo electrónico institucional o personal 
+y ya están listos para comenzar!
+
+**Whole Tale:** 
+
+1. Ir a [Curso GRASS GIS
 2023](https://dashboard.wholetale.org/run/647a2d67131e6c800db54dd7?tab=metadata)
+2. Log in (hay diferentes opciones)
+3. Ejecutar la *Tale* (botón azul arriba a la derecha)
+4. Confirmar *Copy* y *Run Tale*
+5. Si sigue mostrando "Importing...", recargar
+6. Run Tale
 
-## Software
+**Google Colab:**
 
-If you still want to run the workshop locally, you'll find instructions
-and requirements below.
+1. File -> Open notebook
+2. Seleccionar Github
+3. Pegar https://github.com/veroandreo/curso-grass-gis/blob/main/install_colab.ipynb
 
-### GRASS GIS
+En Google Colab no tenemos preinstalado el software necesario, así que necesitarás
+ejecutar la notebook para instalarlo.
 
-We will use **GRASS GIS 8.2+**. It can be installed either through
-standalone installers/binaries or through
-[OSGeo-Live](https://live.osgeo.org/en/index.html) (a linux based
-virtual machine which includes all OSGeo software and packages).
 
-##### MS Windows
+<!-- ## References -->
+<!-- ::: {#refs} -->
+<!-- ::: -->
 
-There are two different options to install GRASS GIS in MS Windows:
-
-1.  [Standalone installer
-    64-bit](https://grass.osgeo.org/grass82/binary/mswindows/native/WinGRASS-8.2.1-1-Setup.exe)
-2.  [OSGeo4W
-    64-bit](http://download.osgeo.org/osgeo4w/v2/osgeo4w-setup.exe)
-
-For Windows users, **we strongly recommend installing GRASS GIS through
-the OSGeo4W package** (second option), since it allows to install all
-OSGeo software and resolves dependencies.
-
-##### Ubuntu Linux
-
-Install GRASS GIS 8.2+ from the "unstable" package repository:
-
-``` bash
-  sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-  sudo apt-get update
-  sudo apt-get install grass grass-gui grass-dev
-```
-
-##### Fedora, openSuSe Linux
-
-For other Linux distributions including **Fedora** and **openSuSe**,
-simply install GRASS GIS with the respective package manager. See also
-[here](https://grass.osgeo.org/download/linux/)
-
-##### Mac OS
-
-Find GRASS GIS binaries on <http://grassmac.wikidot.com/> or install the
-latest available version from
-[MacPorts](https://ports.macports.org/port/grass/).
-
-#### GRASS GIS Add-ons
-
--   [r.bioclim](https://grass.osgeo.org/grass-stable/manuals/addons/r.bioclim.html):
-    Calculates bioclimatic indices as those in
-    [WorldClim](https://www.worldclim.org/bioclim).
-
-Install with `g.extension extension=name_of_addon`
-
-### R packages
-
-The following R packages should be installed beforehand:
-
-``` r
-  install.packages(c("rgrass","terra","sf","raster","mapview","biomod2","dismo","usdm","SDMtune","zeallot","rJava","ggpubr"))
-```
-
-### Python libraries
-
-The following Python libraries should be installed beforehand:
-
-``` bash
-  pip install folium 
-```
-
-## Data
-
-Download the following ready to use *location* with reconstructed daily
-LST averages (@metz_new_2017) for Northern Italy. This dataset is
-courtesy of [mundialis GmbH & Co. KG](mundialis.de/en/).
-
--   [Northern Italy (1.7
-    Gb)](https://drive.google.com/file/d/1z1b2NLC4Z6yzz_57RddTdRRK_gUkd7fU/view?usp=sharing)
-
-We will also use a points vector map representing *Aedes albopictus*
-presence data:
-
--   [Mosquito occurrence data](data/aedes_albopictus.gpkg)
-
-## References
-
-::: {#refs}
-:::
-
-<!-- - https://github.com/veroandreo/foss4g2022_grass4rs -->
-
-<!-- - https://github.com/veroandreo/grass_opengeohub2021 -->
-
-<!-- - Neteler, M. and Mitasova, H. (2008): *Open Source GIS: A GRASS GIS Approach*. Third edition. ed. Springer, New York. [Book site](https://grassbook.org/) -->
-
-<!-- - Neteler, M., Bowman, M.H., Landa, M. and Metz, M. (2012): *GRASS GIS: a multi-purpose Open Source GIS*. Environmental Modelling & Software, 31: 124-130 [DOI](http://dx.doi.org/10.1016/j.envsoft.2011.11.014) -->
-
-<!-- - Gebbert, S. and Pebesma, E. (2014). *A temporal GIS for field based environmental modeling*. Environmental Modelling & Software, 53, 1-12. [DOI](https://doi.org/10.1016/j.envsoft.2013.11.001) -->
-
-<!-- - Gebbert, S. and Pebesma, E. (2017). *The GRASS GIS temporal framework*. International Journal of Geographical Information Science, 31, 1273-1292. [DOI](http://dx.doi.org/10.1080/13658816.2017.1306862) -->
-
-<!-- - Gebbert, S., Leppelt, T. and Pebesma, E. (2019). *A Topology Based Spatio-Temporal Map Algebra for Big Data Analysis*. Data, 4, 86. [DOI](https://doi.org/10.3390/data4020086) -->

@@ -14,14 +14,15 @@ execute:
 jupyter: python3
 ---
 
-Los datos satelitales en general vienen en formato raster >> aplican las mismas 
-reglas.
+Los datos satelitales en general vienen en formato raster, por lo tanto aplican
+las mismas reglas.
 
 Los comandos **i.\*** se orientan explícitamente al procesamiento de datos 
-satelitales (aunque algunos puedan usarse para otros datos raster).
+satelitales aunque algunos puedan usarse para otros datos raster.
 
 :::{.callout-note}
-Para más detalles ver el manual <a href="https://grass.osgeo.org/grass-stable/manuals/imageryintro.html">Imagery Intro</a> y la wiki <a href="https://grasswiki.osgeo.org/wiki/Image_processing">Image Processing</a>
+Para más detalles, ver el manual de [Imagery Intro](https://grass.osgeo.org/grass-stable/manuals/imageryintro.html) y la wiki
+sobre [Image Processing](https://grasswiki.osgeo.org/wiki/Image_processing).
 :::
 
 # Datos para esta sesión
@@ -47,16 +48,14 @@ Descargar las escenas [L8 14/01/2020 (979Mb)](https://drive.google.com/file/d/1y
 
 ![Lanzamientos de satélites Lansat desde 1972](https://landsat.gsfc.nasa.gov/wp-content/uploads/2020-07/Landsat_timeline_20200318_title.gif)
 
+El sistema de escáner multiespectral (MSS) a bordo del Landsats 1-5 disponía de cuatro bandas. El Thematic Mapper (TM) a bordo de Landsats 4 y 5 tenía siete bandas. El Enhanced Thematic Mapper Plus (ETM+) del Landsat 7 tiene 8 bandas y los Landsats 8 y 9 tienen 11 bandas. Fuente: <https://landsat.gsfc.nasa.gov/satellites/landsat-9/landsat-9-bands/>. 
+
 ![Comparación entre las bandas de todos los satélites Landsat](https://landsat.gsfc.nasa.gov/wp-content/uploads/2021/12/all_Landsat_bands.png)
 
-The Multispectral Scanner System (MSS) aboard Landsats 1–5 had four bands. The 
-Thematic Mapper (TM) aboard Landsats 4 & 5 had seven bands. Landsat 7’s Enhanced
-Thematic Mapper Plus (ETM+) has 8 bands and Landsats 8 & 9 have 11 bands. The 
-atmospheric transmission values for this graphic were calculated using MODTRAN
-for a summertime mid-latitude hazy atmosphere (circa 5 km visibility). Fuente: <https://landsat.gsfc.nasa.gov/satellites/landsat-9/landsat-9-bands/>. 
-
-https://www.usgs.gov/landsat-missions
-
+:::{.callout-note}
+Más detalles sobre las misiones Landsat pueden encontrarse en: 
+<https://www.usgs.gov/landsat-missions>
+:::
 
 # Manos a la obra
 
@@ -112,23 +111,21 @@ Creamos un nuevo mapset llamado *landsat8*:
 
 ```{python}
 # Create a new mapset
-
-# gs.create_environment()
-g.mapset -c mapset=landsat8
+gs.create_environment(grassdata, project, mapset="landsat8")
 ```
 
 Listamos los mapsets accesibles
 
 ```{python}
 # list all the mapsets in the search path
-g.mapsets -p
+gs.mapsets()
 ```
 
 Listamos los mapas vectoriales disponibles
 
 ```{python}
 # list vector maps in all mapsets in the search path
-g.list type=vector
+gs.list_grouped(type="vector")
 ```
 
 ## Región de interés
@@ -137,16 +134,14 @@ Extraemos el radio urbano de Córdoba
 
 ```{python}
 # extract Cordoba urban area from `radios_urbanos`
-v.extract input=radios_urbanos \
-  where="nombre == 'CORDOBA'" \
-  output=radio_urbano_cba
+gs.run_command("v.extract", input="radios_urbanos", where="nombre == 'CORDOBA'", output="radio_urbano_cba")
 ```
 
 Establecemos la región computacional al radio urbano de Córdoba
 
 ```{python}
 # set the computational region to the extent of Cordoba urban area
-g.region -p vector=radio_urbano_cba
+gs.run_command("g.region", flags="p", vector="radio_urbano_cba")
 ```
 
 ## Descargar e importar los datos L8
@@ -180,54 +175,40 @@ Imprimir las bandas dentro de la carpeta
 
 ```{python}
 # print all landsat bands within landsat_data folder
-i.landsat.import -p input=$HOME/gisdata/landsat_data
+gs.run_command(i.landsat.import -p input=$HOME/gisdata/landsat_data)
 ```
 
 Imprimir sólo las bandas seleccionadas con un patrón
 
 ```{python}
 # print a selection of bands - might be sloooow
-i.landsat.import -p \
-  input=$HOME/gisdata/landsat_data \
-  pattern='B(2|3|4|5|6|8)'
+gs.run_command(i.landsat.import -p input=$HOME/gisdata/landsat_data pattern='B(2|3|4|5|6|8)')
 ```
 
 Importar bandas, recortar y reproyectar al vuelo
 
 ```{python}
 # import all bands, subset to region and reproject
-i.landsat.import -r \
-  input=$HOME/gisdata/landsat_data \
-  extent=region
+gs.run_command(i.landsat.import -r input=$HOME/gisdata/landsat_data extent=region)
 ```
 
 Listar bandas importadas y revisar metadatos
 
 ```{python}
 # list raster maps
-g.list type=raster mapset=.
-
-# check metadata of some imported bands
-r.info map=LC08_L1TP_229082_20200114_20200127_01_T1_B4
-r.info map=LC08_L1TP_229082_20200114_20200127_01_T1_B8
+gs.list_grouped(type=raster)["landsat8"]
 ```
 
-#### Opcional: Importar directorio desde la GUI
+```{python}
+# check metadata of some imported bands
+gs.raster_info(map=LC08_L1TP_229082_20200114_20200127_01_T1_B4)
+gs.raster_info(map=LC08_L1TP_229082_20200114_20200127_01_T1_B8)
+```
 
-::: {.panel-tabset}
-
-## Select directory
-
-![](../assets/img/import_directory_1.png){width=50%}
-
-## Import settings
-
-![](../assets/img/import_directory_2.png){width=50%}
-:::
 
 ## Pre-procesamiento de datos satelitales
 
-![Workflow de pre-procesamiento de datos satelitales](../assets/img/rs_workflow.jpg)
+![Workflow de pre-procesamiento de datos satelitales](../assets/img/rs_workflow.jpg){width=70% fig-align="center"}
 
 ### De número digital (ND) a reflectancia y temperatura
 
@@ -245,7 +226,7 @@ Definir region computacional a banda de 30m
 
 ```{python}
 # set the region to a 30m band
-g.region -p raster=LC08_L1TP_229082_20200114_20200127_01_T1_B4
+gs.run_command("g.region", raster="LC08_L1TP_229082_20200114_20200127_01_T1_B4", flags="p")
 
 ```
 
@@ -253,29 +234,27 @@ Convertir DN a reflectancia superficial y temperatura - método DOS
 
 ```{python}
 # convert from DN to surface reflectance and temperature - requires to uncompress data locally
-i.landsat.toar \
-  input=LC08_L1TP_229082_20200114_20200127_01_T1_B \
-  output=LC08_229082_20200114_toar_B \
-  sensor=oli8 \
-  metfile=$HOME/gisdata/landsat_data/LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt \
-  method=dos1
+gs.run_command(i.landsat.toar input="LC08_L1TP_229082_20200114_20200127_01_T1_B"   output="LC08_229082_20200114_toar_B" sensor="oli8" metfile="$HOME/gisdata/landsat_data/LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt"
+method="dos1")
 ```
 
 Corroborar info antes y después de la conversión para una banda
 ```{python}
 # list output maps
 g.list type=raster mapset=. pattern="*toar*"
+```
 
+```{python}
 # check info before and after for one band
 r.info map=LC08_L1TP_229082_20200114_20200127_01_T1_B3
 r.info map=LC08_229082_20200114_toar_B3
-
 ```
 
 ![Banda 10 de L8 con la paleta de colores *kelvin*](../assets/img/L8_band10_kelvin.png)
 
 :::{.callout--caution title="Tarea"}
-Ahora, sigan los mismos pasos para la escena del 02/03/2020. Qué notan de diferente?
+Ahora, sigan los mismos pasos para la escena del 02/03/2020. 
+¿Qué notan de diferente?
 :::
 
 ### Ajuste de color y composiciones RGB
@@ -284,21 +263,14 @@ Ajuste de colores para una composición RGB color natural
 
 ```{python}
 # enhance the colors
-i.colors.enhance \
-  red=LC08_229082_20200114_toar_B4 \
-  green=LC08_229082_20200114_toar_B3 \
-  blue=LC08_229082_20200114_toar_B2 \
-  strength=95
+gs.run_command(i.colors.enhance red=LC08_229082_20200114_toar_B4   green=LC08_229082_20200114_toar_B3 blue=LC08_229082_20200114_toar_B2 strength=95)
 ```
 
-Mostrar la combinación RGB - *d.rgb*
+Mostrar la combinación RGB
+
 ```{python}
 # display RGB
-d.mon wx0
-d.rgb \
-  red=LC08_229082_20200114_toar_B4 \
-  green=LC08_229082_20200114_toar_B3 \
-  blue=LC08_229082_20200114_toar_B2
+rgb = gj.
 ```
 
 
@@ -309,21 +281,20 @@ Sobre qué bandas debieran realizar el ajuste?
 
 :::: columns
 :::{.column width="50%"}
-![](../assets/img/L8_composite432.png)
+![Composición color natural 432](../assets/img/L8_composite432.png)
 :::
 
 :::{.column width="50%"}
-![](../assets/img/L8_composite543.png)
+![Composición falso color 543](../assets/img/L8_composite543.png)
 :::
-
-Composiciones color natural 432 y falso color 543
 ::::
 
 ### Enmascarado de nubes con banda QA
 
-- Landsat 8 proporciona una banda de calidad (QA) con valores enteros de 16 
-bits que representan las combinaciones de superficie, atmósfera y condiciones 
-del sensor que pueden afectar la utilidad general de un determinado pixel. 
+- Landsat 8 proporciona una banda de calidad (quality assessment, QA) con valores
+enteros de 16 bits que representan las combinaciones de superficie, atmósfera y 
+condiciones del sensor que pueden afectar la utilidad general de un determinado 
+pixel. 
 - La extensión [i.landsat.qa](https://grass.osgeo.org/grass-stable/manuals/addons/i.landsat.qa.html) reclasifica la banda QA de Landsat 8 de acuerdo a la calidad del pixel. 
 
 :::{.callout-note}
@@ -334,28 +305,22 @@ Crear las reglas para identificar las nubes y sombras de nubes
 
 ```{python}
 # create a rule set
-i.landsat.qa \
-  collection=1 \
-  cloud_shadow_confidence="Medium,High" \
-  cloud_confidence="Medium,High" \
-  output=Cloud_Mask_rules.txt
+gs.run_command(i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High"   cloud_confidence="Medium,High" output=Cloud_Mask_rules.txt)
 ```
 
 Reclasificar la banda QA en función de las reglas
 
 ```{python}
 # reclass the BQA band based on the rule set created
-r.reclass \
-  input=LC08_L1TP_229082_20200114_20200127_01_T1_BQA \
-  output=LC08_229082_20200114_Cloud_Mask \
-  rules=Cloud_Mask_rules.txt
+gs.run_command(r.reclass input=LC08_L1TP_229082_20200114_20200127_01_T1_BQA
+  output=LC08_229082_20200114_Cloud_Mask rules=Cloud_Mask_rules.txt)
 ```
 
 Reporte del porcentaje de nubes y sombras
 
 ```{python}
 # report % of clouds and shadows
-r.report -e map=LC08_229082_20200114_Cloud_Mask units=p
+print(gs.read_command(r.report -e map=LC08_229082_20200114_Cloud_Mask units=p))
 ```
 
 Mostrar el mapa reclasificado
@@ -376,66 +341,59 @@ Comparar visualmente la cobertura de nubes con la composición RGB 543.
 
 :::: columns
 :::{.column width="50%"}
-![](../assets/img/L8_composite543.png)
+![Composición falso color](../assets/img/L8_composite543.png)
 :::
 
 :::{.column width="50%"}
-![](../assets/img/L8_clouds.png)
+![Máscara de nubes](../assets/img/L8_clouds.png)
 :::
-
-Composición falso color y máscara de nubes
 ::::
 
 ### Fusión de datos/Pansharpening
 
 Vamos a usar la banda PAN (15 m) para mejorar la definición de las bandas 
-espectrales de 30 m, por medio de: i.fusion.hpf](https://grass.osgeo.org/grass-stable/manuals/addons/i.fusion.hpf.html), 
+espectrales de 30 m, por medio de: 
+[i.fusion.hpf](https://grass.osgeo.org/grass-stable/manuals/addons/i.fusion.hpf.html), 
 que aplica un método de adición basado en un filtro de paso alto. 
-Otros métodos están implementados en [i.pansharpen](https://grass.osgeo.org/grass-stable/manuals/i.pansharpen.html).
+Otros métodos están implementados en 
+[i.pansharpen](https://grass.osgeo.org/grass-stable/manuals/i.pansharpen.html).
 
 Instalar la extensión *i.fusion.hpf*
 
 ```{python}
 # Install the reqquired addon
-g.extension extension=i.fusion.hpf
+gs.run_command(g.extension extension=i.fusion.hpf)
 ```
 
 Cambiar la región a la banda PAN
 
 ```{python}
 # Set the region to PAN band (15m)
-g.region -p raster=LC08_229082_20200114_toar_B8
+gs.run_command(g.region -p raster=LC08_229082_20200114_toar_B8)
 ```
 
 Ejecutar la fusión
 
 ```{python}
 # Apply the fusion based on high pass filter
-i.fusion.hpf -l -c pan=LC08_229082_20200114_toar_B8 \
-  msx=`g.list type=raster mapset=. pattern=*_toar_B[1-7] separator=,` \
-  suffix=_hpf \
-  center=high \
-  modulation=max \
-  trim=0.0
+gs.run_command(i.fusion.hpf -l -c pan=LC08_229082_20200114_toar_B8, msx=`g.list type=raster mapset=. pattern=*_toar_B[1-7] separator=,`, suffix=_hpf, center=high, modulation=max, trim=0.0)
 ```
 
 Listar los mapas resultantes usando un patrón de búsqueda
 
 ```{python}
 # list the fused maps
-g.list type=raster mapset=. pattern=*_hpf
+gs.list_grouped(type=raster, pattern=*_hpf)["landsat8"]
 ```
 
-Visualizar las diferencias con la herramienta mapswipe
+Visualizar las diferencias
+
+![Datos originales 30 m y datos fusionados 15 m](../assets/img/L8_mapswipe_hpf.png)
 
 ```{python}
 # display original and fused maps
-g.gui.mapswipe \
-  first=LC08_229082_20200114_toar_B5 \
-  second=LC08_229082_20200114_toar_B5_hpf
-```
 
-![Datos originales 30 m y datos fusionados 15 m](../assets/img/L8_mapswipe_hpf.png)
+```
 
 ### Índices de agua y vegetación
 
@@ -443,7 +401,7 @@ Establecer la máscara de nubes para evitar el cómputo sobre las nubes
 
 ```{python}
 # Set the cloud mask to avoid computing over clouds
-r.mask raster=LC08_229082_20200114_Cloud_Mask
+gs.run_command(r.mask raster=LC08_229082_20200114_Cloud_Mask)
 ```
 
 Calcular el NDVI y establecer la paleta de colores
@@ -472,23 +430,24 @@ r.colors map=LC08_229082_20200114_NDWI color=ndwi
 Mostrar los mapas
 
 ```{python}
-# display maps in different monitors
-d.mon wx0
-d.rast map=LC08_229082_20200114_NDVI
-
-d.mon wx1
-d.rast map=LC08_229082_20200114_NDWI
+ndi = gj.InteractiveMap()
+ndi.add_raster()
+ndi.show()
 ```
 
-
+:::: columns
+:::{.column width="50%"}
 ![](../assets/img/L8_ndvi.png)
+:::
+:::{.column width="50%"}
 ![](../assets/img/L8_ndwi.png)
-
+:::
 NDVI y NDWI a partir de datos Landsat 8
+::::
 
-
+:::{.callout-warning title="Tarea"}
 Estimar NDVI y NDWI para la otra escena usando el módulo [i.vi](https://grass.osgeo.org/grass-stable/manuals/i.vi.html) 
-
+:::
 
 ### Clasificación No Supervisada
 
@@ -535,13 +494,13 @@ i.maxlik group=l8 subgroup=l8 \
 Mostrar el mapa clasificado
 
 ```{python}
-# display results
-d.mon wx0
-d.rast map=l8_hpf_class
+
 ```
 
-
 ![](../assets/img/L8_unsup_class.png)
+
+
+### Información derivada adicional
 
 Información derivada adicional podría obtenerse con los siguientes módulos, 
 entre otros:
