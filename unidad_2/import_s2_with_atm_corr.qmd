@@ -1,0 +1,62 @@
+---
+title: "Datos Sentinel 2 L1C"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+---
+
+## AOD
+
+Para obtener un valor de AOD, tenemos 2 opciones:
+
+A. Estimar el valor desde un gráfico y usarlo en el comando i.sentinel.preproc 
+via la opción `aod_value`.
+
+![](../assets/img/S2_AOD_plot.png)
+
+B. Descargar un archivo de [http://aeronet.gsfc.nasa.gov](https://aeronet.gsfc.nasa.gov) 
+y el valor será leido desde el mismo via la opción `aeronet_file` de 
+i.sentinel.preproc.
+
+:::: columns
+:::{.column width="60%"}
+![](../assets/img/S2_AOD_file.png)
+:::
+
+:::{.column width="40%"}
+- Estación *ARM_Cordoba* o *Pilar_Cordoba*
+- Seleccionar fechas de inicio y final
+- Seleccionar: *`Combined file`* y *`All points`*
+- Descargar y descomprimir (el archivo final tiene extensión .dubovik)
+- Pasar el archivo con la opción `aeronet_file`
+:::
+::::
+
+
+## Mapa de elevación
+
+Existen dos módulos que nos facilitan la busqueda y obtención de datos de 
+elevación:
+
+- [r.in.srtm.region](https://grass.osgeo.org/grass-stable/manuals/addons/r.in.srtm.region.html): importa (y re-proyecta) los mosaicos SRTM que cubren la región computacional, 
+parchea los mosaicos e interpola datos faltantes
+- [r.in.nasadem](https://grass.osgeo.org/grass-stable/manuals/addons/r.in.nasadem.html): importa (y re-proyecta) los mosaicos de NASADEM que cubren la región computacional y parchea 
+los mosaicos
+
+:::{.callout-important}
+Si el DEM es más chico que la región computacional, sólo la región cubierta por 
+el DEM será corregida atmosféricamente.
+:::
+
+## Ejemplo de la ejecución de i.sentinel.preproc
+
+```bash
+i.sentinel.preproc -atr \
+  input_dir=$HOME/gisdata/s2_data/name_of_S2_scene.SAFE \
+  elevation=NASADEM \
+  aeronet_file=$HOME/gisdata/s2_data/name_of_aeronet_station.dubovik
+```

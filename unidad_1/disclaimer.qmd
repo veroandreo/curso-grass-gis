@@ -9,7 +9,7 @@ format:
     chalkboard: 
       buttons: true
     preview-links: auto
-    logo: "../assets/img/G-UNC-CONAE-C.png"
+    logo: "../assets/img/logos_para_fondo_oscuro.png"
     theme: [default, gulich]
 ---
 
@@ -29,7 +29,8 @@ format:
 -   Dia 2: Empezamos a trabajar con Jupyter notebooks. Explicación sobre su funcionamiento y sobre los paquetes de GRASS para utilizar sus funcionalidades desde Python. Ejemplos. Manejo y procesamiento de datos ráster y satelitales en GRASS GIS dentro de Jupyter notebooks.
 -   Día 3: OBIA dentro de Jupyter notebooks.
 -   Día 4: Series de tiempo dentro de Jupyter notebooks.
--   Día 5: GRASS y R. Trabajamos con Rmd notebooks. Necesitamos R y RStudio/VS code instalados.
+-   Día 5: GRASS y R. Trabajamos con R dentro de Jupyter notebooks. 
+<!-- Necesitamos R y RStudio/VS code instalados. -->
 
 
 ## Trabajo integrador

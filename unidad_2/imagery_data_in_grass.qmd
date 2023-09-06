@@ -1,5 +1,5 @@
 ---
-title: "Datos satelitales en GRASS GIS"
+title: Datos satelitales en GRASS GIS
 author: Verónica Andreo
 date: today
 format:
@@ -15,53 +15,55 @@ jupyter: python3
 ---
 
 Los datos satelitales en general vienen en formato raster, por lo tanto aplican
-las mismas reglas.
-
+las mismas reglas que vimos anteriormente. 
 Los comandos **i.\*** se orientan explícitamente al procesamiento de datos 
 satelitales aunque algunos puedan usarse para otros datos raster.
 
-:::{.callout-note}
-Para más detalles, ver el manual de [Imagery Intro](https://grass.osgeo.org/grass-stable/manuals/imageryintro.html) y la wiki
-sobre [Image Processing](https://grasswiki.osgeo.org/wiki/Image_processing).
-:::
+Para ejemplificar el flujo de trabajo para procesamiento de datos satelitales 
+en GRASS GIS, en esta primer sesión vamos a trabajar con datos del satélite 
+Landsat 8.
 
 # Datos para esta sesión
 
 :::: columns
-:::{.column width="50%"}
+:::{.column width="40%"}
 Escenas Landsat 8 (OLI)
 
 - Fechas: 14/01/2020 y 02/03/2020
-- Path/Row: 229/082
+- Path/Row: 229/082 (Córdoba)
 - CRS: UTM zona 20 N (EPSG:32620)
 :::
 
-:::{.column width="50%"}
-![](https://landsat.gsfc.nasa.gov/wp-content/uploads/2021/12/ldcm_2012_COL-300x168-1.png){fig-align="right"}
+:::{.column width="60%"}
+![](https://landsat.gsfc.nasa.gov/wp-content/uploads/2021/12/ldcm_2012_COL-300x168-1.png){fig-align="center"}
 :::
 ::::
 
-Descargar las escenas [L8 14/01/2020 (979Mb)](https://drive.google.com/file/d/1ytQp-xin1FQr_hqtDJRLgK6g4eXwK-WI/view?usp=sharing) y [L8 02/03/2020 (880Mb)](https://drive.google.com/file/d/1Gg8FbhwpIQR-GyYepM4uw_9IOjEnji_N/view?usp=sharing) y moverlas a `$HOME/gisdata/landsat_data`. **No descomprimir!**
+<!-- Descargar las escenas [L8 14/01/2020 (979Mb)](https://drive.google.com/file/d/1ytQp-xin1FQr_hqtDJRLgK6g4eXwK-WI/view?usp=sharing) y [L8 02/03/2020 (880Mb)](https://drive.google.com/file/d/1Gg8FbhwpIQR-GyYepM4uw_9IOjEnji_N/view?usp=sharing) y moverlas a `$HOME/gisdata/landsat_data`. **No descomprimir!** -->
 
 
 # Historia de la mision Landsat
 
 ![Lanzamientos de satélites Lansat desde 1972](https://landsat.gsfc.nasa.gov/wp-content/uploads/2020-07/Landsat_timeline_20200318_title.gif)
 
-El sistema de escáner multiespectral (MSS) a bordo del Landsats 1-5 disponía de cuatro bandas. El Thematic Mapper (TM) a bordo de Landsats 4 y 5 tenía siete bandas. El Enhanced Thematic Mapper Plus (ETM+) del Landsat 7 tiene 8 bandas y los Landsats 8 y 9 tienen 11 bandas. Fuente: <https://landsat.gsfc.nasa.gov/satellites/landsat-9/landsat-9-bands/>. 
+El sistema de escáner multiespectral (MSS) a bordo del Landsats 1-5 disponía de 
+cuatro bandas. El Thematic Mapper (TM) a bordo de Landsats 4 y 5 tenía siete 
+bandas. El Enhanced Thematic Mapper Plus (ETM+) del Landsat 7 tiene 8 bandas y 
+los Landsats 8 y 9 tienen 11 bandas. Fuente: <https://landsat.gsfc.nasa.gov/satellites/landsat-9/landsat-9-bands/>. 
 
-![Comparación entre las bandas de todos los satélites Landsat](https://landsat.gsfc.nasa.gov/wp-content/uploads/2021/12/all_Landsat_bands.png)
+![Comparación entre las bandas de todos los satélites Landsat](https://landsat.gsfc.nasa.gov/wp-content/uploads/2021/12/all_Landsat_bands.png){width="90%"}
 
 :::{.callout-note}
 Más detalles sobre las misiones Landsat pueden encontrarse en: 
 <https://www.usgs.gov/landsat-missions>
 :::
 
+
 # Manos a la obra
 
 ## Iniciamos GRASS GIS
 
-Iniciamos GRASS GIS en *posgar2007_4_cba/PERMANENT*
+Iniciamos GRASS GIS en el proyecto *posgar2007_4_cba* y mapset *PERMANENT*
 
 ```{python}
 import os
@@ -102,26 +104,40 @@ Corroboramos la proyección
 
 ```{python}
 # check the CRS
-gs.read_command("g.proj", flags="p")
+print(gs.read_command("g.proj", flags="p"))
 ```
 
 ## Crear un nuevo mapset
 
-Creamos un nuevo mapset llamado *landsat8*:
+Para diferenciar sesiones dentro del curso, vamos a crear un nuevo mapset 
+llamado *landsat8*:
 
 ```{python}
 # Create a new mapset
-gs.create_environment(grassdata, project, mapset="landsat8")
+gs.run_command("g.mapset", 
+               mapset="landsat8",
+               flags="c")
 ```
 
-Listamos los mapsets accesibles
+```{python}
+# Check we are in the mapset just created
+gs.run_command("g.mapset",
+               flags="p")
+```
+
+Listamos los mapsets accesibles para corroborar que tenemos acceso a *PERMANENT*
 
 ```{python}
 # list all the mapsets in the search path
-gs.mapsets()
+gs.mapsets(search_path=True)
 ```
 
-Listamos los mapas vectoriales disponibles
+:::{.callout-note}
+Desde cualquier mapset en el que estemos trabajando, siempre vamos a tener
+acceso a *PERMANENT*.
+:::
+
+Listemos los mapas vectoriales disponibles
 
 ```{python}
 # list vector maps in all mapsets in the search path
@@ -130,81 +146,124 @@ gs.list_grouped(type="vector")
 
 ## Región de interés
 
-Extraemos el radio urbano de Córdoba
+Como primer paso para trabajar con datos raster,necesitamos establecer la región 
+computacional. Para ello, vamos a extraer el radio urbano de Córdoba del vector
+de radios urbanos y luego lo vamos a usar para establecer los límites de nuestra
+region computacional.
 
 ```{python}
 # extract Cordoba urban area from `radios_urbanos`
-gs.run_command("v.extract", input="radios_urbanos", where="nombre == 'CORDOBA'", output="radio_urbano_cba")
+gs.run_command("v.extract", 
+               input="radios_urbanos", 
+               where="nombre == 'CORDOBA'", 
+               output="radio_urbano_cba")
 ```
-
-Establecemos la región computacional al radio urbano de Córdoba
 
 ```{python}
 # set the computational region to the extent of Cordoba urban area
-gs.run_command("g.region", flags="p", vector="radio_urbano_cba")
+gs.run_command("g.region", 
+               flags="p", 
+               vector="radio_urbano_cba")
 ```
 
-## Descargar e importar los datos L8
+## Descargar e importar los datos Landsat 8
 
-Instalar la extensión *i.landsat*:
+Entre las extensiones disponibles, hay una extensión 
+[i.landsat](https://grass.osgeo.org/grass-stable/manuals/addons/i.landsat.html), 
+que nos permite buscar, filtrar, descargar, importar y aplicar bandas de calidad
+a imágenes Landsat.
+Para la busqueda y descarga de datos, esta extensión depende de una librería de
+python denominada [landsatxplore](https://github.com/yannforget/landsatxplore).
+
+Desafortunadamente, landsatxplore fue abandonada por su autor, y es difícil de 
+mantener. Estamos considerando utilizar otras opciones, pero es un WIP. Por este
+motivo, vamos a instalar la extensión igualmente porque nos sirve para la 
+importación y enmascarado de pixeles según la calidad.
+
+:::{.callout-note}
+Voluntari@s para actualizar y testear los pull request de landsatxplore o 
+actualizar i.landsat.download para que use otro paquete distinto, son mas que 
+bienvenid@s!!
+:::
 
 ```{python}
 # install i.landsat toolset
-g.extension extension=i.landsat
+gs.run_command("g.extension",
+               extension="i.landsat")
 ```
 
-Buscar escenas de Landsat 8 disponibles
+La búsqueda de escenas se basa en la región computacional definida y funcionaría
+como se detalla a continuación.
 
 ```{python}
 # search for Landsat 8 scenes
-i.landsat.download -l settings=$HOME/gisdata/USGS_SETTING.txt \
-  dataset=landsat_8_c1 clouds=35 \
-  start='2019-10-27' end='2020-03-15'
+# gs.run_command("i.landsat.download", 
+#               settings=os.path.join(homedir, "landsat"),
+#               dataset="landsat_8_c1",
+#               clouds="35",
+#               start="2019-10-27",
+#               end="2020-03-15",
+#               flags="l")
 ```
 
-NO EJECUTAR! Descargar las escenas seleccionadas
+Por defecto, usando el comando anterior sin la opción *l* y proveyendo una carpeta
+de descarga, se descargarían todas las imágenes encontradas anteriormente. 
+Sin embargo, también es posible descargar imágenes seleccionadas via su *id*.
 
 ```{python}
 # download selected scenes
-# i.landsat.download settings=$HOME/gisdata/USGS_SETTING.txt \
-#   id=LC82290822020062LGN00,LC82290822020014LGN00 \
-#   output=$HOME/gisdata/landsat_data
+# gs.run_command("i.landsat.download", 
+#               settings=os.path.join(homedir, "landsat"),
+#               id="LC82290822020062LGN00,LC82290822020014LGN00",
+#               output=os.path.join(homedir, "gisdata", "landsat_data"))
 ```
 
-Imprimir las bandas dentro de la carpeta
+Como el módulo de descarga no está andando y porque la descarga puede tomar mucho 
+tiempo con conexiones lentas, vamos a usar imágenes previamente descargadas.
+Como primer paso vamos a imprimir todas las bandas presentes dentro de la carpeta
+`landsat_data`.
 
 ```{python}
 # print all landsat bands within landsat_data folder
-gs.run_command(i.landsat.import -p input=$HOME/gisdata/landsat_data)
+# (1: projection match, 0: projection does not match)
+gs.run_command("i.landsat.import",
+               input=os.path.join(homedir, "gisdata", "landsat_data"),
+               flags="p")
 ```
 
-Imprimir sólo las bandas seleccionadas con un patrón
+También podemos imprimir sólo las bandas seleccionadas con un patrón.
 
 ```{python}
 # print a selection of bands - might be sloooow
-gs.run_command(i.landsat.import -p input=$HOME/gisdata/landsat_data pattern='B(2|3|4|5|6|8)')
+gs.run_command("i.landsat.import",
+               input=os.path.join(homedir, "gisdata", "landsat_data"), 
+               pattern="B(2|3|4|5|6|8)",
+               flags="p")
 ```
 
-Importar bandas, recortar y reproyectar al vuelo
+Para empezar a trabajar con los datos L8, vamos entonces a importar todas las 
+bandas, recortar a la región y reproyectar al vuelo, ya que vimos que su CRS
+no coincide con el del proyecto donde nos encontramos.
 
 ```{python}
 # import all bands, subset to region and reproject
-gs.run_command(i.landsat.import -r input=$HOME/gisdata/landsat_data extent=region)
+gs.run_command("i.landsat.import", 
+               input=os.path.join(homedir, "gisdata", "landsat_data"), 
+               extent="region",
+               flags="r")
 ```
 
-Listar bandas importadas y revisar metadatos
+Listamos las bandas importadas y revisamos los metadatos de alguna de ellas.
 
 ```{python}
 # list raster maps
-gs.list_grouped(type=raster)["landsat8"]
+gs.list_grouped(type="raster")["landsat8"]
 ```
 
 ```{python}
 # check metadata of some imported bands
-gs.raster_info(map=LC08_L1TP_229082_20200114_20200127_01_T1_B4)
-gs.raster_info(map=LC08_L1TP_229082_20200114_20200127_01_T1_B8)
+gs.raster_info(map="LC08_L1TP_229082_20200114_20200127_01_T1_B4")
 ```
-
 
 ## Pre-procesamiento de datos satelitales
 
@@ -212,82 +271,103 @@ gs.raster_info(map=LC08_L1TP_229082_20200114_20200127_01_T1_B8)
 
 ### De número digital (ND) a reflectancia y temperatura
 
-- Los datos L8 OLI vienen en 16-bit con rango de datos entre 0 y 65535.
+- Los datos L8 OLI vienen en 16-bits con rango de datos entre 0 y 65535.
 - [i.landsat.toar](https://grass.osgeo.org/grass-stable/manuals/i.landsat.toar.html) 
-convierte ND en reflectancia TOA (y temperatura de brillo) para todos los sensores 
-Landsat. Opcionalmente proporciona reflectancia de superficie (BOA) después de la
-corrección DOS. 
+convierte los números digitales (ND) en reflectancia TOA (y temperatura de brillo) 
+para todos los sensores Landsat. Opcionalmente proporciona reflectancia de 
+superficie (BOA) después de la corrección DOS. 
 - [i.atcorr](https://grass.osgeo.org/grass-stable/manuals/i.atcorr.html) proporciona
 un método de corrección atmosférica más complejo para gran variedad de sensores 
 (S6).
 
 
-Definir region computacional a banda de 30m
+Antes de comenzar a procesar los datos, vamos a definir la resolución de la 
+región computacional a una banda de 30 m.
 
 ```{python}
 # set the region to a 30m band
-gs.run_command("g.region", raster="LC08_L1TP_229082_20200114_20200127_01_T1_B4", flags="p")
-
+gs.run_command("g.region", 
+               raster="LC08_L1TP_229082_20200114_20200127_01_T1_B4", 
+               flags="p")
 ```
 
-Convertir DN a reflectancia superficial y temperatura - método DOS
+Ahora sí, convertimos los ND a reflectancia superficial y temperatura usando el 
+método Dark Object Substraction (DOS).
 
 ```{python}
-# convert from DN to surface reflectance and temperature - requires to uncompress data locally
-gs.run_command(i.landsat.toar input="LC08_L1TP_229082_20200114_20200127_01_T1_B"   output="LC08_229082_20200114_toar_B" sensor="oli8" metfile="$HOME/gisdata/landsat_data/LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt"
-method="dos1")
+# convert from DN to surface reflectance and temperature
+gs.run_command("i.landsat.toar",
+               input="LC08_L1TP_229082_20200114_20200127_01_T1_B",
+               output="LC08_229082_20200114_SR_B",
+               sensor="oli8",
+               metfile=os.path.join(homedir, "gisdata", "landsat_data", "LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt"),
+               method="dos1")
 ```
 
-Corroborar info antes y después de la conversión para una banda
+Corroboremos los metadatos antes y después de la conversión ND >> RS para una
+banda.
+
 ```{python}
 # list output maps
-g.list type=raster mapset=. pattern="*toar*"
+gs.list_grouped(type="raster",
+                pattern="*SR*")["landsat8"]
 ```
 
 ```{python}
 # check info before and after for one band
-r.info map=LC08_L1TP_229082_20200114_20200127_01_T1_B3
-r.info map=LC08_229082_20200114_toar_B3
+print(gs.read_command("r.info", 
+                      map="LC08_L1TP_229082_20200114_20200127_01_T1_B3"))
 ```
 
-![Banda 10 de L8 con la paleta de colores *kelvin*](../assets/img/L8_band10_kelvin.png)
+```{python}
+print(gs.read_command("r.info", 
+                      map="LC08_229082_20200114_SR_B3"))
+```
 
-:::{.callout--caution title="Tarea"}
-Ahora, sigan los mismos pasos para la escena del 02/03/2020. 
-¿Qué notan de diferente?
+```{python}
+# Visualize results
+b3_map=gj.InteractiveMap(width = 500, tiles="OpenStreetMap")
+b3_map.add_raster("LC08_L1TP_229082_20200114_20200127_01_T1_B3")
+b3_map.add_raster("LC08_229082_20200114_SR_B3")
+b3_map.add_layer_control(position = "bottomright")
+b3_map.show()
+```
+
+:::{.callout-caution title="Tarea Opcional"}
+Seguir los mismos pasos para la escena del 02/03/2020. ¿Qué notan de diferente?
 :::
+
 
 ### Ajuste de color y composiciones RGB
 
-Ajuste de colores para una composición RGB color natural
+Para lograr una buena visualización en composiciones RGB, primero realizamos un 
+ajuste de colores utilizando el módulo 
+[i.colors.enhance](https://grass.osgeo.org/grass-stable/manuals/i.colors.enhance.html).
 
 ```{python}
 # enhance the colors
-gs.run_command(i.colors.enhance red=LC08_229082_20200114_toar_B4   green=LC08_229082_20200114_toar_B3 blue=LC08_229082_20200114_toar_B2 strength=95)
+gs.run_command("i.colors.enhance",
+               red="LC08_229082_20200114_SR_B4",
+               green="LC08_229082_20200114_SR_B3", 
+               blue="LC08_229082_20200114_SR_B2",
+               strength="95")
 ```
 
-Mostrar la combinación RGB
+Visualicemos la combinacion RGB color natural usando `gj.Map`.
 
 ```{python}
 # display RGB
-rgb = gj.
+rgb_map = gj.Map(width=450, use_region=True)
+rgb_map.d_rgb(red="LC08_229082_20200114_SR_B4",
+              green="LC08_229082_20200114_SR_B3", 
+              blue="LC08_229082_20200114_SR_B2",)
+rgb_map.show()
 ```
 
-
-:::{.callout--caution title="Tarea"}
-Seguir los mismos pasos para una composición falso color 543. 
-Sobre qué bandas debieran realizar el ajuste? 
+:::{.callout-caution title="Tarea"}
+Hagamos una composición falso color 543. ¿Sobre qué bandas debieran realizar el
+ajuste? 
 :::
-
-:::: columns
-:::{.column width="50%"}
-![Composición color natural 432](../assets/img/L8_composite432.png)
-:::
-
-:::{.column width="50%"}
-![Composición falso color 543](../assets/img/L8_composite543.png)
-:::
-::::
 
 ### Enmascarado de nubes con banda QA
 
@@ -295,245 +375,332 @@ Sobre qué bandas debieran realizar el ajuste?
 enteros de 16 bits que representan las combinaciones de superficie, atmósfera y 
 condiciones del sensor que pueden afectar la utilidad general de un determinado 
 pixel. 
-- La extensión [i.landsat.qa](https://grass.osgeo.org/grass-stable/manuals/addons/i.landsat.qa.html) reclasifica la banda QA de Landsat 8 de acuerdo a la calidad del pixel. 
+- La extensión 
+[i.landsat.qa](https://grass.osgeo.org/grass-stable/manuals/addons/i.landsat.qa.html) 
+reclasifica la banda QA de Landsat 8 de acuerdo a la calidad del pixel. 
 
 :::{.callout-note}
 Más información sobre la banda QA de L8 en la [guía de usuario](https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/media/files/LSDS-1619_Landsat8-9-Collection2-Level2-Science-Product-Guide-v5.pdf).
 :::
  
-Crear las reglas para identificar las nubes y sombras de nubes
+Vamos a utilizar i.landsat.qa para crear las reglas necesarias para identificar
+las nubes y sombras de nubes en las escenas L8.
 
 ```{python}
 # create a rule set
-gs.run_command(i.landsat.qa collection=1 cloud_shadow_confidence="Medium,High"   cloud_confidence="Medium,High" output=Cloud_Mask_rules.txt)
+gs.run_command("i.landsat.qa",
+               dataset="landsat_8_c1",
+               cloud_shadow_confidence="Medium,High",
+               cloud_confidence="Medium,High",
+               output=os.path.join(homedir, "Cloud_Mask_rules.txt"))
 ```
 
-Reclasificar la banda QA en función de las reglas
+Con las reglas que creamos anteriormente, reclasificamos la banda QA para obtener 
+un mapa ráster que podamos luego usar como máscara.
 
 ```{python}
 # reclass the BQA band based on the rule set created
-gs.run_command(r.reclass input=LC08_L1TP_229082_20200114_20200127_01_T1_BQA
-  output=LC08_229082_20200114_Cloud_Mask rules=Cloud_Mask_rules.txt)
+gs.run_command("r.reclass",
+               input="LC08_L1TP_229082_20200114_20200127_01_T1_BQA",
+               output="LC08_229082_20200114_Cloud_Mask",
+               rules=os.path.join(homedir, "Cloud_Mask_rules.txt"))
 ```
 
-Reporte del porcentaje de nubes y sombras
+Para estimar la superficie cubierta por nubes y sombras de nubes, usamos el 
+módulo [r.report](https://grass.osgeo.org/grass-stable/manuals/r.report.html).
 
 ```{python}
 # report % of clouds and shadows
-print(gs.read_command(r.report -e map=LC08_229082_20200114_Cloud_Mask units=p))
+print(gs.read_command("r.report",
+                      map="LC08_229082_20200114_Cloud_Mask",
+                      units="p",
+                      flags="e"))
 ```
 
-Mostrar el mapa reclasificado
+Visualizamos el mapa reclasificado.
 
 ```{python}
 # display reclassified map over RGB
-d.mon wx0
-d.rgb \
-  red=LC08_229082_20200114_toar_B4 \
-  green=LC08_229082_20200114_toar_B3 \
-  blue=LC08_229082_20200114_toar_B2
-d.rast LC08_229082_20200114_Cloud_Mask
+rgb_map.d_rast(map="LC08_229082_20200114_Cloud_Mask")
+rgb_map.show()
 ```
 
-:::{.callout--caution title="Tarea"}
-Comparar visualmente la cobertura de nubes con la composición RGB 543.
-:::
+## Fusión de datos/Pansharpening
 
-:::: columns
-:::{.column width="50%"}
-![Composición falso color](../assets/img/L8_composite543.png)
-:::
-
-:::{.column width="50%"}
-![Máscara de nubes](../assets/img/L8_clouds.png)
-:::
-::::
-
-### Fusión de datos/Pansharpening
-
-Vamos a usar la banda PAN (15 m) para mejorar la definición de las bandas 
+Vamos a usar la banda pancromática (15 m) para mejorar la definición de las bandas 
 espectrales de 30 m, por medio de: 
 [i.fusion.hpf](https://grass.osgeo.org/grass-stable/manuals/addons/i.fusion.hpf.html), 
 que aplica un método de adición basado en un filtro de paso alto. 
-Otros métodos están implementados en 
+Otros métodos de pansharpening están implementados en el módulo 
 [i.pansharpen](https://grass.osgeo.org/grass-stable/manuals/i.pansharpen.html).
 
-Instalar la extensión *i.fusion.hpf*
+Como primer paso, instalamos la extensión *i.fusion.hpf*.
 
 ```{python}
 # Install the reqquired addon
-gs.run_command(g.extension extension=i.fusion.hpf)
+gs.run_command("g.extension",
+               extension="i.fusion.hpf")
 ```
 
-Cambiar la región a la banda PAN
+Luego, como vamos a "mejorar" la resolución espacial de las bandas multiespectrales 
+a 15 m, necesitamos alinear la resolución de la región computacional a la banda PAN.
 
 ```{python}
 # Set the region to PAN band (15m)
-gs.run_command(g.region -p raster=LC08_229082_20200114_toar_B8)
+gs.run_command("g.region",
+               raster="LC08_229082_20200114_SR_B8",
+               flags="p")
 ```
 
-Ejecutar la fusión
+... y ejecutamos la fusión.
+
+```{python}
+# list bands
+ms_bands = gs.list_grouped(type="raster", 
+                           pattern="*_SR_B[1-7]")["landsat8"]
+ms_bands
+```
 
 ```{python}
 # Apply the fusion based on high pass filter
-gs.run_command(i.fusion.hpf -l -c pan=LC08_229082_20200114_toar_B8, msx=`g.list type=raster mapset=. pattern=*_toar_B[1-7] separator=,`, suffix=_hpf, center=high, modulation=max, trim=0.0)
+gs.run_command("i.fusion.hpf",
+               pan="LC08_229082_20200114_SR_B8", 
+               msx=ms_bands,
+               suffix="hpf", 
+               center="high", 
+               modulation="max", 
+               trim="0.0", 
+               flags="lc")
 ```
 
-Listar los mapas resultantes usando un patrón de búsqueda
+Finalmente, listamos los mapas resultantes usando un patrón de búsqueda
 
 ```{python}
 # list the fused maps
-gs.list_grouped(type=raster, pattern=*_hpf)["landsat8"]
+gs.list_grouped(type="raster", 
+                pattern="*.hpf")["landsat8"]
 ```
 
-Visualizar las diferencias
+```{python}
+# check info of a pansharpened band
+gs.raster_info("LC08_229082_20200114_SR_B4.hpf")
+```
 
-![Datos originales 30 m y datos fusionados 15 m](../assets/img/L8_mapswipe_hpf.png)
+y visualizamos las diferencias con `gj.InteractiveMap`.
 
 ```{python}
 # display original and fused maps
-
+hpf_map = gj.InteractiveMap(width = 500, tiles="OpenStreetMap")
+hpf_map.add_raster("LC08_229082_20200114_SR_B4")
+hpf_map.add_raster("LC08_229082_20200114_SR_B4.hpf")
+hpf_map.add_layer_control(position = "bottomright")
+hpf_map.show()
 ```
 
-### Índices de agua y vegetación
+## Índices de agua y vegetación
 
-Establecer la máscara de nubes para evitar el cómputo sobre las nubes
+En esta sección vamos a estimar los conocidos índices de vegetación y agua. No
+obstante, necesitamos primero, establecer la máscara de nubes y sombras de nubes
+obtenida anteriormente para evitar el cómputo de los índices sobre estas áreas.
 
 ```{python}
 # Set the cloud mask to avoid computing over clouds
-gs.run_command(r.mask raster=LC08_229082_20200114_Cloud_Mask)
+gs.run_command("r.mask",
+               raster="LC08_229082_20200114_Cloud_Mask")
 ```
 
-Calcular el NDVI y establecer la paleta de colores
+Calculamos el NDVI y establecemos la paleta de colores.
 
 ```{python}
 # Compute NDVI
-r.mapcalc \
-  expression="LC08_229082_20200114_NDVI = \
-  (LC08_229082_20200114_toar_B5_hpf - LC08_229082_20200114_toar_B4_hpf) / \
-  (LC08_229082_20200114_toar_B5_hpf + LC08_229082_20200114_toar_B4_hpf) * 1.0"
+ndvi_formula = "LC08_229082_20200114_NDVI = (LC08_229082_20200114_SR_B5.hpf - LC08_229082_20200114_SR_B4.hpf) / (LC08_229082_20200114_SR_B5.hpf + LC08_229082_20200114_SR_B4.hpf) * 1.0"
+gs.mapcalc(exp=ndvi_formula)
+
 # Set the color palette
-r.colors map=LC08_229082_20200114_NDVI color=ndvi
+gs.run_command("r.colors",
+               map="LC08_229082_20200114_NDVI",
+               color="ndvi")
 ```
 
-Calcular NDWI y establecer la paleta de colores
+Calculamos el NDWI y establecemos la paleta de colores.
 
 ```{python}
 # Compute NDWI
-r.mapcalc expression="LC08_229082_20200114_NDWI = \
-  (LC08_229082_20200114_toar_B5_hpf - LC08_229082_20200114_toar_B6_hpf) / \
-  (LC08_229082_20200114_toar_B5_hpf + LC08_229082_20200114_toar_B6_hpf) * 1.0"
+ndwi_formula = "LC08_229082_20200114_NDWI = (LC08_229082_20200114_SR_B5.hpf - LC08_229082_20200114_SR_B6.hpf) / (LC08_229082_20200114_SR_B5.hpf + LC08_229082_20200114_SR_B6.hpf) * 1.0"
+gs.mapcalc(exp=ndwi_formula)
+
 # Set the color palette
-r.colors map=LC08_229082_20200114_NDWI color=ndwi
+gs.run_command("r.colors",
+               map="LC08_229082_20200114_NDWI",
+               color="ndwi")
 ```
 
-Mostrar los mapas
+Visualizamos los mapas resultantes.
 
 ```{python}
-ndi = gj.InteractiveMap()
-ndi.add_raster()
+ndi = gj.InteractiveMap(width=450, use_region=True)
+ndi.add_raster("LC08_229082_20200114_NDVI")
+ndi.add_raster("LC08_229082_20200114_NDWI")
+ndi.add_layer_control(position = "bottomright")
 ndi.show()
 ```
 
-:::: columns
-:::{.column width="50%"}
-![](../assets/img/L8_ndvi.png)
-:::
-:::{.column width="50%"}
-![](../assets/img/L8_ndwi.png)
-:::
-NDVI y NDWI a partir de datos Landsat 8
-::::
-
-:::{.callout-warning title="Tarea"}
-Estimar NDVI y NDWI para la otra escena usando el módulo [i.vi](https://grass.osgeo.org/grass-stable/manuals/i.vi.html) 
+:::{.callout-warning title="Tarea Opcional"}
+Estimar NDVI y NDWI para la otra escena usando el módulo [i.vi](https://grass.osgeo.org/grass-stable/manuals/i.vi.html).
 :::
 
-### Clasificación No Supervisada
 
+## Clasificación No Supervisada
+
+Los pasos para realizar una clasificación no supervisada en GRASS, implican:
+
+- Asignar semantic labels a las bandas con [r.semantic.label](https://grass.osgeo.org/grass-stable/manuals/r.semantic.label.html) 
+o [r.support](https://grass.osgeo.org/grass-stable/manuals/r.support.html)
 - Agrupar las bandas (i.e., hacer un stack): [i.group](https://grass.osgeo.org/grass-stable/manuals/i.group.html)
 - Generar firmas para *n* número de clases: [i.cluster](https://grass.osgeo.org/grass-stable/manuals/i.cluster.html)
-- Clasificar: [i.maxlik](https://grass.osgeo.org/grass-stable/manuals/i.maxlik.html)
- 
-Listar los mapas usando un patrón
+- Clasificar usando las firmas: [i.maxlik](https://grass.osgeo.org/grass-stable/manuals/i.maxlik.html)
+
+
+#### ¿Qué son los semantic labels?
+
+Los *semantic labels* son etiquetas que podemos agregar a cualquier mapa ráster
+y que nos indican qué variable está representada en ese mapa.
+Estas etiquetas son especialmente relevantes para las imágenes de satélite, 
+ya que nos permiten identificar a qué sensor y banda corresponde el mapa. 
+Son útiles a la hora de trabajar con colecciones de imágenes de satélite y 
+también a la hora de clasificar diferentes escenas. 
+
+Por ejemplo, si generamos firmas espectrales para unas clases usando un 
+determinado conjunto de bandas, estas firmas pueden reutilizarse para 
+clasificar otra escena siempre que las etiquetas semánticas sean las mismas. 
+
+¡Cuidado! Aunque es posible reutilizar las firmas espectrales para cualquier 
+escena con las mismas bandas, los cambios temporales (estaciones, impacto 
+meteorológico) limitan su aplicabilidad sólo a escenas obtenidas más o menos 
+al mismo tiempo.
+
+Probemos entonces, asignar semantic labels a las bandas de L8 y los índices de
+vegetación.
 
 ```{python}
 # list the bands needed for classification
-g.list type=raster mapset=. pattern=*_toar*_hpf
+bands = gs.list_grouped(type="raster",
+                        pattern="*_SR*hpf")["landsat8"]
+bands
 ```
-
-Crear un grupo de imágenes o *stack*
 
 ```{python}
-# add maps to an imagery group for easier management
-i.group group=l8 subgroup=l8 \
- input=`g.list type=raster mapset=. pattern=*_toar*_hpf sep=","`
+# semantic labels list
+labels = ["L8_1", "L8_2", "L8_3", "L8_4", "L8_5", "L8_6", "L8_7"]
 ```
 
-Obtener estadísticos -firmas- para las *n* clases de interés con una muestra
+Para bandas de satélites como Landsat y Sentinel, usamos el comando [r.sematic.label](https://grass.osgeo.org/grass-stable/manuals/r.semantic.label.html) que toma metadatos sobre los labels de [i.band.library](https://grass.osgeo.org/grass-stable/manuals/i.band.library.html). Es posible agregar bandas de otros satélites siempre que se siga un determinado formato.
+
+```{python}
+# add semantic labels to bands
+gs.run_command("r.semantic.label",
+               map=bands,
+               semantic_label=labels, 
+               operation="add")
+```
+
+Para cualquier otro ráster al que deseemos agregar una etiqueta, usamos [r.support](https://grass.osgeo.org/grass-stable/manuals/r.support.html) que nos permite agregar distintos metadatos a nuestros datos en GRASS.
+
+```{python}
+# add semantic labels to indices
+for i in ["NDVI", "NDWI"]:
+    gs.run_command("r.support", 
+                   map=f"LC08_229082_20200114_{i}",
+                   semantic_label=i)
+```
+
+Imprimimos los semantic labels
+
+```{python}
+gs.raster_info("LC08_229082_20200114_SR_B7.hpf")["semantic_label"]
+```
+
+Creamos un grupo de imágenes o *stack* con las bandas 1 a 7 más el NDVI y el NDWI.
+
+```{python}
+# add ndvi and ndwi to the list of bands
+for i in ["NDVI", "NDWI"]:
+    bands.append(f"LC08_229082_20200114_{i}")
+
+bands
+```
+
+```{python}
+# create an imagery group with the list of bands
+gs.run_command("i.group",
+               group="l8",
+               subgroup="l8",
+               input=bands)
+```
+
+```{python}
+# print elements within the group 
+gs.run_command("i.group",
+               group="l8",
+               flags="l")
+```
+
+Obtenemos estadísticos -firmas- para las *n* clases de interés con una muestra
 de pixeles
 
 ```{python}
 # statistics for unsupervised classification
-i.cluster group=l8 subgroup=l8 \
- sig=l8_hpf \
- classes=7 \
- separation=0.6
+gs.run_command("i.cluster",
+               group="l8",
+               subgroup="l8",
+               sig="l8_hpf",
+               classes="7",
+               separation="0.6")
 ```
 
-Realizar la clasificación no supervisada de toda la imagen
+Usamos las firmas espectrales para realizar la clasificación no supervisada de
+toda la imagen
 
 ```{python}
 # Maximum Likelihood unsupervised classification
-i.maxlik group=l8 subgroup=l8 \
- sig=l8_hpf \
- output=l8_hpf_class \
- rej=l8_hpf_rej
+gs.run_command("i.maxlik",
+               group="l8",
+               subgroup="l8",
+               sig="l8_hpf",
+               output="l8_hpf_class",
+               rej="l8_hpf_rej")
 ```
-
-Mostrar el mapa clasificado
 
 ```{python}
-
+# Mostrar el mapa clasificado con `InteractiveMap`
+clas = gj.InteractiveMap(width=450, use_region=True)
+clas.add_raster("l8_hpf_class")
+clas.add_layer_control(position = "bottomright")
+clas.show()
 ```
 
-![](../assets/img/L8_unsup_class.png)
 
 
 ### Información derivada adicional
 
-Información derivada adicional podría obtenerse con los siguientes módulos, 
-entre otros:
+Usualmente, para realizar clasificaciones, derivamos muchas variables a partir 
+de las bandas de sensores satelitales multiespectrales. Otra información podría
+obtenerse con los siguientes módulos, entre otros:
 
-- medidas de textura: [r.texture](https://grass.osgeo.org/grass-stable/manuals/r.texture.html), 
-- medidas de diversidad: [r.diversity](https://grass.osgeo.org/grass-stable/manuals/addons/r.diversity.html), 
+- medidas de textura: 
+[r.texture](https://grass.osgeo.org/grass-stable/manuals/r.texture.html), 
+- medidas de diversidad: 
+[r.diversity](https://grass.osgeo.org/grass-stable/manuals/addons/r.diversity.html), 
 - estadísticas locales con información de contexto: [r.neighbors](https://grass.osgeo.org/grass-stable/manuals/r.neighbors.html),
 - transformación tasseled cap: [i.tasscap](https://grass.osgeo.org/grass-stable/manuals/i.tasscap.html),
 - etc.
 
 
-### Clasificación en GRASS GIS
+# Info y ejercicios de clasificación en GRASS GIS
 
 - [Topic classification](http://grass.osgeo.org/grass-stable/manuals/topic_classification.html) en los manuales de GRASS GIS
 - [Image classification](http://grasswiki.osgeo.org/wiki/Image_classification) en la wiki
 - [Ejemplos de clasificación](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/units/28.html) en el curso dictado en Noruega en 2018
-- [Clasificación con Random Forest](https://neteler.gitlab.io/grass-gis-analysis/03_grass-gis_ecad_randomforest/) en la presentación del OpenGeoHub Summer School 2018 en Praga
 - [Detección de cambios con Landsat](https://veroandreo.gitlab.io/post/jan2021_ilandsat_tutorial/)
-
-
-## Semantic labels
-
-Un concepto bastante nuevo en GRASS GIS son las etiquetas semánticas o 
-*semantic labels*. Éstas son especialmente relevantes para las imágenes de 
-satélite, ya que nos permiten identificar a qué sensor y banda corresponde una 
-trama determinada. Estas etiquetas son especialmente relevantes a la hora de 
-trabajar con colecciones de imágenes de satélite y también a la hora de 
-clasificar diferentes escenas. Lo veremos más adelante, pero al generar una 
-firma espectral para un determinado conjunto de bandas, puede reutilizarse para 
-clasificar otra escena siempre que las etiquetas semánticas sean las mismas. 
-Cuidado: aunque es posible reutilizar las firmas espectrales para cualquier 
-escena con las mismas bandas, los cambios temporales (estaciones, impacto 
-meteorológico) limitan su aplicabilidad sólo a escenas obtenidas más o menos 
-al mismo tiempo.
-
+- [Taller GRASS para sensado remoto en FOSS4G 2022](https://github.com/veroandreo/foss4g2022_grass4rs)
 

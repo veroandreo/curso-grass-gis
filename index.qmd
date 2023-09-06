@@ -156,6 +156,10 @@ sudo apt install grass grass-gui grass-dev
 
 * Datos de muestra: 
   * <https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip>
+* Mapas raster:
+
+* Mapa vectorial:
+
 
 ## Día 2 al 5: online
 
@@ -192,8 +196,17 @@ y ya están listos para comenzar!
 En Google Colab no tenemos preinstalado el software necesario, así que necesitarás
 ejecutar la notebook para instalarlo.
 
+### Datos necesarios
+
+* Copiarse al drive la siguiente carpeta:
+
+
+## Agradecimientos
+
+- A todos los desarrolladores, usuarios y entusiastas del software libre y de código abierto (FOSS)
+- A la [NASA](https://www.nasa.gov/) y la [ESA](http://www.esa.int/) por poner a disposición del público los datos y productos satelitales
+- Al [IGN](https://www.ign.gob.ar/) e [IDECOR](https://idecor.cba.gov.ar/) por las capas vectoriales y de cobertura de acceso libre y gratuito
 
 <!-- ## References -->
 <!-- ::: {#refs} -->
 <!-- ::: -->
-

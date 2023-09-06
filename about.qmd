@@ -17,32 +17,41 @@ about:
 ::: {.grid}
 
 ::: {.g-col-12 .g-col-md-12}
-## {{< fa solid dna >}} About 
-[**Verónica Andreo**](https://veroandreo.gitlab.io/) is a biologist. She holds 
-a PhD in Biological Sciences and an MSc in Remote Sensing and GIS applications. 
-She works as a researcher for [CONICET](https://www.conicet.gov.ar/) and 
-lecturer at [Gulich Institute](http://ig.conae.unc.edu.ar/) - Argentinian Space
-Agency [(CONAE)](https://www.argentina.gob.ar/ciencia/conae) in Córdoba, Argentina.
-Her research is focused on uncovering 
-**environmental drivers of vector-borne disease outbreaks**. 
-She is mostly interested in those environmental features 
-that can be derived 
-**by means of satellite image analysis, remote sensing time series and GIS-based techniques**. 
+## {{< fa solid dna >}} Sobre la disertante 
+[**Verónica Andreo**](https://veroandreo.gitlab.io/) es Licenciada y Doctora 
+en Ciencias Biológicas segresada de la Universidad Nacional de Río Cuarto 
+([UNRC](https://www.unrc.edu.ar/)). Además, cuenta con una maestría en 
+Aplicaciones de la Información Espacial de la Universidad Nacional de Córdoba
+([UNC](https://www.unc.edu.ar/)). Desde 2018, se desempeña como investigadora de
+[CONICET](http://www.conicet.gov.ar) y docente de postgrado en el 
+[Instituto Gulich](https://ig.conae.unc.edu.ar/) dependiente de la
+[(CONAE)](https://www.argentina.gob.ar/ciencia/conae) y la UNC.
 
+Su investigación esta enfocada en las aplicaciones del sensado remoto y los 
+sistemas de información geográfica (SIG) a problemas relacionados con la Salud 
+Pública y los reservorios y vectores de enfermedades. Su principal
+interés son los determinantes ambientales de la distribución y riesgo de las
+enfermedades vectoriales y zoonóticas, especialmente aquellos determinantes
+que pueden derivarse del análisis de imágenes satelitales, series de tiempo
+de productos satelitales y aprendizaje automático. 
 
-Verónica is part of the [GRASS GIS](https://grass.osgeo.org/) Development team
-and currently serves as the 
-[PSC chair](https://grass.osgeo.org/news/2021_02_05_new_grass_psc/). 
-She is a strong advocate for [OSGeo](https://www.osgeo.org/) and free and open 
-source software for geo-spatial (FOSS4G). She was the Program Committee
-chair for [**FOSS4G 2021**](2021.foss4g.org/). Among other things, she has 
-volunteered as a mentor for GRASS GIS in the 
-[Google Code-In contest](https://codein.withgoogle.com/) 
-introducing high school students into the Open Source world.
+Vero forma parte del 
+[GRASS GIS Development team](https://grass.osgeo.org/about/community) y 
+desempeña el rol de chair del proyecto desde Febrero 2021.
+Además, es Charter member de [OSGeo](http://www.osgeo.org/) y promotora del 
+software libre y de código abierto en general, y de [FOSS4G](http://foss4g.org/) 
+en especial. 
+Fue coordinadora del Comité de Programa de la [**FOSS4G 2021**](2021.foss4g.org/) 
+que se realizó en Argentina. Entre otras cosas, ha sido voluntaria como mentora 
+para GRASS GIS en el concurso [Google Code-In](https://codein.withgoogle.com/) 
+introduciendo a estudiantes de secundaria en el mundo del software de código 
+abierto. 
+También dicta cursos y talleres introductorios y avanzados sobre los módulos 
+temporales de GRASS GIS y sus aplicaciones.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-## {{< fa solid heart >}} Interests 
+## {{< fa solid heart >}} Intereses 
 
 - Remote sensing time series
 - Image analysis
@@ -53,7 +62,7 @@ introducing high school students into the Open Source world.
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-## {{< fa solid graduation-cap >}}  Education
+## {{< fa solid graduation-cap >}}  Educación
 
 - **PhD in Biological Sciences**. *National University of Río Cuarto*. 2012.
 - **MSc in Spatial Applications for Early Warning and Response to Emergencies**. 

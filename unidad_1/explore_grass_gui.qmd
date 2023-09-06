@@ -1,270 +1,256 @@
 ---
 title: "Explorando la GUI de GRASS GIS"
 author: "Verónica Andreo"
-title-slide-attributes: 
-  data-background-color: "#1A428A"
+date: today
 format:
-  revealjs: 
-    hash-type: number 
-    slide-number: true
-    chalkboard: 
-      buttons: true
-    preview-links: auto
-    logo: "../assets/img/G-UNC-CONAE-C.png"
-    theme: [default, gulich]
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
 ---
 
-
-## Ejercicio: Familiarizándonos con GRASS GIS
-
-
-## Contenidos
-
-- Estructura de la base de datos GRASS GIS
-- Datos de muestra: *North Carolina sample location*
-- Iniciamos GRASS y exploramos su interfaz gráfica
-- Abrir mapas raster y vectoriales
-- Consultas sobre mapas raster y vectoriales
-- Visualización 3D
-- Visualización de mapas base (WMS)
-- Composición cartográfica
+En ésta primera sesión práctica, vamos a familiarizarnos con las diferentes
+interfaces de GRASS GIS, especialmente la terminal y la GUI.
+Vamos a explorar los datos de muestra más clásicos de GRASS GIS y en los que
+se basan la mayoría de los ejemplos en los manuales: el famoso 
+**North Carolina sample project**. Así visualizaremos algunos mapas vectoriales
+y ráster, haremos consultas sobre los mismos y configuraremos la región 
+computacional, entre otras cosas. 
 
 
-## Datos de muestra: 
-#### *North Carolina sample location*
 
 
-- [**North Carolina full**](https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip)
-- Crear un directorio en *`$HOME`* (o dentro de Documentos) con el nombre *`grassdata`*
-- Descomprimir el archivo *`nc_spm_08_grass7.zip`* dentro de *`grassdata`*
+# Iniciamos GRASS GIS
 
+Para iniciar GRASS localmente, podemos:
 
-Usuarios Windows: la descompresión crea un nivel extra de subdirectorios
-
-
-## Iniciamos GRASS GIS
-
-- Click sobre el ícono de GRASS GIS (*MS Windows: Inicio @fa[arrow-right] OSGeo4W @fa[arrow-right] GRASS GIS*)
-- Abrir una terminal o la *OSGeo4W Shell* y escribir:
-
+- Click sobre el ícono de GRASS GIS (*En MS Windows: Inicio >> OSGeo4W >> GRASS GIS*)
+- Abrir una terminal o la *OSGeo4W Shell* si estás en MS Windows y escribir:
 
 ```bash
-# abrir GRASS con el GUI Location wizard
 grass
-
-# abrir GRASS en modo texto, i.e., solo veremos la terminal
-grass --text $HOME/grassdata/nc_spm_08_grass7/user1/
 ```
 
----
+![Ejecutando GRASS por primera vez](../assets/img/grass_gui_first_time_open.png)
 
-Si no han descargado el location de North Carolina (NC)... no hay problema!
+Dado que para iniciar, el software requiere la ruta a un mapset, si ésta no es
+provista o no existe, GRASS crea automáticamente un directorio `grassdata` con
+un proyecto por defecto llamado `ẁorld_latlong_wgs84` donde encontramos el 
+mapset `PERMANENT` y un mapa vectorial de ejemplo. Procedemos entonces a 
+descargar unos datos de muestra para empezar a trabajar.
 
-![Startup-download location](../assets/img/download_location_button.png)
+#### *North Carolina sample project*
 
-![Download location](../assets/img/download_location.png)
+{{< fa download >}} Descargamos los datos de muestra [**North Carolina full**](https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip) 
+y los descomprimimos dentro del directorio `grassdata`
 
----
+Es posible descargar varios datos de muestra directamente desde la GUI:
 
-GRASS GIS GUI
+![](../assets/img/download_location.png){fig-align="center"}
+Una vez que la descarga termina, el nuevo proyecto es automáticamente 
+descomprimido dentro de la base de datos de GRASS o `grassdata`.
 
+![](../assets/img/download_location_finished.png){fig-align="center"}
 
-<img src="../assets/img/empty_gui_explained.png" width="88%">
+# Exploramos la GUI
 
+Para comenzar a explorar la GUI vamos a cambiarnos al mapset PERMANENT del
+proyecto que acabamos de descargar. Para eso, hacemos click derecho sobre
+`nc_spm_08_grass7` >> `PERMANENT` y seleccionamos *Switch mapset* en el menú
+contextual. 
 
----
+![](../assets/img/switch_locations.png){fig-align="center"}
 
-... y la Terminal
+Ahora estamos entonces en el proyecto que descargamos.
 
+![](../assets/img/current_mapset.png){fig-align="center"}
 
-<img src="../assets/img/empty_terminal.png" width="80%">
+## Obtener información sobre el CRS
 
----
+![](../assets/img/projection_info.png){width=65%}
 
-### Obtener información sobre el CRS
-
-<img src="../assets/img/projection_info.png" width="65%">
-
-<br>
-o simplemente desde la terminal:
+... o simplemente desde la terminal:
 
 ```bash
 g.proj -p
 ```
 
-## Abrir mapas raster y vectoriales
+## Listar mapas
 
-Muchas opciones:
-- Desde el menú principal: File @fa[arrow-right] Map display @fa[arrow-right] Add raster|vector
-- Desde los íconos de la barra de tareas del Layer Manager
-- Desde la pestaña *Consola* del Layer Manager
-- Doble-click sobre el mapa en la pestaña *Datos* del Layer Manager 
-- Desde la terminal, llamando monitores wx: [*d.mon*](https://grass.osgeo.org/grass-stable/manuals/d.mon.html)
+Como vimos al principio para listar "cosas" dentro de la base de datos de
+GRASS, usamos [g.list](https://grass.osgeo.org/grass-stable/manuals/g.list.html). 
+Probemos escribir los siguientes comandos en la Consola de la GUI o en la 
+terminal:
 
----
+```{bash}
+# lista de los mapas raster
+g.list type=raster
+# lista de los mapas vectoriales
+g.list type=vector
+```
 
-> **Tarea** 
->
-> Probar las diferentes maneras de abrir mapas en GRASS GIS
+:::{.callout-caution title="Tarea"}
+Qué otros tipos de elementos podemos listar con `g.list`?
+:::
 
+Ahora, busquemos mapas raster cuyo nombre comienza con "el", pero que no sean
+el mapa "elevation".
+
+```{bash}
+# listar con un patrón
+g.list type=raster pattern="el*" exclude=elevation
+```
+
+:::{.callout-caution title="Tarea"}
+Usen `g.list` y expresiones regulares para listar únicamente los mapas 
+vectoriales P079214 y P079215
+:::
+
+## Visualizar mapas ráster y vectoriales
+
+Tenemos muchas opciones para visualizar mapas:
+
+- Desde el menú principal: 
+**File >> Map display >> Add raster|vector** (Shift+Ctrl+R ó Shift+Ctrl+V)
+- Desde los íconos de la barra de tareas del panel *Layers*
+- Doble-click sobre el mapa en el panel *Data Catalog*
+- Desde la pestaña *Consola* con los comandos `d.vect|rast`
+- Desde la pestaña *Python* con `AddLayer('map_name')`
+- Desde la terminal negra llamando monitores wx con  [*d.mon*](https://grass.osgeo.org/grass-stable/manuals/d.mon.html) + 
+`d.vect|rast`
+
+:::{.callout-caution title="Tarea"}
+Probar las diferentes maneras de visualizar mapas en GRASS GIS y explorar las
+opciones de zoom al mapa y zoom a la región del menú del panel *Map Display*.
+
+![](../assets/img/zoom_map_and_region.png){width=90%}
+:::
 
 ## Invocar comandos de GRASS GIS
 
+Hay diferentes opciones para invocar comandos o herramientras de GRASS GIS, 
+tanto desde la GUI como desde la terminal. 
+
 - Desde la interfaz gráfica (GUI): 
-  - menú principal del Layer Manager
-  - pestaña *Console*
-  - pestaña *Modules*
+  - seleccionando desde el menú principal
+  - tipeando en la pestaña *Console*
+  - explorando el árbol de herramientas o buscando por nombre o palabra clave en la pestaña *Tools*
   
 - Desde la terminal: 
   - tipear la primera letra o algunas letras del comando + `<tab><tab>` para opciones y autocompletado
 
----
+:::{.callout-caution title="Tarea"}
+- Ejecutar `r.univar map=elevation` desde la GUI (Raster >> Reports and 
+statistics)
+- Ejecutar `r.univar map=elevation` desde la pestaña *Console*
+- Escribir `r.un` en la terminal + `<tab><tab>`, luego `<Enter>`
+- Ejecutar `r.univar map=elevation` en la terminal
+:::
 
-> **Tarea**
->
-> - Ejecutar `r.univar map=elevation` desde la GUI (Menú Raster > Reports and statistics)
-> - Ejecutar `r.univar map=elevation` desde la pestaña *Console*
-> - Escribir `r.un` en la terminal + `<tab><tab>`, luego `<Enter>`
-> - Ejecutar `r.univar map=elevation` en la terminal
+Al ejecutar comandos desde la pestaña Consola en la GUI, tenemos la posibilidad 
+de guardar tanto las salidas de texto de los comandos como la historia de 
+comandos ejecutados desde allí. Esto es equivalente a ejecutar `history` en la
+terminal.
 
----
+![](../assets/img/log_file_button.png){width=85% fig-align="center"}
 
-2 cosas para destacar en la GUI:
+Por otra parte, al ejecutar los comandos desde la interfaz gráfica de cada uno
+de ellos podemos ver cómo con cada parámetro que definimos, se va construyendo
+el comando con la sintaxis de GRASS. Éstos se pueden copiar y pegar en un 
+archivo de texto para después modificar o volver a ejecutar, sin necesidad de
+hacer todos los *clicks*.
 
+![](../assets/img/copy_button.png){width=85% fig-align="center"}
 
-<img src="../assets/img/log_file_button.png" width="85%">
+## Consultas sobre mapas 
 
-*Log file* y *Save* en la consola de la GUI
-
-
-![Copy button](../assets/img/copy_button.png)
-
-Botón *Copy* en la GUI de cada comando
-
-
-## Ayuda
-
-- Desde el menú principal `Help`
-- En la GUI de cada comando
-- `<comando> --help` en la terminal para obtener la descripción de parámetros y opciones
-- `g.manual <comando>` para acceder al manual online
-
----
-
-> **Tarea** 
-> 
-> Obtener ayuda para `r.grow.distance` y `v.what.rast`. Para qué se usan? Cuáles son sus parámetros y opciones?
-
-
-## Consultas sobre mapas raster
-
-![Query raster map](../assets/img/query_maps.png)
-
+![](../assets/img/query_raster_maps.png)
 
 ## Consultas sobre mapas vectoriales
 
-![Query vector map](../assets/img/query_vector_maps.png)
-
+![](../assets/img/query_vector_maps.png)
 
 ## Tabla(s) de atributos de mapas vectoriales
 
-<img src="../assets/img/vector_attr_table.png" width="85%">
+![](../assets/img/vector_attr_table.png)
 
----
-
-> **Tarea**
->
-> - Abrir el mapa vectorial `zipcode`
-> - Cambiar el color de las áreas
-> - Seleccionar sólo los límites y mostrarlos con otro color
-> - Mostrar sólo los valores de `cat` entre 1 y 40
-> - Construir una consulta SQL con al menos dos condiciones
+:::{.callout-caution title="Tarea"}
+- Abrir el mapa vectorial `zipcode`
+- Cambiar el color de las áreas
+- Seleccionar sólo los límites (boundaries) y mostrarlos con otro color
+- Mostrar sólo los valores de `cat` entre 1 y 40
+- Construir una consulta SQL con al menos dos condiciones
+:::
 
 
-## Explorando los datos de muestra y la región computacional
+## Región computacional
+
+La **región computacional** es la configuración de límites del área de análisis 
+y resolución espacial (raster).
+
+![](../assets/img/region.png)
+
+Imprimamos la region computacional actual:
 
 ```bash
-# lista de los mapas raster
-g.list rast
-# lista de los mapas vectoriales
-g.list vect
-# imprimir la región computacional
 g.region -p
 ```
 
----
-
-> **Tareas**
->
->- Explorar la ayuda de *r.info* y *v.info* y obtener información básica sobre un mapa raster y un mapa vectorial
->- Cambiar la región computacional actual a un mapa vectorial e imprimir los nuevos ajustes
->- Alinear la resolución de la región computacional a un mapa raster e imprimir los nuevos ajustes para comprobar
+:::{.callout-caution title="Tarea"}
+1. Cambiar la región computacional actual a un mapa vectorial e imprimir los 
+nuevos ajustes.
+2. Alinear la resolución de la región computacional a un mapa raster e imprimir 
+los nuevos ajustes para comprobar.
+3. Comfiguremos la region computacional al mapa `elevation`, imprimamos su 
+estadistica univariada, luego cambiemos la region computacional 
+desde el *Map Display* e imprimimos la estadistica del mapa una vez más... 
+qué notan?
+:::
 
 
 ## Visualización 3D
 
-<img src="../assets/img/3d_view.png" width="95%">
+![](../assets/img/3d_view.png){width=95%}
 
----
-
-> **Tareas**
->
-> - Abrir el raster `elevation`
-> - Cambiar a *Vista 3D* en la ventana *Map Display*
-> - Explorar las opciones disponibles en la nueva pestaña 3D que aparece en el *Layer Manager*
-
----
-
-## Visualizar mapas base WMS
-
-Paso 1
-<img src="../assets/img/add_wms_1.png" width="95%">
-
-
-Paso 2
-<img src="../assets/img/add_wms_2.png" width="85%">
-
-
-## Visualizar mapas base WMS
-
-<img src="../assets/img/add_wms_3.png" width="95%">
-
----
-
-> **Tarea**
->
-> - Explorar el área, acercar y alejar
-> - Abrir y mostrar un mapa vectorial sobre la capa WMS (**Sugerencia**: Ajustar la opacidad del mapa vectorial)
+:::{.callout-caution title="Tarea"}
+- Cambiar a *Vista 3D* en la ventana *Map Display*.
+- Explorar las opciones disponibles en la nueva pestaña 3D que aparece en el 
+panel *Layers*.
+:::
 
 
 ## Composición cartográfica en la GUI
 
-> **Tarea**
->
->  - Desplegar los mapas `elevation` y `roadsmajor`
->  - Superponer una grilla
->  - Agregar *labels* a los caminos (**Sugerencia**: botón derecho sobre el nombre del mapa en el *Layer Manager*)
->  - Agregar las leyendas para el mapa raster y vectorial
->  - Agregar barra de escala
->  - Agregar símbolo indicando el *Norte*
->  - Agregar título al mapa
 
----
+:::{.callout-caution title="Tarea"}
+- Desplegar los mapas `elevation` y `roadsmajor`.
+- Superponer una grilla.
+- Agregar *labels* a los caminos (**Sugerencia**: botón derecho sobre el nombre 
+del mapa en el *Layer Manager*).
+- Agregar las leyendas para el mapa raster y vectorial.
+- Agregar barra de escala.
+- Agregar símbolo indicando el *Norte*.
+- Agregar título al mapa.
+- Exportar el resultado en formato png.
+:::
 
-<img src="../assets/img/map_decorations_task.png" width="80%">
+![](../assets/img/map_decorations_task.png){width=80%}
 
----
 
-> **Tarea** 
->
-> Crear un mapa usando el compositor cartográfico ([g.gui.psmap](https://grass.osgeo.org/grass-stable/manuals/g.gui.psmap.html)) y guardar las instrucciones en un archivo .psmap.
+## Ayuda
 
----
 
-<img src="../assets/img/gummy-question.png" width="45%">
+Cómo obtenemos ayuda sobre los módulos de GRASS GIS?
 
----
+- Desde el menú principal `Help` de la GUI.
+- En la GUI de cada comando.
+- `<comando> --help` en la terminal o en la pestaña *Consola* para obtener la 
+descripción de parámetros y opciones del módulo.
+- `g.manual <comando>` para acceder al manual online.
 
-**Gracias por su atención!!**
 
-![GRASS GIS logo](../assets/img/grass_logo_alphab.png)
+:::{.callout-caution title="Tarea"}
+Obtener ayuda para `r.grow.distance` y `v.what.rast`. Para qué se usan? 
+Cuáles son sus parámetros y opciones?
+:::
+
