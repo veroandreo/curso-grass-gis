@@ -114,73 +114,68 @@ mundo para una amplia gama de aplicaciones.
 
 # Metodología
 
-El curso es principalmente *práctico*. 
+El curso es principalmente **práctico**. 
 Salvo el primer día, se trabajará mayormente con Jupyter notebooks. 
-Las mismas podrán ejecutarse de manera local, en Google Colab o 
-en la plataforma The Whole Tale. 
-Las personas participantes necesitan traer sus laptops con el software 
-instalado y los datos descargados de antemano, ya que no habrá instancia
-de instalación de software durante el curso. 
+Las mismas podrán ejecutarse de manera local, en 
+[Google Colab](https://colab.research.google.com/) o 
+en la plataforma [The Whole Tale](https://wholetale.org/). 
+
+Las personas participantes necesitan traer sus laptops con el 
+**software instalado y los datos descargados de antemano**, ya que 
+*no se ha planificado una instancia de instalación de software* durante 
+el curso. 
 
 El curso es de un **nivel intermedio**. Se asumen conocimientos
 básicos de teledetección, SIG, línea de comandos, Python y R.
 
-## Dia 1: localmente
+:::{.callout-important}
+Quienes prefieran ejecutar todo el curso de manera local, es necesario que
+instalen una serie de paquetes que se detallan en la @sec-software. 
 
-Para el **primer día del curso, necesitamos ejecutar GRASS GIS de manera local**.
-Si bien la mayor parte del material del taller se puede ejecutar teóricamente en 
-todas las plataformas, algunas partes requieren herramientas que suelen ser más 
-difíciles de configurar en Windows. Por lo tanto, para quien desee ejecutar todo
-el curso de manera local recomendamos usar **entornos Linux/Unix**.
+Si bien la mayor parte del material del taller se puede ejecutar *teóricamente*
+en todas las plataformas, algunas partes requieren herramientas que pueden ser
+más difíciles de configurar en Windows. 
 
-### Software necesario
+Por lo tanto, para quien desee ejecutar
+todo el curso de manera local **recomendamos trabajar en entornos Linux/Unix**.
+:::
 
-* GRASS GIS >= v8.2.0
-* Python >= 3.7 con los siguientes paquetes:
-  * jupyterlab, numpy, matplotlib, seaborn, scikit-learn, scipy, pandas, folium
-* R >= 4.2 con los siguientes paquetes:
-  * rgrass, sf, terra, raster, mapview, SDMtune, biomod2, dismo, usdm, zeallot, ggpubr, rJava
-* QGIS
+## Dia 1: Ejecutamos GRASS localmente
 
-#### Nota para usuarios Ubuntu 
+#### Software necesario
 
-Usar el PPA inestable de ubuntugis para obtener la última 
-versión de GRASS GIS:
-```
-sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-sudo apt update
-sudo apt install grass grass-gui grass-dev
-```
+Para el primer día del curso, **vamos a ejecutar GRASS GIS de manera local**.
+Por lo tanto, necesitamos traer 
+[**GRASS GIS versión >= 8.2.0**](https://grass.osgeo.org/download/) y 
+[**QGIS**](https://www.qgis.org/en/site/forusers/download.html) previamente
+instalados.
 
-### Datos necesarios
+#### Datos necesarios
 
-* Datos de muestra: 
-  * <https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip>
-* Mapas raster:
-
-* Mapa vectorial:
+* Descargar el 
+[archivo comprimido (~150 Mb)](https://drive.google.com/file/d/1cAZZ3M8osHGkJA6gM0VETcVJBru36yrt/view?usp=sharing) que incluye los datos de muestra para utilizar durante el primer día. 
 
 
-## Día 2 al 5: online
+## Día 2 al 5: Ejecutamos GRASS online
 
-**El resto del curso se ejecutará en línea** ya sea dentro de la plataforma 
-[**Whole Tale**](https://wholetale.org/) o en Google Colab. 
+El resto del curso se ejecutará **con notebooks en línea** ya sea dentro de la 
+plataforma [**Whole Tale**](https://wholetale.org/) o en 
+[**Google Colab**](https://colab.research.google.com/). 
 
-Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS) 
-financiada por NSF para construir una plataforma escalable y multiusuario de
-código abierto, basada en la web para investigaciones reproducibles. 
-Permite la creación, publicación y ejecución de *tales*: 
-objetos de investigación ejecutables que capturan datos, código y el 
-entorno de software completo utilizado para producir los resultados de la 
-investigación. También es fantástico para enseñar, ya que los participantes 
-no necesitan instalar todos los paquetes de software necesarios. 
-¡Solo necesitan registrarse con un correo electrónico institucional o personal 
-y ya están listos para comenzar!
+<!-- Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)  -->
+<!-- financiada por NSF para construir una plataforma escalable y multiusuario de -->
+<!-- código abierto, basada en la web para investigaciones reproducibles.  -->
+<!-- Permite la creación, publicación y ejecución de *tales*:  -->
+<!-- objetos de investigación ejecutables que capturan datos, código y el  -->
+<!-- entorno de software completo utilizado para producir los resultados de la  -->
+<!-- investigación. También es fantástico para enseñar, ya que los participantes  -->
+<!-- no necesitan instalar todos los paquetes de software necesarios.  -->
+<!-- ¡Solo necesitan registrarse con un correo electrónico institucional o personal  -->
+<!-- y ya están listos para comenzar! -->
 
 **Whole Tale:** 
 
-1. Ir a [Curso GRASS GIS
-2023](https://dashboard.wholetale.org/run/647a2d67131e6c800db54dd7?tab=metadata)
+1. Ir a [Curso GRASS GIS 2023]()
 2. Log in (hay diferentes opciones)
 3. Ejecutar la *Tale* (botón azul arriba a la derecha)
 4. Confirmar *Copy* y *Run Tale*
@@ -189,23 +184,53 @@ y ya están listos para comenzar!
 
 **Google Colab:**
 
-1. File -> Open notebook
-2. Seleccionar Github
-3. Pegar https://github.com/veroandreo/curso-grass-gis/blob/main/install_colab.ipynb
+1. Open colab: <https://colab.research.google.com/>
+2. File >> Open notebook
+3. Seleccionar "Github"
+4. En Repositorios poner: **veroandreo/curso-grass-gis**
 
-En Google Colab no tenemos preinstalado el software necesario, así que necesitarás
-ejecutar la notebook para instalarlo.
+![Abrir el repo del curso en Colab](assets/img/open_colab.png){width=85% fig_align="center"}
+
+En Google Colab no tenemos preinstalado el software necesario, así que 
+necesitaremos reinstalar en cada sesión. Pero... don't worry! Estará todo
+en las notebooks.
 
 ### Datos necesarios
 
-* Copiarse al drive la siguiente carpeta:
+* Descargar el [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
+con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para 
+usar.
 
+# Software necesario para ejecutar el curso completo localmente {#sec-software}
 
-## Agradecimientos
+* **GRASS GIS >= 8.2.0**
+* **Python >= 3.7** con los siguientes paquetes:
+  * jupyterlab, numpy, matplotlib, seaborn, scikit-learn, scipy, pandas, folium, 
+  sentinelsat
+* **R >= 4.2** con los siguientes paquetes:
+  * rgrass, sf, terra, raster, mapview, tmap, tmaptools, SDMtune, biomod2, dismo,
+  usdm, zeallot, ggpubr, rJava, caret, kernlab, e1071, randomForest, rpart, 
+  doParallel
+* **QGIS**
 
-- A todos los desarrolladores, usuarios y entusiastas del software libre y de código abierto (FOSS)
-- A la [NASA](https://www.nasa.gov/) y la [ESA](http://www.esa.int/) por poner a disposición del público los datos y productos satelitales
-- Al [IGN](https://www.ign.gob.ar/) e [IDECOR](https://idecor.cba.gov.ar/) por las capas vectoriales y de cobertura de acceso libre y gratuito
+#### Nota para usuarios Ubuntu 
+
+Usar el PPA inestable de ubuntugis para obtener la última versión de GRASS GIS:
+
+```
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+sudo apt update
+sudo apt install grass grass-gui grass-dev
+```
+
+# Agradecimientos
+
+- A todos los desarrolladores, usuarios y entusiastas del software libre y de 
+código abierto (FOSS)
+- A la [NASA](https://www.nasa.gov/) y la [ESA](http://www.esa.int/) por poner 
+a disposición del público los datos y productos satelitales
+- Al [IGN](https://www.ign.gob.ar/) e [IDECOR](https://idecor.cba.gov.ar/) por 
+las capas vectoriales y de cobertura de acceso libre y gratuito
 
 <!-- ## References -->
 <!-- ::: {#refs} -->
