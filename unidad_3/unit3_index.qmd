@@ -3,7 +3,9 @@
 :::{.column-page}
 ## Presentaciones Unidad 3
 
-En esta unidad vamos a ver bla...
+En esta unidad vamos a ver nociones básicas de análisis de imágenes basado en 
+objetos (OBIA) y luego realizaremos un ejercicio recorriendo los módulos para
+OBIA en GRASS GIS. 
 
 :::: columns
 ::: {.column width="50%"}
