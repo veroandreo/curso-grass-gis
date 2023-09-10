@@ -34,11 +34,8 @@ mkdir -p $HOME/.local/bin/
 ln -s $HOME/grass/bin.*/grass* $HOME/.local/bin/grass
 
 
-cd ..
-
-mkdir -p curso_grass_2023/
-
-wget -c https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip -O curso_grass_2023/nc.zip
-
-
-
+# cd ..
+# 
+# mkdir -p curso_grass_2023/
+# 
+# wget -c https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip -O curso_grass_2023/nc.zip
