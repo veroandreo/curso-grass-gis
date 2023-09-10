@@ -14,25 +14,29 @@ obtención del certificado correspondiente. En esta última
 instancia de aprendizaje se espera que las personas perticipantes incorporen y 
 apliquen los conocimientos adquiridos durante el desarrollo del curso. 
 
-### Consignas
+## Consigna
 
-Se proponen 2 modalidades diferentes:
+Se proponen 3 modalidades diferentes:
 
 1. Informe y presentación de trabajo final abordando algún problema/pregunta de 
-interés utilizando herramientas de GRASS GIS
+su interés utilizando herramientas de GRASS GIS.
 1. Tutorial abordando algún problema/pregunta de interés utilizando herramientas
-de GRASS GIS o demostrando el uso/aplicación de algún conjunto de módulos de GRASS
+de GRASS GIS o demostrando el uso/aplicación de algún conjunto de módulos de 
+GRASS.
+1. [**Para valientes!**] Desarrollo de una extension para GRASS GIS con algún flujo 
+de trabajo que podría ser de interés para un amplio grupo de personas.
 
+En todos los casos, el trabajo puede realizarse **individualmente** o en 
+**grupos de 2 integrantes**.
 
-#### 1. Informe
+### 1. Informe
 
-La modalidad *informe* del trabajo integrador se realizará en 
-**grupos de 2 integrantes**. 
-El mismo debe abordar algún problema/pregunta de su interés utilizando 
-herramientas que aprendimos durante el taller u otras de su interés disponibles
+El informe debe abordar algún problema/pregunta de su interés utilizando 
+herramientas que aprendimos durante el curso u otras de su interés disponibles
 en GRASS (ver [módulos core](https://grass.osgeo.org/grass-stable/manuals/full_index.html) 
 y [addons](https://grass.osgeo.org/grass-stable/manuals/addons/)).
 Los trabajos deben incluir al menos los siguientes ítems:
+
   - Título
   - Integrantes del equipo
   - Introducción (descripción breve de problema, presentando la pregunta de 
@@ -42,47 +46,65 @@ Los trabajos deben incluir al menos los siguientes ítems:
   - Descripción de la metodología (incluyendo el código, se pueden incluir 
   diagramas de flujo para ilustrar la metodología seguida) 
   - Resultados (comentar los resultados más relevantes presentando mapas de 
-  salida, tablas y/o gráficos; los mapas deben contener como mínimo leyenda y escala)
-  - Discusión y conclusiones
+  salida, tablas y/o gráficos; los mapas deben contener como mínimo leyenda y 
+  escala)
+  - Discusión y conclusiones (máximo 2 párrafos).
 
 Se entregará un informe de un **máximo de 10 páginas** en formato odt o pdf 
-(letra tamaño 12). 
-El trabajo deberá ser presentado mediante una exposición. Se valorará la calidad
-del trabajo técnico y la prolijidad y fluidez de la exposición. El tiempo de 
-presentación de cada grupo será de 15 min + 5 min para preguntas.
+(letra tamaño 12). Se valorará la calidad del trabajo técnico, la pertinencia 
+de los métodos utilizados y la calidad/claridad general de la presentación.
 
-Se otorgará un reconocimiento al mejor trabajo seleccionado que consistirá en un
-espacio de exposición en directo en el canal de Youtube del Instituto Gulich.
+<!-- Se otorgará un reconocimiento al mejor trabajo seleccionado que consistirá en un -->
+<!-- espacio de exposición en directo en el canal de Youtube del Instituto Gulich. -->
 
-Los criterios de selección incluyen:
-  - códigos reproducibles y documentados (legibilidad, estilo y escritura)
-  - aplicabilidad de la propuesta
-  - originalidad
-  - resultados comprensibles
+<!-- Los criterios de selección incluyen: -->
+<!--   - códigos reproducibles y documentados (legibilidad, estilo y escritura) -->
+<!--   - aplicabilidad de la propuesta -->
+<!--   - originalidad -->
+<!--   - resultados comprensibles -->
 
-#### 2. Tutorial:
+### 2. Tutorial
 
-En **grupos de 2 integrantes**, escribir un tutorial del estilo de
+Escribir un tutorial del estilo de
 [*Working with i.landsat*](https://veroandreo.gitlab.io/post/jan2021_ilandsat_tutorial/).
 Se puede optar por alguna temática o grupo de módulos de interés incluyendo 
-cosas que no se hayan visto durante el taller pero se deseen aprender.
+cosas que no se hayan visto durante el curso pero se deseen aprender.
  
-El tutorial debe estar escrito en *Inglés* y en formato 
-[markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet), 
+El tutorial debe estar escrito en *Inglés* y en formato de Jupyter Notebook, 
 incluir una breve introducción, descripción/link a datos, código explicado 
 paso a paso, resultados parciales y finales en forma de mapas, tablas o gráficos, 
-una mínima discusión y referencias. 
+una mínima discusión y referencias. El tutorial debe ser 
+**completamente reproducible**.
 
-Para este trabajo requerirán crear una cuenta en [GitHub](https://github.com/), y 
-un repositorio donde alojar el archivo markdown (.md).
-Se presentará directamente desde el archivo md (15 min de exposición + 5 min de 
-preguntas) y se valorará con los mismos criterios descriptos anteriormente.  
+Para este trabajo requerirán crear una cuenta en [GitHub](https://github.com/), 
+y un repositorio donde alojar la notebook.
 
-Con los dos trabajos seleccionados, se realizará un *pull request* al 
-[repositorio](https://github.com/OSGeo/grass-website)
-donde de encuentra el sitio web de GRASS. Allí, será revisado por la 
-comunidad y de ser aprobado, se publicará en las noticias
-y las redes sociales de GRASS GIS.  
+### 3. Extensión de GRASS
+
+La idea de esta propuesta es ir un paso más allá de lo aprrendido en el curso
+e implementar algún flujo de trabajo de interés o tarea específica como si fuera
+una extensión de GRASS GIS. 
+
+En este taller ofrecido en el FOSS4G 2022 pueden encontrar una guía 
+*from zero to hero* para desarrollar un addon para GRASS: 
+[Developing custom GRASS tools](https://github.com/wenzeslaus/foss4g-2022-developing-custom-grass-tools).
+
+Para esta propuesta también requerirán contar con una cuenta en
+[GitHub](https://github.com/) donde se creará un repositorio para la extensión.
+El mismo debe denominarse como la extensión y contar con la estructura típica 
+de las extensiones, i.e., el código (`archivo.py`), la documentación
+(`archivo.html`) y un archivo `Makefile` para la compilación del módulo. 
+La documentación del módulo debe contar con un ejemplo que sea 
+reproducible con los datos de muestra del proyecto North Carolina.
+
+
+### Premio a los mejores trabajos
+
+Se seleccionará un trabajo de cada tipo de propuesta y se creará una noticia
+para ser publicada en el sitio web y las redes sociales de GRASS GIS. Pueden
+ver la noticia publicada luego del taller de 2021: 
+<https://grass.osgeo.org/news/2021_04_23_new_tutorials_made_by_students/>.
+
 
 ### Fecha de entrega
 

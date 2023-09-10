@@ -518,7 +518,7 @@ g.copy vector=lakes,mylakes
 
 <br>
 
-:::{.callout-warning}
+:::{.callout-important}
 Estas tareas deben **SIEMPRE** realizarse desde dentro de GRASS
 :::
 
@@ -621,7 +621,6 @@ Estas tareas deben **SIEMPRE** realizarse desde dentro de GRASS
 ## Enlaces (muy) útiles
 
 - [Lista de tutoriales diversos](https://grass.osgeo.org/learn/tutorials/)
-- [GRASS intro workshop en NCSU](https://ncsu-osgeorel.github.io/grass-intro-workshop/)
 - [Unleash the power of GRASS GIS en US-IALE 2017](https://grasswiki.osgeo.org/wiki/Unleash_the_power_of_GRASS_GIS_at_US-IALE_2017)
 - [GRASS GIS workshop en Jena 2018](https://training.gismentors.eu/grass-gis-workshop-jena/)
 - [Raster data processing in GRASS GIS](https://grass.osgeo.org/grass-stable/manuals/rasterintro.html)

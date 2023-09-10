@@ -41,9 +41,9 @@ format:
 
 ---
 
-Alta resolución (HR) vs Muy alta resolución (VHR)
+### Alta resolución vs Muy alta resolución
 
-![](../assets/img/HR_VHR.png){width=50%}
+![](../assets/img/HR_VHR.png){fig-align="center" width=60%}
 <br>
 
 :::: columns
@@ -66,24 +66,24 @@ Alta resolución (HR) vs Muy alta resolución (VHR)
 
 ---
 
-### Alta resolución (HR) vs Muy alta resolución (VHR)
+### Alta resolución vs Muy alta resolución
 
 :::: columns
-:::{.column width="33%"}
+:::{.column width="33%" .tiny}
 ![](../assets/img/20m_pix.png)
 
 - Varios objetos geográficos en el mismo pixel
 - Respuesta espectral mixta, no hay delineación clara de los objetos
 :::
 
-:::{.column width="33%"}
+:::{.column width="33%" .tiny}
 ![](../assets/img/5m_pix.png)
 
 - Algunos píxeles de respuesta espectral mixta y algunos puros
 - Resolución espacial ~ tamaño de algunos objetos geográficos
 :::
 
-:::{.column width="33%"}
+:::{.column width="33%" .tiny}
 ![](../assets/img/125cm_pix.png)
 
 - La mayoría de los píxeles pertenecen a una única clase 
@@ -99,7 +99,11 @@ Alta resolución (HR) vs Muy alta resolución (VHR)
 
 ### OBIA: Object-based image analysis
 
-Idea general: agrupar los píxeles en objetos antes de clasificarlos
+<br>
+
+**Idea general**: agrupar los píxeles en objetos antes de clasificarlos
+
+<br>
 
 :::: columns
 :::{.column width=50%}

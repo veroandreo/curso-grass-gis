@@ -18,9 +18,9 @@ format:
 -   Se asume que el software necesario está instalado (paquetes y versiones correctas).
 -   Se asume que los datos necesarios han sido descargados.
 -   En caso que internet falle, necesitaremos ejecutar las rutinas localmente.
--   Se asume que las personas participantes **leyeron los requisitos básicos previo a la inscripción** en el curso y son responsables de su elección y consecuencias en caso de no alcanzarlos.
+-   Se asume que las personas participantes **leyeron los requisitos básicos previo a la inscripción** en el curso, por lo tanto son responsables de las consecuencias en caso de no alcanzarlos.
 -   Las personas participantes concurren con sus notebooks y tienen nociones básicas de línea de comandos sea en Linux o Windows.
--   Las personas participantes tienen una cuenta de **Gmail** para poder ejecutar las notebooks en Google Colab o The Whole Tale.
+-   Las personas participantes tienen una cuenta de **Gmail** para poder ejecutar las notebooks en Google Colab.
 
 
 ## Modalidad de trabajo del curso
@@ -30,15 +30,14 @@ format:
 -   Día 3: OBIA dentro de Jupyter notebooks.
 -   Día 4: Series de tiempo dentro de Jupyter notebooks.
 -   Día 5: GRASS y R. Trabajamos con R dentro de Jupyter notebooks. 
-<!-- Necesitamos R y RStudio/VS code instalados. -->
 
 
 ## Trabajo integrador
 
 -   Es requisito para aprobar el curso y obtener el certificado
 -   Se puede hacer en grupos de 2 personas
--   2 opciones: informe o tutorial
--   [Instrucciones](../trabajo_final.html)
+-   3 opciones: informe, tutorial o addon
+-   Ver la [consigna e instrucciones](../trabajo_final.html)
 
 
 ## Ahora sí... empecemos! {style="font-size: 1.5em; text-align: center"}

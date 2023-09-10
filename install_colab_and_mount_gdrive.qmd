@@ -67,7 +67,7 @@ ver allí el contenido de las carpetas:
 ## Ejecutar comandos de R en Colab
 
 Colab nos permite ejcutar comandos de python por defecto. Usando ciertos
-caracteres mágicos o shebangs como `!` o `%%bash` podemos ejecutar comandos
+caracteres mágicos como `!` o `%%bash` podemos ejecutar comandos
 en bash, i.e., como en una terminal de Linux. En este caso, colab tiene
 Ubuntu.
 
@@ -106,9 +106,9 @@ interfaz con R.
 La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente
 e iniciar una sesión de GRASS allí sin problemas. 
 La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda 
-donde ejecutemos comando de R necesitamos escribir el shebang `%%R` para varias 
-líneas de código o `%R` cuando es una única línea de código en
-R^[<https://www.thediar.com/es/blog/google-colab-drive-r/>].
+donde ejecutemos comando de R necesitamos escribir el comando mágico `%%R` para 
+varias líneas de código o `%R` cuando es una única línea de código en
+R^[Ver <https://www.thediar.com/es/blog/google-colab-drive-r/> y <https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html>].
 
 ```{python}
 !pip install rpy2==3.5.1

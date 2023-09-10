@@ -4703,7 +4703,7 @@ vertical-align: -.125em;
 </section>
 <section id="ejecutar-comandos-de-r-en-colab" class="level2">
 <h2 class="anchored" data-anchor-id="ejecutar-comandos-de-r-en-colab">Ejecutar comandos de R en Colab</h2>
-<p>Colab nos permite ejcutar comandos de python por defecto. Usando ciertos caracteres mágicos o shebangs como <code>!</code> o <code>%%bash</code> podemos ejecutar comandos en bash, i.e., como en una terminal de Linux. En este caso, colab tiene Ubuntu.</p>
+<p>Colab nos permite ejcutar comandos de python por defecto. Usando ciertos caracteres mágicos como <code>!</code> o <code>%%bash</code> podemos ejecutar comandos en bash, i.e., como en una terminal de Linux. En este caso, colab tiene Ubuntu.</p>
 <p>Para ejecutar comandos de R, tenemos dos opciones. Una es simplemente cambiar de runtime o entorno de ejecución a R. Para esto, vamos al menú principal Runtime &gt;&gt; Change runtime type y en el cuadro que se despliega elegimos R. El problema con esta aproximación es que no hay una forma nativa de montar nuestro GDrive y acceder fácilmente a los archivos. Si bien existe un paquete de R <a href="https://googledrive.tidyverse.org/index.html"><code>googledrive</code></a> que permite la conexión, éste no funciona para conectarnos a nuestro grassdata e iniciar una sesión de GRASS allí.</p>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># install and load googledrive library</span></span>
@@ -4723,7 +4723,7 @@ vertical-align: -.125em;
 <span id="cb5-15"><a href="#cb5-15"></a><span class="co"># list content</span></span>
 <span id="cb5-16"><a href="#cb5-16"></a>drive_ls()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno un paquete de python, <a href="https://rpy2.github.io/">rpy2</a>, que nos permite hacer interfaz con R. La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente e iniciar una sesión de GRASS allí sin problemas. La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda donde ejecutemos comando de R necesitamos escribir el shebang <code>%%R</code> para varias líneas de código o <code>%R</code> cuando es una única línea de código en R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno un paquete de python, <a href="https://rpy2.github.io/">rpy2</a>, que nos permite hacer interfaz con R. La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente e iniciar una sesión de GRASS allí sin problemas. La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda donde ejecutemos comando de R necesitamos escribir el comando mágico <code>%%R</code> para varias líneas de código o <code>%R</code> cuando es una única línea de código en R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="op">!</span>pip install rpy2<span class="op">==</span><span class="fl">3.5.1</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a><span class="op">%</span>reload_ext rpy2.ipython</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4739,7 +4739,7 @@ vertical-align: -.125em;
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notas</h2>
 
 <ol>
-<li id="fn1"><p><a href="https://www.thediar.com/es/blog/google-colab-drive-r/" class="uri">https://www.thediar.com/es/blog/google-colab-drive-r/</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Ver <a href="https://www.thediar.com/es/blog/google-colab-drive-r/" class="uri">https://www.thediar.com/es/blog/google-colab-drive-r/</a> y <a href="https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html" class="uri">https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -5210,7 +5210,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb7-75"><a href="#cb7-75"></a><span class="fu">## Ejecutar comandos de R en Colab</span></span>
 <span id="cb7-76"><a href="#cb7-76"></a></span>
 <span id="cb7-77"><a href="#cb7-77"></a>Colab nos permite ejcutar comandos de python por defecto. Usando ciertos</span>
-<span id="cb7-78"><a href="#cb7-78"></a>caracteres mágicos o shebangs como <span class="in">`!`</span> o <span class="in">`%%bash`</span> podemos ejecutar comandos</span>
+<span id="cb7-78"><a href="#cb7-78"></a>caracteres mágicos como <span class="in">`!`</span> o <span class="in">`%%bash`</span> podemos ejecutar comandos</span>
 <span id="cb7-79"><a href="#cb7-79"></a>en bash, i.e., como en una terminal de Linux. En este caso, colab tiene</span>
 <span id="cb7-80"><a href="#cb7-80"></a>Ubuntu.</span>
 <span id="cb7-81"><a href="#cb7-81"></a></span>
@@ -5249,9 +5249,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb7-116"><a href="#cb7-116"></a>La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente</span>
 <span id="cb7-117"><a href="#cb7-117"></a>e iniciar una sesión de GRASS allí sin problemas. </span>
 <span id="cb7-118"><a href="#cb7-118"></a>La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda </span>
-<span id="cb7-119"><a href="#cb7-119"></a>donde ejecutemos comando de R necesitamos escribir el shebang <span class="in">`%%R`</span> para varias </span>
-<span id="cb7-120"><a href="#cb7-120"></a>líneas de código o <span class="in">`%R`</span> cuando es una única línea de código en</span>
-<span id="cb7-121"><a href="#cb7-121"></a>R^<span class="co">[</span><span class="ot">&lt;https://www.thediar.com/es/blog/google-colab-drive-r/&gt;</span><span class="co">]</span>.</span>
+<span id="cb7-119"><a href="#cb7-119"></a>donde ejecutemos comando de R necesitamos escribir el comando mágico <span class="in">`%%R`</span> para </span>
+<span id="cb7-120"><a href="#cb7-120"></a>varias líneas de código o <span class="in">`%R`</span> cuando es una única línea de código en</span>
+<span id="cb7-121"><a href="#cb7-121"></a>R^<span class="co">[</span><span class="ot">Ver &lt;https://www.thediar.com/es/blog/google-colab-drive-r/&gt; y &lt;https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html&gt;</span><span class="co">]</span>.</span>
 <span id="cb7-122"><a href="#cb7-122"></a></span>
 <span id="cb7-125"><a href="#cb7-125"></a><span class="in">```{python}</span></span>
 <span id="cb7-126"><a href="#cb7-126"></a><span class="op">!</span>pip install rpy2<span class="op">==</span><span class="fl">3.5.1</span></span>

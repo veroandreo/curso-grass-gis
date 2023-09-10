@@ -23,6 +23,29 @@ Para ejemplificar el flujo de trabajo para procesamiento de datos satelitales
 en GRASS GIS, en esta primer sesión vamos a trabajar con datos del satélite 
 Landsat 8.
 
+Antes de empezar y para ganar tiempo, conectamos nuestro drive e instalamos 
+GRASS en Google Colab.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# mount drive
+drive.mount("/content/drive")
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
+
 # Datos para esta sesión
 
 :::: columns
@@ -69,7 +92,7 @@ Iniciamos GRASS GIS en el proyecto *posgar2007_4_cba* y mapset *PERMANENT*
 import os
 
 # data directory
-homedir = os.path.expanduser('~')
+homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")

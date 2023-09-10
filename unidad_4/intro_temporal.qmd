@@ -14,6 +14,7 @@ execute:
 jupyter: python3
 ---
 
+
 # TGRASS: GRASS Temporal
 
 **GRASS GIS** es **el primer SIG de código abierto** que incorporó capacidades 
@@ -82,6 +83,29 @@ En esta segunda parte de la sesión vamos a recorrer los módulos temporales de
 GRASS GIS y demostrar su funcionalidad por medio de una serie de datos de 
 temperatura de superficie (LST) de MODIS.
 
+Antes de empezar y para ganar tiempo, conectamos nuestro drive e instalamos 
+GRASS en Google Colab.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# mount drive
+drive.mount("/content/drive")
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
+
 ### Datos para la sesión
 
 - Producto MODIS: <a href="https://lpdaac.usgs.gov/products/mod11b3v006/">MOD11B3 Collection 6</a>
@@ -101,7 +125,7 @@ Definimos las rutas y el mapset *`modis_lst`*
 import os
 
 # data directory
-homedir = os.path.expanduser('~')
+homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")

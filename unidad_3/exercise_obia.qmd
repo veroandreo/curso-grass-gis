@@ -17,6 +17,28 @@ jupyter: python3
 En este ejercicio vamos a ejemplificar el flujo de trabajo para realizar una
 clasificación supervisada basada en objetos con datos SPOT. 
 
+Antes de empezar y para ganar tiempo, conectamos nuestro drive e instalamos 
+GRASS en Google Colab.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# mount drive
+drive.mount("/content/drive")
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
 
 # Datos para esta sesión
 
@@ -43,12 +65,12 @@ Iniciamos GRASS GIS en el proyecto *posgar2007_4_cba* y mapset *PERMANENT*.
 import os
 
 # data directory
-homedir = os.path.expanduser('~')
+homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
-project='posgar2007_4_cba'
-mapset='PERMANENT'
+project = "posgar2007_4_cba"
+mapset = "PERMANENT"
 ```
 
 ```{python}
@@ -72,8 +94,10 @@ session = gj.init(grassdata, project, mapset)
 ```
 
 :::{.callout-warning title="Tarea"}
-- Crear un mapset llamado *`obia_spot`* e importar allí las bandas VIS-NIR y PAN de la imagen SPOT con reproyección al vuelo y resolución espacial de 1.5 m.
-- Alinear la región computacional a la extensión y resolución de alguna de las bandas importadas.
+- Crear un mapset llamado *`obia_spot`* e importar allí las bandas VIS-NIR y PAN
+de la imagen SPOT con reproyección al vuelo y resolución espacial de 1.5 m.
+- Alinear la región computacional a la extensión y resolución de alguna de las 
+bandas importadas.
 - Hacer una ecualización de histograma para mejorar el contraste de visualización.
 - Mostrar la combinación RGB color natural (1: azul, 2: verde, 3: rojo, 4: NIR).
 :::
@@ -89,7 +113,8 @@ gs.run_command("g.mapset",
                flags="c")
 ```
 
-Una vez creado el mapset, procedemos con la importación de datos. Empezamos por las bandas multi-espectrales.
+Una vez creado el mapset, procedemos con la importación de datos. Empezamos por
+las bandas multi-espectrales.
 
 ```{python}
 spot_data = os.path.join(homedir, "gisdata", "spot_data")
@@ -121,7 +146,8 @@ Chequeamos la lista de mapas raster en el mapset.
 gs.list_grouped(type="raster")["obia_spot"]
 ```
 
-Establecemos la región computacional a una de las bandas importadas, de modo que límites y resolución de la región queden alineados a los datos importados.
+Establecemos la región computacional a una de las bandas importadas, de modo que
+límites y resolución de la región queden alineados a los datos importados.
 
 ```{python}
 # align region to one of the raster bands
@@ -130,7 +156,8 @@ gs.run_command("g.region",
                flags="p")
 ```
 
-Establecemos *grey* como paleta de colores para las bandas RGB, para poder realizar la composición color natural posteriormente.
+Establecemos *grey* como paleta de colores para las bandas RGB, para poder 
+realizar la composición color natural posteriormente.
 
 ```{python}
 # apply grey color to RGB bands
@@ -164,7 +191,10 @@ cba_rgb.show()
 
 ## Hay valores nulos?
 
-En la cadena de procesamiento que vamos a realizar, especialmente en los pasos de segmentación, no se admiten valores nulos en los mapas de entrada. Así que, como primer paso antes de proceder, chequeamos la estadística univariada para saber si hay valores nuelos en nuestros mapas.
+En la cadena de procesamiento que vamos a realizar, especialmente en los pasos 
+de segmentación, no se admiten valores nulos en los mapas de entrada. Así que, 
+como primer paso antes de proceder, chequeamos la estadística univariada para 
+saber si hay valores nuelos en nuestros mapas.
 
 ```{python}
 # one band
@@ -186,12 +216,14 @@ print(gs.read_command("r.univar",
 ```
 
 :::{.callout-important}
-Si hubiera valores nulos, se deben rellenar antes de comenzar! Qué herramientas podríamos utilizar?
+Si hubiera valores nulos, se deben rellenar antes de comenzar! Qué herramientas 
+podríamos utilizar?
 :::
 
 ## Índices espectrales y texturas GLCM
 
-Como ya hicimos en los ejercicios anteriores, estimamos índices espectrales de vegetación y agua. 
+Como ya hicimos en los ejercicios anteriores, estimamos índices espectrales de 
+vegetación y agua. 
 
 ```{python}
 # estimate vegetation index
@@ -218,7 +250,11 @@ gs.run_command("r.colors",
                color="ndwi")
 ```
 
-Por otra parte, vamos a estimar medidas de textura con [r.texture](https://grass.osgeo.org/grass-stable/manuals/r.texture.html). En este caso, elegimos Inverse Difference Moment (IDM) y Angular Second Moment (ASM), pero hay muchas otras opciones. Este módulo puede ser muy lento si la región computacional es muy grande y si el tamaño de la ventana es grande también. Para agilizar los cálculos en estos casos, se puede usar la extensión [r.texture.tiled](https://grass.osgeo.org/grass-stable/manuals/addons/r.texture.tiled.html).
+Por otra parte, vamos a estimar medidas de textura con [r.texture](https://grass.osgeo.org/grass-stable/manuals/r.texture.html). En 
+este caso, elegimos Inverse Difference Moment (IDM) y Angular Second Moment 
+(ASM), pero hay muchas otras opciones. Este módulo puede ser muy lento si la 
+región computacional es muy grande y si el tamaño de la ventana es grande también. 
+Para agilizar los cálculos en estos casos, se puede usar la extensión [r.texture.tiled](https://grass.osgeo.org/grass-stable/manuals/addons/r.texture.tiled.html).
 
 ```{python}
 # estimate textures measures
@@ -272,7 +308,9 @@ gs.mapcalc(exp=f"PANVIS = round(({R} + {G} + {B}) / 3)"
 
 ### Búsqueda de umbrales de sub y sobre-segmentación
 
-Como vimos en el ejercicio anterior, usualmente, los módulos **i.\*** toman un grupo de mapas como entrada. Antes de comenzar con la segmentación, entonces, creamos un grupo con las bandas multiespectrales únicamente.
+Como vimos en el ejercicio anterior, usualmente, los módulos **i.\*** toman un 
+grupo de mapas como entrada. Antes de comenzar con la segmentación, entonces, 
+creamos un grupo con las bandas multiespectrales únicamente.
 
 ```{python}
 # create imagery group (only ms bands)
@@ -281,7 +319,8 @@ gs.run_command("i.group",
                input=pansharp)
 ```
 
-Ahora vamos a aprovechar una de las grandes ventajas de la región computacional, i.e., definir una región más pequeña para realizar unas pruebas :)
+Ahora vamos a aprovechar una de las grandes ventajas de la región computacional,
+i.e., definir una región más pequeña para realizar unas pruebas :)
 
 ```{python}
 # set smaller region
@@ -295,7 +334,8 @@ gs.run_command("g.region",
 gs.region()
 ```
 
-Ahora sí, ejecutamos un par de segmentaciones para determinar niveles de sub- y sobre-segmentación. Empezamos con un umbral pequeño.
+Ahora sí, ejecutamos un par de segmentaciones para determinar niveles de sub- y 
+sobre-segmentación. Empezamos con un umbral pequeño.
 
 ```{python}
 # run segmentation - small threshold
@@ -377,11 +417,17 @@ Se animan a probar con otros valores y en otras regiones?
 
 ### Búsqueda automática de umbrales por optimización
 
-Teniendo valores de umbrales de sub- y sobre-segmentación, podemos proceder a realizar la segmentación de manera autómatica, buscando el mejor umbral en una especie de grilla definida por umbral mínimo, umbral máximo y paso. Para ello, utilizamos la extensión: [i.segment.uspo](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.uspo.html).
+Teniendo valores de umbrales de sub- y sobre-segmentación, podemos proceder a 
+realizar la segmentación de manera autómatica, buscando el mejor umbral en una 
+especie de grilla definida por umbral mínimo, umbral máximo y paso. Para ello,
+utilizamos la extensión: 
+[i.segment.uspo](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.uspo.html).
 
-Este procedimiento es computacionalmente intensivo para un área grande y muchas combinaciones de parámetros, pero siempre podemos:
+Este procedimiento es computacionalmente intensivo para un área grande y muchas 
+combinaciones de parámetros, pero siempre podemos:
 
-- Limitar el tamaño de la región computacional o generar *tiles* con [i.cutlines](https://grass.osgeo.org/grass-stable/manuals/addons/i.cutlines.html) y paralelizar la USPO.
+- Limitar el tamaño de la región computacional o generar *tiles* con [i.cutlines](https://grass.osgeo.org/grass-stable/manuals/addons/i.cutlines.html) 
+y paralelizar la USPO.
 - Limitar el rango de los parámetros, o usar un paso relativamente grande.
 - Crear **superpixels** con [i.superpixels.slic](https://grass.osgeo.org/grass-stable/manuals/addons/i.superpixels.slic.html) para usarlos como semillas.
  
@@ -396,7 +442,8 @@ La extensión [i.superpixels.slic](https://grass.osgeo.org/grass-stable/manuals/
 
 ### USPO con superpixels como semillas
 
-Vamos a ejecutar entonces *i.superpixels.slic* con bajo valor de compactación para generar el semillero para *i.segment.uspo*.
+Vamos a ejecutar entonces *i.superpixels.slic* con bajo valor de compactación 
+para generar el semillero para *i.segment.uspo*.
 
 ```{python}
 # run superpixel segmentation to use as seeds
@@ -408,12 +455,14 @@ gs.run_command("i.superpixels.slic",
                memory=2000)
 ```
 
-Acá podemos ver un recorte de la composición RGB y el resultado de la ejecución de *i.superpixels.slic*.
+Acá podemos ver un recorte de la composición RGB y el resultado de la ejecución 
+de *i.superpixels.slic*.
 
 ![](../assets/img/superpixels.png)
 
 :::{.callout-warning title="Tarea"}
-Cuántas semillas se generaron? Qué factor de reducción se consigue en comparación a usar todos los pixeles?
+Cuántas semillas se generaron? Qué factor de reducción se consigue en comparación
+a usar todos los pixeles?
 
 Para responder pueden dar una mirada a los manuales de [r.info](https://grass.osgeo.org/grass-stable/manuals/r.info.html) y [g.region](https://grass.osgeo.org/grass-stable/manuals/g.region.html).
 :::
@@ -455,7 +504,8 @@ gs.list_grouped(type="raster",
 !cat uspo_parameters.csv
 ```
 
-Convertimos el mejor resultado, i.e., *\*rank1* a vector para visualizar el resultado.
+Convertimos el mejor resultado, i.e., *\*rank1* a vector para visualizar el 
+resultado.
 
 ```{python}
 # convert to vector the rank1
@@ -473,12 +523,14 @@ Zoom al resultado de ejecutar la segmentación con USPO
 :::{.callout-warning title="Tarea"}
 Cuántos segmentos obtuvieron?
 
-Dar una mirada a [v.info](https://grass.osgeo.org/grass-stable/manuals/v.info.html) para responder.
+Dar una mirada a [v.info](https://grass.osgeo.org/grass-stable/manuals/v.info.html) 
+para responder.
 :::
 
 ## Estadísticas de segmentos: [i.segment.stats](https://grass.osgeo.org/grass-stable/manuals/addons/i.segment.stats.html)
 
-Instalamos la extensión que nos permite extraer estadísticas para los segmentos obtenidos en el paso anterior.
+Instalamos la extensión que nos permite extraer estadísticas para los segmentos 
+obtenidos en el paso anterior.
 
 ```{python}
 # install extensions
@@ -511,14 +563,20 @@ Qué otro(s) módulo(s) podría(n) sustituir a *i.segment.stats*?
 
 ## Datos de entrenamiento
 
-Tenemos nuestros segmentos caracterizados, pero nos falta un dato fundamental para poder realizar una clasificación supervisada... la verdad de terreno, i.e., a qué clase pertenece una muestra de todos los segmentos del área de estudio. Como etiquetar segmentos o puntos es una tarea tediosa, se provee dentro del mapset `PERMANENT` un conjunto de puntos con etiqueta para realizar el entrenamiento. Veamos cuántos puntos tenemos.
+Tenemos nuestros segmentos caracterizados, pero nos falta un dato fundamental 
+para poder realizar una clasificación supervisada... la verdad de terreno, i.e., 
+a qué clase pertenece una muestra de todos los segmentos del área de estudio. 
+Como etiquetar segmentos o puntos es una tarea tediosa, se provee dentro del 
+mapset `PERMANENT` un conjunto de puntos con etiqueta para realizar el 
+entrenamiento. Veamos cuántos puntos tenemos.
 
 ```{python}
 # get info of labeled points
 gs.vector_info_topo("labeled_points")
 ```
 
-Como el acceso a tablas de otros mapsets no está permitido, nos copiamos el vector con los puntos etiquetados al mapset `obia_spot`.
+Como el acceso a tablas de otros mapsets no está permitido, nos copiamos el 
+vector con los puntos etiquetados al mapset `obia_spot`.
 
 ```{python}
 # copy vector to current mapset (access to tables from different mapsets is not allowed)
@@ -556,7 +614,8 @@ Veamos un zoom a la selección de segmentos con puntos de entrenamiento.
 
 ![](../assets/img/points_in_segments.png)
 
-Antes de asignar el atributo de los puntos a los segmentos, necesitamos agregar una tabla y una columna al vector con los segmentos.
+Antes de asignar el atributo de los puntos a los segmentos, necesitamos agregar 
+una tabla y una columna al vector con los segmentos.
 
 ```{python}
 # add attr table to train segments
@@ -571,7 +630,8 @@ gs.run_command("v.db.addcolumn",
                column="class int")
 ```
 
-Ahora sí, usamos el módulo [v.distance](https://grass.osgeo.org/grass-stable/manuals/v.distance.html) para transferir la etiqueta (clase de cobertura) desde los puntos a los segmentos
+Ahora sí, usamos el módulo [v.distance](https://grass.osgeo.org/grass-stable/manuals/v.distance.html) 
+para transferir la etiqueta (clase de cobertura) desde los puntos a los segmentos
 
 ```{python}
 # assign label from points to segments
@@ -590,16 +650,24 @@ Cuántos segmentos de cada clase tenemos?
 !db.select sql="SELECT class,COUNT(cat) as count_class FROM train_segments GROUP BY class"
 ```
 
-Como, por alguna razón, para estos datos, no pudimos obtener un vector a partir de i.segment.stats, necesitamos hacer un "workaround" para obtener, en cambio, un csv con los segmentos de entrenamiento, sus estadísticas y sus etiquetas. Para eso, haremos lo siguiente:
+Como, por alguna razón, para estos datos, no pudimos obtener un vector a partir 
+de i.segment.stats, necesitamos hacer un "workaround" para obtener, en cambio, 
+un csv con los segmentos de entrenamiento, sus estadísticas y sus etiquetas. 
+Para eso, haremos lo siguiente:
 
-- convertir a raster el vector `train_segments` con las etiquetas para poder obtener las estadísticas con i.segment.stats,
-- obtener las estadísticas para los segmentos de entrenamiento únicamente con i.segment.stats,
+- convertir a raster el vector `train_segments` con las etiquetas para poder 
+obtener las estadísticas con i.segment.stats,
+- obtener las estadísticas para los segmentos de entrenamiento únicamente con 
+i.segment.stats,
 - importar a GRASS la tabla csv resultante (Sí, podemos importar tablas a GRASS!),
-- unir el vector de segmentos de entrenamiento que tiene las etiquetas con la tabla con las estadísticas,
-- eliminar la columna cat_ resultante de la unión, ya que no es un atributo para la clasificación, y
+- unir el vector de segmentos de entrenamiento que tiene las etiquetas con la 
+tabla con las estadísticas,
+- eliminar la columna cat_ resultante de la unión, ya que no es un atributo para 
+la clasificación, y
 - exportar la nueva tabla de atributos como csv.
 
-Si, de i.segment.stats ustedes pueden obtener un vector, la tarea es mucho más sencilla: 
+Si, de i.segment.stats ustedes pueden obtener un vector, la tarea es mucho más 
+sencilla: 
 ```
 # select segments that are below labeled points
 v.select \
@@ -715,7 +783,11 @@ r.sample.category input=uns_clas output=uns_clas_points npoints=150
 
 ## Clasificación con Machine learning
 
-Ahora sí, finalmente llegamos a la clasificación de los segmentos. Vamos a instalar la extensión [v.class.mlR](https://grass.osgeo.org/grass-stable/manuals/addons/v.class.mlR.html). Esta extensión usa paquetes de R para realizar la clasificación, por lo tanto necesitamos tener R y ciertos paquetes previamente instalados.
+Ahora sí, finalmente llegamos a la clasificación de los segmentos. Vamos a 
+instalar la extensión 
+[v.class.mlR](https://grass.osgeo.org/grass-stable/manuals/addons/v.class.mlR.html). 
+Esta extensión usa paquetes de R para realizar la clasificación, por lo tanto 
+necesitamos tener R y ciertos paquetes previamente instalados.
 
 ```{python}
 # install extension
@@ -747,7 +819,8 @@ gs.run_command("v.class.mlR",
 ```
 
 :::{.callout-warning title="Tarea"}
-Crear paleta de colores para las clases de cobertura urbana asignando colores interactivamente
+Crear paleta de colores para las clases de cobertura urbana asignando colores 
+interactivamente
 
 - Ir agregando valores
 - Seleccionar colores 
@@ -766,7 +839,8 @@ gs.run_command("r.colors",
                rules="obia_urban")
 ```
 
-Visualizamos el resultado de la clasificación supervisada con Machine Learning basada en objetos
+Visualizamos el resultado de la clasificación supervisada con Machine Learning 
+basada en objetos
 
 ```{python}
 # display results
@@ -775,7 +849,8 @@ obia.d_rast(map="classification_rf")
 obia.show()
 ```
 
-Revisemos los archivos auxiliares que obtuvimos de la ejecución de la clasificación por random forest.
+Revisemos los archivos auxiliares que obtuvimos de la ejecución de la 
+clasificación por random forest.
 
 ```{python}
 !cat var_imp.txt
@@ -790,7 +865,9 @@ Revisemos los archivos auxiliares que obtuvimos de la ejecución de la clasifica
 ```
 
 :::{.callout-important}
-El proceso de clasificación usualmente conlleva una serie de iteraciones que implican selección de variables más importantes, búsqueda de más/mejores datos de entrenamiento y validación
+El proceso de clasificación usualmente conlleva una serie de iteraciones que 
+implican selección de variables más importantes, búsqueda de más/mejores datos 
+de entrenamiento y validación
 :::
 
 ## Validación
@@ -808,10 +885,14 @@ Distintas opciones:
 ### Opción 1
 
 :::{.callout-warning title="Tarea"}
-Generar un set de validación de al menos 50 segmentos. Una vez creado el vector de segmentos con etiquetas, *testing*, convertirlo a formato raster y ejecutar [**r.kappa**](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html).
+Generar un set de validación de al menos 50 segmentos. Una vez creado el vector 
+de segmentos con etiquetas, *testing*, convertirlo a formato raster y ejecutar [**r.kappa**](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html).
 :::
 
-[r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html) necesita mapas raster como *input*, por lo tanto necesitamos transformar los segmentos de validación a formato raster usando la columna *`class`* como fuente de valores para los pixeles.
+[r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html) necesita 
+mapas raster como *input*, por lo tanto necesitamos transformar los segmentos 
+de validación a formato raster usando la columna *`class`* como fuente de valores 
+para los pixeles.
 
 ```{python}
 # convert labeled test segments to raster
@@ -831,7 +912,10 @@ print(gs.read_command("r.kappa",
 
 ### Opción 2
 
-Alternativamente, podemos separar el set de puntos etiquetados en *train* y *test*. Usemos la extensión [v.divide.training_validation](https://github.com/mundialis/v.divide.training_validation) creada por [mundialis](https://www.mundialis.de/en/).
+Alternativamente, podemos separar el set de puntos etiquetados en *train* y *test*. 
+Usemos la extensión 
+[v.divide.training_validation](https://github.com/mundialis/v.divide.training_validation) 
+creada por [mundialis](https://www.mundialis.de/en/).
 
 ```{python}
 # install the extension
@@ -851,7 +935,8 @@ gs.run_command("v.divide.training_validation",
 ```
 
 :::{.callout-warning title="Tarea"}
-Ejecutar nuevamente la clasificación usando sólo el vector *training*. Recordar convertir a csv.
+Ejecutar nuevamente la clasificación usando sólo el vector *training*. Recordar 
+convertir a csv.
 :::
 
 Agregamos la columna `pred_class` al vector *test*

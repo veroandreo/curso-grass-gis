@@ -21,6 +21,28 @@ importación de datos Sentinel, abordar los diferentes pasos a seguir en
 función del nivel de procesamiento, enmascarar nubes y sombras de nubes,
 realizar segmentaciones y clasificaciones supervisadas.
 
+Antes de empezar y para ganar tiempo, conectamos nuestro drive e instalamos 
+GRASS en Google Colab.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# mount drive
+drive.mount("/content/drive")
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
 
 ## Datos Sentinel 2
 
@@ -95,7 +117,7 @@ Iniciar GRASS GIS, crear nuevo mapset y establecer región computacional
 import os
 
 # data directory
-homedir = os.path.expanduser('~')
+homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
