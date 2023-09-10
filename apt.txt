@@ -34,6 +34,7 @@ netcdf-bin
 p7zip
 proj-bin
 sqlite3
+subversion
 unixodbc-dev
 xvfb
 zlib1g-dev

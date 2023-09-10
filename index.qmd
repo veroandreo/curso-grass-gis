@@ -116,9 +116,9 @@ mundo para una amplia gama de aplicaciones.
 
 El curso es principalmente **práctico**. 
 Salvo el primer día, se trabajará mayormente con Jupyter notebooks. 
-Las mismas podrán ejecutarse de manera local, en 
-[Google Colab](https://colab.research.google.com/) o 
-en la plataforma [The Whole Tale](https://wholetale.org/). 
+Las mismas podrán ejecutarse de manera local o en 
+[Google Colab](https://colab.research.google.com/).
+<!-- o en la plataforma [The Whole Tale](https://wholetale.org/).  -->
 
 Las personas participantes necesitan traer sus laptops con el 
 **software instalado y los datos descargados de antemano**, ya que 
@@ -158,9 +158,13 @@ instalados.
 
 ## Día 2 al 5: Ejecutamos GRASS online
 
-El resto del curso se ejecutará **con notebooks en línea** ya sea dentro de la 
-plataforma [**Whole Tale**](https://wholetale.org/) o en 
-[**Google Colab**](https://colab.research.google.com/). 
+El resto del curso se ejecutará **con notebooks en línea** dentro de la 
+plataforma [**Google Colab**](https://colab.research.google.com/).
+Podemos visitar la web de 
+[preguntas frecuentes](https://research.google.com/colaboratory/faq.html) 
+para obtener mayor información sobre el funcionamiento y las prestaciones 
+de esta plataforma.
+<!-- [**Whole Tale**](https://wholetale.org/) -->
 
 <!-- Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)  -->
 <!-- financiada por NSF para construir una plataforma escalable y multiusuario de -->
@@ -173,33 +177,36 @@ plataforma [**Whole Tale**](https://wholetale.org/) o en
 <!-- ¡Solo necesitan registrarse con un correo electrónico institucional o personal  -->
 <!-- y ya están listos para comenzar! -->
 
-**Whole Tale:** 
+<!-- **Whole Tale:**  -->
 
-1. Ir a [Curso GRASS GIS 2023]()
-2. Log in (hay diferentes opciones)
-3. Ejecutar la *Tale* (botón azul arriba a la derecha)
-4. Confirmar *Copy* y *Run Tale*
-5. Si sigue mostrando "Importing...", recargar
-6. Run Tale
+<!-- 1. Ir a [Curso GRASS GIS 2023]() -->
+<!-- 2. Log in (hay diferentes opciones) -->
+<!-- 3. Ejecutar la *Tale* (botón azul arriba a la derecha) -->
+<!-- 4. Confirmar *Copy* y *Run Tale* -->
+<!-- 5. Si sigue mostrando "Importing...", recargar -->
+<!-- 6. Run Tale -->
 
-**Google Colab:**
+**Cómo ejecutar Google Colab:**
 
 1. Open colab: <https://colab.research.google.com/>
 2. File >> Open notebook
 3. Seleccionar "Github"
 4. En Repositorios poner: **veroandreo/curso-grass-gis**
+5. seleccionar la notebook que se desea ejecutar
 
 ![Abrir el repo del curso en Colab](assets/img/open_colab.png){width=85% fig_align="center"}
 
 En Google Colab no tenemos preinstalado el software necesario, así que 
-necesitaremos reinstalar en cada sesión. Pero... don't worry! Estará todo
-en las notebooks.
+necesitaremos instalar en cada sesión. Para ello, tenemos una 
+notebook con [instrucciones](install_colab_and_mount_gdrive.html) que
+podemos luego copiar y pegar en cada notebook antes de comenzar. 
 
-### Datos necesarios
+#### Datos necesarios
 
-* Descargar el [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
+* Usaremos el siguiente [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
 con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para 
-usar.
+usar. Pueden hacer una copia directamente a su Google drive así queda listo
+para trabajar desde Colab. 
 
 # Software necesario para ejecutar el curso completo localmente {#sec-software}
 

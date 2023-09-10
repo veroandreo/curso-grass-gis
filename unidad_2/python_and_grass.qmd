@@ -14,11 +14,36 @@ execute:
 jupyter: python3
 ---
 
-En esta notebook, nos vamos a introducir en el uso de GRASS GIS con Python. Para 
-ello, primero vamos a recorrer brevemente los principales paquetes/librerías de 
-python que son parte de GRASS y nos permiten ejcutar sus funciones, a la vez que
-podemos combinar las salidas con otras librerías más tradicionales de python.
+En esta notebook, nos vamos a introducir en el uso de GRASS GIS con Python, y no 
+solo eso, sino que ejecutaremos GRASS con Python dentro de Google Colab conectado
+a una base de datos o `grassdata` dentro de nuestro Google Drive. 
 
+Antes de empezar entonces y para ganar tiempo, conectemos nuestro drive e instalemos 
+GRASS en Google Colab.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# mount drive
+drive.mount("/content/drive")
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
+
+Mientras, vamos a recorrer brevemente los principales paquetes/librerías de 
+Python que son parte de GRASS y nos permiten ejcutar sus funciones, a la vez que
+podemos combinar las salidas con otras librerías más tradicionales de Python.
 
 ### ¿Por qué Jupyter Notebooks y cómo usarlas?
 
@@ -183,7 +208,7 @@ sample dataset de North Carolina.
 import os
 
 # data directory
-homedir = os.path.expanduser('~')
+homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
@@ -222,6 +247,12 @@ Corroboramos que GRASS inició correctamente:
 ```{python}
 # show current GRASS GIS settings, this also checks if the session works
 gs.gisenv()
+```
+
+¿Qué versión de GRASS estamos ejecutando?
+
+```{python}
+print(gs.read_command("g.version", flags="e"))
 ```
 
 ## Ejemplos con `grass.script`

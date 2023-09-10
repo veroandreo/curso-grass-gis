@@ -4599,10 +4599,7 @@ vertical-align: -.125em;
   <li><a href="#metodología" id="toc-metodología" class="nav-link" data-scroll-target="#metodología">Metodología</a>
   <ul class="collapse">
   <li><a href="#dia-1-ejecutamos-grass-localmente" id="toc-dia-1-ejecutamos-grass-localmente" class="nav-link" data-scroll-target="#dia-1-ejecutamos-grass-localmente">Dia 1: Ejecutamos GRASS localmente</a></li>
-  <li><a href="#día-2-al-5-ejecutamos-grass-online" id="toc-día-2-al-5-ejecutamos-grass-online" class="nav-link" data-scroll-target="#día-2-al-5-ejecutamos-grass-online">Día 2 al 5: Ejecutamos GRASS online</a>
-  <ul class="collapse">
-  <li><a href="#datos-necesarios-1" id="toc-datos-necesarios-1" class="nav-link" data-scroll-target="#datos-necesarios-1">Datos necesarios</a></li>
-  </ul></li>
+  <li><a href="#día-2-al-5-ejecutamos-grass-online" id="toc-día-2-al-5-ejecutamos-grass-online" class="nav-link" data-scroll-target="#día-2-al-5-ejecutamos-grass-online">Día 2 al 5: Ejecutamos GRASS online</a></li>
   </ul></li>
   <li><a href="#sec-software" id="toc-sec-software" class="nav-link" data-scroll-target="#sec-software">Software necesario para ejecutar el curso completo localmente</a></li>
   <li><a href="#agradecimientos" id="toc-agradecimientos" class="nav-link" data-scroll-target="#agradecimientos">Agradecimientos</a></li>
@@ -4632,7 +4629,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">7 de septiembre de 2023</p>
+      <p class="date">10 de septiembre de 2023</p>
     </div>
   </div>
   
@@ -4684,7 +4681,7 @@ vertical-align: -.125em;
 </section>
 <section id="metodología" class="level1">
 <h1>Metodología</h1>
-<p>El curso es principalmente <strong>práctico</strong>. Salvo el primer día, se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local, en <a href="https://colab.research.google.com/">Google Colab</a> o en la plataforma <a href="https://wholetale.org/">The Whole Tale</a>.</p>
+<p>El curso es principalmente <strong>práctico</strong>. Salvo el primer día, se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local o en <a href="https://colab.research.google.com/">Google Colab</a>. <!-- o en la plataforma [The Whole Tale](https://wholetale.org/).  --></p>
 <p>Las personas participantes necesitan traer sus laptops con el <strong>software instalado y los datos descargados de antemano</strong>, ya que <em>no se ha planificado una instancia de instalación de software</em> durante el curso.</p>
 <p>El curso es de un <strong>nivel intermedio</strong>. Se asumen conocimientos básicos de teledetección, SIG, línea de comandos, Python y R.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -4717,7 +4714,7 @@ Importante
 </section>
 <section id="día-2-al-5-ejecutamos-grass-online" class="level2">
 <h2 class="anchored" data-anchor-id="día-2-al-5-ejecutamos-grass-online">Día 2 al 5: Ejecutamos GRASS online</h2>
-<p>El resto del curso se ejecutará <strong>con notebooks en línea</strong> ya sea dentro de la plataforma <a href="https://wholetale.org/"><strong>Whole Tale</strong></a> o en <a href="https://colab.research.google.com/"><strong>Google Colab</strong></a>.</p>
+<p>El resto del curso se ejecutará <strong>con notebooks en línea</strong> dentro de la plataforma <a href="https://colab.research.google.com/"><strong>Google Colab</strong></a>. Podemos visitar la web de <a href="https://research.google.com/colaboratory/faq.html">preguntas frecuentes</a> para obtener mayor información sobre el funcionamiento y las prestaciones de esta plataforma. <!-- [**Whole Tale**](https://wholetale.org/) --></p>
 <!-- Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)  -->
 <!-- financiada por NSF para construir una plataforma escalable y multiusuario de -->
 <!-- código abierto, basada en la web para investigaciones reproducibles.  -->
@@ -4729,21 +4726,20 @@ Importante
 <!-- no necesitan instalar todos los paquetes de software necesarios.  -->
 <!-- ¡Solo necesitan registrarse con un correo electrónico institucional o personal  -->
 <!-- y ya están listos para comenzar! -->
-<p><strong>Whole Tale:</strong></p>
-<ol type="1">
-<li>Ir a <a href>Curso GRASS GIS 2023</a></li>
-<li>Log in (hay diferentes opciones)</li>
-<li>Ejecutar la <em>Tale</em> (botón azul arriba a la derecha)</li>
-<li>Confirmar <em>Copy</em> y <em>Run Tale</em></li>
-<li>Si sigue mostrando “Importing…”, recargar</li>
-<li>Run Tale</li>
-</ol>
-<p><strong>Google Colab:</strong></p>
+<!-- **Whole Tale:**  -->
+<!-- 1. Ir a [Curso GRASS GIS 2023]() -->
+<!-- 2. Log in (hay diferentes opciones) -->
+<!-- 3. Ejecutar la *Tale* (botón azul arriba a la derecha) -->
+<!-- 4. Confirmar *Copy* y *Run Tale* -->
+<!-- 5. Si sigue mostrando "Importing...", recargar -->
+<!-- 6. Run Tale -->
+<p><strong>Cómo ejecutar Google Colab:</strong></p>
 <ol type="1">
 <li>Open colab: <a href="https://colab.research.google.com/" class="uri">https://colab.research.google.com/</a></li>
 <li>File &gt;&gt; Open notebook</li>
 <li>Seleccionar “Github”</li>
 <li>En Repositorios poner: <strong>veroandreo/curso-grass-gis</strong></li>
+<li>seleccionar la notebook que se desea ejecutar</li>
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -4751,11 +4747,11 @@ Importante
 <figcaption class="figure-caption">Abrir el repo del curso en Colab</figcaption>
 </figure>
 </div>
-<p>En Google Colab no tenemos preinstalado el software necesario, así que necesitaremos reinstalar en cada sesión. Pero… don’t worry! Estará todo en las notebooks.</p>
-<section id="datos-necesarios-1" class="level3">
-<h3 class="anchored" data-anchor-id="datos-necesarios-1">Datos necesarios</h3>
+<p>En Google Colab no tenemos preinstalado el software necesario, así que necesitaremos instalar en cada sesión. Para ello, tenemos una notebook con <a href="install_colab_and_mount_gdrive.html">instrucciones</a> que podemos luego copiar y pegar en cada notebook antes de comenzar.</p>
+<section id="datos-necesarios-1" class="level4">
+<h4 class="anchored" data-anchor-id="datos-necesarios-1">Datos necesarios</h4>
 <ul>
-<li>Descargar el <a href="https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing">archivo comprimido (~ 3.5 Gb)</a> con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para usar.</li>
+<li>Usaremos el siguiente <a href="https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing">archivo comprimido (~ 3.5 Gb)</a> con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para usar. Pueden hacer una copia directamente a su Google drive así queda listo para trabajar desde Colab.</li>
 </ul>
 </section>
 </section>

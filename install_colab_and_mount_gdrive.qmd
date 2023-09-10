@@ -1,0 +1,123 @@
+---
+title: "Instalar software en Colab"
+author: Verónica Andreo
+date: today
+format:
+  html:
+    code-tools: true
+    code-copy: true
+    code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
+---
+
+## Instalar GRASS GIS en Colab
+
+Como primer paso, cada vez que iniciemos una nueva sesión, necesitaremos 
+instalar GRASS GIS. Pueden copiar estas celdas a sus copias de las 
+notebooks con las que trabajaremos.
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+## Conectar nuestro Drive a la sesión de Colab
+
+Luego, montamos nuestro drive donde tenemos la carpeta `curso_grass_2023`. Para 
+eso importamos la librería `drive`.
+
+```{python}
+# import drive from google colab
+from google.colab import drive 
+```
+
+Definimos un punto de montaje y montamos nuestro drive, esto es equivalente
+a enchufar y leer un pen drive o un disco externo. Nos va a pedir que le 
+demos permisos para acceder.
+
+```{python}
+# define mounting point and mount drive
+drive.mount("/content/drive")
+```
+
+Definimos la carpeta `curso_grass_2023` como nuestro home, nos movemos allí
+y listamos su contenido para corrobar que estamos donde queremos estar.
+
+```{python}
+import os
+
+homedir = "/content/drive/MyDrive/curso_grass_2023"
+os.chdir(homedir)
+os.listdir()
+```
+
+También podemos montar nuestro drive directamente desde la interfaz gráfica y
+ver allí el contenido de las carpetas:
+
+![](assets/img/colab_mount_gdrive.png)
+
+## Ejecutar comandos de R en Colab
+
+Colab nos permite ejcutar comandos de python por defecto. Usando ciertos
+caracteres mágicos o shebangs como `!` o `%%bash` podemos ejecutar comandos
+en bash, i.e., como en una terminal de Linux. En este caso, colab tiene
+Ubuntu.
+
+Para ejecutar comandos de R, tenemos dos opciones. Una es simplemente 
+cambiar de runtime o entorno de ejecución a R. Para esto, vamos al menú 
+principal Runtime >> Change runtime type y en el cuadro que se despliega 
+elegimos R. El problema con esta aproximación es que no hay una forma
+nativa de montar nuestro GDrive y acceder fácilmente a los archivos.
+Si bien existe un paquete de R 
+[`googledrive`](https://googledrive.tidyverse.org/index.html) que permite
+la conexión, éste no funciona para conectarnos a nuestro grassdata e iniciar
+una sesión de GRASS allí.
+
+```{python}
+# install and load googledrive library
+install.packages("googledrive")
+library("googledrive")
+
+# authorize google drive
+drive_auth(
+  email = gargle::gargle_oauth_email(),
+  path = NULL,
+  scopes = "https://www.googleapis.com/auth/drive",
+  cache = gargle::gargle_oauth_cache(),
+  use_oob = gargle::gargle_oob_default(),
+  token = NULL
+)
+
+# list content
+drive_ls()
+```
+
+La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno
+un paquete de python, [rpy2](https://rpy2.github.io/), que nos permite hacer 
+interfaz con R. 
+La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente
+e iniciar una sesión de GRASS allí sin problemas. 
+La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda 
+donde ejecutemos comando de R necesitamos escribir el shebang `%%R` para varias 
+líneas de código o `%R` cuando es una única línea de código en
+R^[<https://www.thediar.com/es/blog/google-colab-drive-r/>].
+
+```{python}
+!pip install rpy2==3.5.1
+%reload_ext rpy2.ipython
+```
+
+Esto será necesario para nuestra sesión de [OBIA](unidad_3/exercise_obia.html), 
+en que para la clasificación de los objetos la función llama a R internamente, 
+y también para la sesión de 
+[modelado de nicho con GRASS y R](unidad_5/grass_and_r_sdm.html). 
+
+

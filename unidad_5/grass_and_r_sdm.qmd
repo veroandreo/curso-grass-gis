@@ -7,18 +7,82 @@ format:
     code-tools: true
     code-copy: true
     code-fold: false
+execute:
+  eval: false
+  cache: false
+  keep-ipynb: true
+jupyter: python3
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(eval = FALSE)
-# knitr::opts_chunk$set(cache = TRUE)
-```
+<!-- # ```{r setup, include = FALSE} -->
+<!-- # knitr::opts_chunk$set(eval = FALSE) -->
+<!-- # # knitr::opts_chunk$set(cache = TRUE) -->
+<!-- # ``` -->
 
 En esta última sesión, vamos a demostrar y ejemplificar el uso combinado de 
 GRASS y R para modelar la distribución de *Aedes aegypti* en la provincia 
 de Córdoba en función de variables ambientales. Algunas de estas variables
 provienen de los ejercicios realizados en la unidad de series de tiempo y 
 otras serán generadas durante este ejercicio.
+
+Antes de empezar y para ganar tiempo, conectemos nuestro drive e instalemos 
+GRASS y los paquetes de R que vamos a usar en esta sesión.
+
+```{python}
+# import drive from google colab
+from google.colab import drive
+# define mounting point for drive
+dmp = "/content/drive"
+# mount drive
+drive.mount(dmp)
+```
+
+```{python}
+%%bash
+DEBIAN_FRONTEND=noninteractive 
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable 
+apt update 
+apt install grass subversion grass-dev
+apt remove libproj22
+```
+
+```{python}
+!grass --config path
+```
+
+Instalamos y cargamos al entorno el paquete de python que nos permite hacer
+interfaz con R dentro de una Jupyter notebook.
+
+```{python}
+!pip install rpy2==3.5.1
+%reload_ext rpy2.ipython
+```
+
+Chequeamos nuestra sesión de R.
+
+```{python}
+%R sessionInfo()
+```
+
+Instalamos todos los paquetes necesarios para este ejercicio. 
+*This might take a while...*
+
+```{python}
+%%R
+install.packages("rgrass")
+install.packages("terra")
+install.packages("raster")
+install.packages("sf")
+install.packages("biomod2")
+install.packages("dismo")
+install.packages("usdm")
+install.packages("SDMtune")
+install.packages("zeallot")
+install.packages("rJava")
+install.packages("ggpubr")
+install.packages("tmap")
+install.packages("tmaptools")
+```
 
 
 # [**rgrass**](https://cran.r-project.org/web/packages/rgrass/index.html)
@@ -137,15 +201,15 @@ más detalles y tutoriales:
 
 # Manos a la obra
 
-## Vamos a R
+## Cargamos los paquetes de R
 
-Cargamos los paquetes necesarios
-
-```{r load_libraries, message=FALSE}
+```{python}
+#| label: load_libraries
+#| message: false
+%%R
 library(rgrass)
 library(sf)
 library(terra)
-library(mapview)
 library(biomod2)
 library(dismo)
 library(usdm)
@@ -161,15 +225,15 @@ Usaremos la **opción B**, es decir, iniciamos GRASS GIS desde R en un proyecto 
 mapset existentes. Notar las similitudes con `gj.init()` de `grass.jupyter`
 y `gs.setup.init()` de `grass.script`.
 
-```{r}
+```{python}
 #| label: grass_init
 #| message: false
 #| results: hide
-
+%%R
 # path to GRASS binaries (run `grass --config path`)
 grassbin <- system("grass --config path", intern = TRUE)
-# path to GRASS database
-grassdata <- path.expand("~/grassdata/")
+# path to GRASS database in GDrive
+grassdata <- "/content/drive/MyDrive/curso_grass_2023/grassdata"
 # path to project
 project <- "posgar2007_4_cba"
 # path to mapset
@@ -186,7 +250,8 @@ initGRASS(gisBase = grassbin,
 
 Exploramos los mapas raster y vectoriales disponibles en el mapset PERMANENT:
 
-```{r}
+```{python}
+%%R
 r <- execGRASS("g.list", 
                parameters = list(type = "raster",
                                  mapset = "."))
@@ -203,12 +268,12 @@ edificadas) de la provincia de Córdoba que estén a una altura de menos
 de 850 m. Notar que estamos trabajando en la base de datos de GRASS GIS, pero
 desde R.
 
-```{r}
+```{python}
 #| label: create_presences
 #| message: false
 #| warning: false
 #| results: hide
-
+%%R
 # Extract centroids from built-up area polygons
 execGRASS("v.extract", 
           parameters = list(input="area_edificada_cba", 
@@ -237,31 +302,31 @@ execGRASS("v.extract",
 ```
 
 Ahora leemos desde GRASS los datos de ocurrencia que generamos, los convertimos 
-en un objeto `sf`, y mostramos el mapa con `mapview`.
+en un objeto `sf`, y los graficamos.
 
-```{r}
+```{python}
 #| label: read_vectors
 #| message: false
 #| warning: false
 #| results: hide
-
+%%R
 # Read vector layers
 presence <- st_as_sf(read_VECT("aedes_aegypti"))
 ```
 
-```{r ref.label='plot'}
+```{python}
 #| warning: false
-
+%%R
 # Display presence vector
-mapview(presence)
+plot(presence)
 ```
 
-También podemos usar la función `plot()` para visualizar la geometría o la 
+Podemos usar la función `plot()` para visualizar la geometría o la 
 geometría y los atributos (o una selección de los mismos) de los objetos `sf`.
 
-```{r}
+```{python}
 #| label: plot_with_sf
-
+%%R
 # Plot only the geometry 
 plot(st_geometry(presence))
 
@@ -282,14 +347,15 @@ no es cierto que toda la extensión del área de estudio está disponible para
 sobre las salinas. Entonces, vamos a enmascarar primero esas áreas del ambiente
 disponible. 
 
-```{r}
+```{python}
+%%R
 # Check region
 gmeta()
 ```
 
-```{r}
+```{python}
 #| label: create_mask_bg
-
+%%R
 # Generar máscara a partir del raster de LULC
 expression <- 
   "no_water = if(landcover_2018 == 7 || landcover_2018 == 8, null(), landcover_2018)"
@@ -300,21 +366,21 @@ execGRASS("r.mapcalc",
 
 Luego, leemos a R la máscara creada para visualizarla
 
-```{r}
+```{python}
 #| warning: false
-
+%%R
 # Import mask
 no_water <- raster(read_RAST("no_water"))
-mapview(no_water)
+plot(no_water)
 ```
 
 Como la región tiene una resolución de 30 m, vamos a llevarla a 1 km, para
 asegurarnos una mejor separación de los puntos de background, y volvemos a
 leer la máscara dentro de R. 
 
-```{r}
+```{python}
 #| label: create_bg_points
-
+%%R
 # Change resolution
 execGRASS("g.region",
           parameters = list(res="1000"),
@@ -333,7 +399,8 @@ mask <- raster(read_RAST("MASK"))
 Ahora sí, generamos los puntos de background utilizando una función del paquete
 `dismo`[@dismo] y los convertimos a `sf` para luego visualizarlos.
 
-```{r}
+```{python}
+%%R
 # Generate random points within mask
 set.seed(123)
 background <- randomPoints(mask = mask, 
@@ -345,28 +412,15 @@ background_sf <- st_as_sf(as.data.frame(background),
                           crs = st_crs(mask))
 ```
 
-:::{callout-caution title="Pregunta"}
+:::{.callout-caution title="Pregunta"}
 Con qué funcion de GRASS podríamos haber hecho algo similar?
 :::
 
-Visualizamos interactivamente el mapa que usamos como máscara junto con los 
-vectores de presencia y background.
+Visualizamos el mapa que usamos como máscara junto con los vectores de
+presencia y background usando la librería `tmap` [@tmap].
                                   
-```{r ref.label='plot'}
-#| warning: false
-
-# Display mask and vectors
-mapview(mask) +
-  mapview(presence) + 
-  mapview(background_sf, 
-          col.regions="black", 
-          cex=2)
-```
-
-Y también demostramos cómo obtener mapas con calidad para publicaciones 
-usando la librería `tmap` [@tmap]
-
-```{r}
+```{python}
+%%R
 # Aux data
 bbox <- st_bbox(mask)
 
@@ -397,9 +451,9 @@ tiempo de LST y NDVI, vamos a generar dos mapas ráster que representan la
 distancia a fuentes de agua y rutas y caminos, respectivamente. Para eso, 
 vamos a usar mapas ya disponibles en el mapset PERMANENT. 
 
-```{r}
+```{python}
 #| label: create_rasters_water
-
+%%R
 # Patch water lines + water bodies
 execGRASS("v.patch",
           parameters = list(input="lineas_aguas_continentales_perennes_cba,
@@ -419,9 +473,9 @@ execGRASS("r.grow.distance",
                             distance="distancia_agua"))
 ```
 
-```{r}
+```{python}
 #| label: create_rasters_roads
-
+%%R
 # Patch primary + secondary roads
 execGRASS("v.patch",
           parameters = list(input="vial_primaria_cba,vial_secundaria_cba",
@@ -441,8 +495,9 @@ execGRASS("r.grow.distance",
 Leemos los mapas generados y los visualizamos con `plot()`, que en este caso
 reconoce los objetos `SpatRast`.
 
-```{r}
+```{python}
 #| label: read_distance_maps
+%%R
 
 distancia_agua <- read_RAST("distancia_agua")
 distancia_caminos <- read_RAST("distancia_caminos")
@@ -454,7 +509,8 @@ plot(c(distancia_agua,distancia_caminos),
 
 También podemos usar `tmap` y su función `tm_facets()`
 
-```{r}
+```{python}
+%%R
 distancia <- read_RAST(c("distancia_agua","distancia_caminos"))
 
 fig_raster_facet <- 
@@ -473,8 +529,9 @@ fig_raster_facet
 Para leer mapas de otros mapsets, necesitamos agregar esos mapsets a la lista de 
 mapsets accesibles en el mapset donde estamos ahora.
 
-```{r}
+```{python}
 #| label: add_mapsets
+%%R
 execGRASS("g.mapsets",
           parameters = list(mapset="modis_lst",
                             operation="add"))
@@ -489,17 +546,16 @@ Leemos ahora algunas de las variables que derivamos de las series temporales de
 LST y NDVI. Primero, necesitamos aplicar la máscara de los límites de la 
 provincia.
 
-```{r}
-execGRASS("r.mask", 
-          parameters = list(vector="provincia_cba"))
+```{python}
+%R execGRASS("r.mask", parameters = list(vector="provincia_cba"))
 ```
 
-```{r}
+```{python}
 #| label: read_rasters
 #| message: false
 #| warning: false
 #| results: hide
-
+%%R
 # List rasters to import
 to_import <- c("LST_Day_minimum",
                "LST_Day_maximum",
@@ -515,7 +571,8 @@ for (i in to_import){
 
 Agrupamos todos los rasters de variables ambientales.
 
-```{r}
+```{python}
+%%R
 # Stack rasters
 predictors_r <- rast(c(predictors,distancia))
 capas <- c("LST_Day_minimum", 
@@ -528,17 +585,6 @@ capas <- c("LST_Day_minimum",
 names(predictors_r) <- capas
 ```
 
-Visualicemos los mapas importados. Convertimos el objeto *terra* en *raster* 
-porque `mapview` aún no es compatible con terra. 
-
-```{r}
-#| label: quick_view
-#| message: false
-#| warning: false
-
-# Quick visualization in mapview
-mapview(raster(predictors_r$distancia_caminos)) + presence
-```
 
 ## Preparación de los datos
 
@@ -548,11 +594,11 @@ formato llamado *samples with data* (SWD). Éste es básicamente una tabla con
 coordenadas de presencia y background más los valores correspondientes a las 
 variables predictoras para cada punto.
 
-```{r}
+```{python}
 #| label: data_prep1
 #| message: false
 #| warning: false
-
+%%R
 # Variables for models
 sp <- "Aedes aegypti"
 presence_coords <- st_coordinates(presence)
@@ -573,7 +619,8 @@ data_sp
 Aquí definimos algunos de los valores de entrada necesarios para el flujo de 
 trabajo:
 
-```{r}
+```{python}
+%%R
 seed=123
 perc_test = 0.2
 k = 4
@@ -588,7 +635,8 @@ imp_th=10
 Entrenaremos el modelo con un 80% de muestras de presencia, y dejaremos el 20% 
 restante para la evaluación al final.
 
-```{r}
+```{python}
+%%R
 # Create training and test sets
 c(train_sp, test_sp) %<-% 
   trainValTest(data_sp, 
@@ -598,12 +646,12 @@ c(train_sp, test_sp) %<-%
 
 ```
 
-```{r}
-train_sp
+```{python}
+%R train_sp
 ```
 
-```{r}
-test_sp
+```{python}
+%R test_sp
 ```
 
 ## Creación de *folds* para validación cruzada
@@ -615,7 +663,8 @@ cantidad de registros de presencia, crearemos solo 4 *folds* o *subconjuntos*.
 El algoritmo utilizará iterativamente 3 subconjuntos para entrenar y 1 para 
 validar, pero siempre dentro del entrenamiento.
 
-```{r}
+```{python}
+%%R
 # Create folds 
 ran_folds <- randomFolds(train_sp, 
                          k = k,
@@ -629,10 +678,10 @@ Primero entrenaremos un llamado *modelo completo*, es decir, un modelo con todos
 los predictores, y de allí eliminaremos aquellos que estén altamente 
 correlacionados y cuya contribución a la predicción no sea importante.
 
-```{r}
+```{python}
 #| message: false
 #| warning: false
-
+%%R
 # Train a full model
 full_model_sp <- train(method = method,
                        data = train_sp, 
@@ -643,12 +692,13 @@ full_model_sp
 
 Veamos las predicciones geográficas del modelo completo o *full model*
 
-```{r}
+```{python}
+%%R
 pred_full_model <- predict(full_model_sp,
                            data = env,
                            type = "cloglog")
 
-mapview(raster::raster(pred_full_model))
+plot(pred_full_model)
 ```
 
 ## Selección de variables
@@ -662,9 +712,9 @@ rendimiento posible. Usaremos el área bajo la curva ROC (AUC) como métrica de
 rendimiento y eliminaremos las variables correlacionadas solo si el AUC disminuye
 si las mantenemos.
 
-```{r}
+```{python}
 #| warning: false
-
+%%R
 # Prepare background locations to test correlation
 bg_sp <- prepareSWD(species = sp, 
                     a = background_coords,
@@ -683,8 +733,8 @@ vs_sp <- varSel(full_model_sp,
 
 Exploremos el objeto de salida
 
-```{r}
-vs_sp@data
+```{python}
+%R vs_sp@data
 ```
 
 ### Remover variables de menor importancia
@@ -693,7 +743,8 @@ Después de descartar las variables correlacionadas, también eliminaremos las
 variables que tengan una contribución porcentual o una importancia inferior al 
 10%, considerando como su mantenimiento o remoción afecta al AUC.
 
-```{r}
+```{python}
+%%R
 # remove less important variables only if auc does not decrease
 reduc_var_sp <- reduceVar(vs_sp,
                           th = imp_th, 
@@ -706,15 +757,16 @@ reduc_var_sp <- reduceVar(vs_sp,
 
 Exploremos el objeto resultante
 
-```{r}
-reduc_var_sp
+```{python}
+%R reduc_var_sp
 ```
 
 Ahora necesitamos recrear el objeto SWD y los conjuntos de datos de entrenamiento 
 y evaluación, pero solo con las variables seleccionadas, para poder ejecutar el 
 modelo final y hacer predicciones.
 
-```{r}
+```{python}
+%%R
 # Get only relevant variables from the reduced model
 retained_varnames <- names(reduc_var_sp@models[[1]]@data@data)
 
@@ -742,7 +794,8 @@ utilizamos las *feature classes* (fc) y la regularización (reg) del mejor
 modelo obtenido anteriormente. En este caso, son solo valores predeterminados,
 pero si también realizamos una optimización de hiperparámetros, pueden diferir.
 
-```{r}
+```{python}
+%%R
 final_model_sp <- train(method = method, 
                         data = train_sp,
                         fc = reduc_var_sp@models[[1]]@model@fc,
@@ -757,12 +810,13 @@ contexto de los SDM, puedes chequear el siguiente artículo:
 
 Hagamos las predicciones en el espacio geográfico y exploremos el resultado
 
-```{r}
+```{python}
+%%R
 map_sp_maxent <- predict(final_model_sp,
                          data = env, 
                          type = "cloglog")
 
-mapview(raster::raster(map_sp_maxent))
+plot(map_sp_maxent)
 ```
 
 ## Guardamos la predicción en GRASS 
@@ -770,7 +824,8 @@ mapview(raster::raster(map_sp_maxent))
 Ahora podemos escribir el ráster con las predicciones del modelo final en la 
 base de datos de GRASS.
 
-```{r}
+```{python}
+%%R
 write_RAST(map_sp_maxent, 
            "Aedes_aegypti_maxent", 
            flags = c("o","overwrite"))
@@ -778,7 +833,8 @@ write_RAST(map_sp_maxent,
 
 Corroboramos que el mapa creado esté allí
 
-```{r}
+```{python}
+%%R
 execGRASS("g.list", 
           parameters = list(type="raster",
                             pattern="Aedes*"))
@@ -792,7 +848,8 @@ Un AUC de 0,5 significaría que el modelo funciona equivalentemente a lanzar una
 moneda al aire.
 AUC es lo que llamamos una métrica de evaluación independiente de umbral.
 
-```{r}
+```{python}
+%%R
 # AUC
 auc_maxent <- auc(final_model_sp, test = test_sp)
 auc_maxent
@@ -802,7 +859,8 @@ Normalmente el resultado del SDM se convierte en mapas de presencia/ausencia.
 Para determinar qué umbral utilizar, realizamos evaluaciones dependientes del 
 umbral.
 
-```{r}
+```{python}
+%%R
 # Threshold dependent evaluation
 th_maxent <- thresholds(final_model_sp, 
                         type = "cloglog", 
@@ -813,13 +871,14 @@ knitr::kable(th_maxent, format = 'html', digits = 2)
 
 Elegimos un umbral y creamos un mapa binario, i.e., de presencia y ausencia
 
-```{r}
+```{python}
+%%R
 p = map_sp_maxent >= 0.5
 a = map_sp_maxent < 0.5
 map_sp_maxent[p] <- 1
 map_sp_maxent[a] <- 0
 
-mapview(raster::raster(map_sp_maxent))
+plot(map_sp_maxent)
 ```
 
 
@@ -828,13 +887,14 @@ mapview(raster::raster(map_sp_maxent))
 La importancia de las variables es un indicador de la contribución variable 
 a la predicción.
 
-```{r}
+```{python}
+%%R
 vi_model_sp <- maxentVarImp(final_model_sp)
 vi_model_sp
 ```
 
-```{r}
-plotVarImp(vi_model_sp)
+```{python}
+%R plotVarImp(vi_model_sp)
 ```
 
 
@@ -843,7 +903,8 @@ plotVarImp(vi_model_sp)
 Las curvas de respuesta nos dan una idea de la relación entre las variables 
 predictoras y la probabilidad de ocurrencia del evento de interés.
 
-```{r}
+```{python}
+%%R
 my_rp <- function(i){
   plotResponse(reduc_var_sp, i)
 }
@@ -855,7 +916,8 @@ ggpubr::ggarrange(plotlist = plotlist, labels = labels)
 
 Cerramos el mapset y terminamos :)
 
-```{r}
+```{python}
+%%R
 # close the mapset
 unlink_.gislock()
 ```
