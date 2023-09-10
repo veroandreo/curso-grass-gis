@@ -2,6 +2,7 @@ folium
 ipyleaflet
 matplotlib
 numpy
+pandas
 Pillow
 ply
 PyVirtualDisplay
