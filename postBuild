@@ -38,7 +38,7 @@ cd ..
 
 mkdir -p curso_grass_2023/
 
-!wget -c https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip -O $homedir/nc.zip
+wget -c https://grass.osgeo.org/sampledata/north_carolina/nc_spm_08_grass7.zip -O curso_grass_2023/nc.zip
 
 
 
