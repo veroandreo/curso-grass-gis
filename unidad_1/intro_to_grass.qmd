@@ -611,11 +611,12 @@ Estas tareas deben **SIEMPRE** realizarse desde dentro de GRASS
 
 - [g.manual](https://grass.osgeo.org/grass-stable/manuals/g.manual.html): en la GUI bajo el menú de "Ayuda" o simplemente presionando `<F1>`
 - `--help` o `--h` + nombre del módulo en la terminal
-- <https://grass.osgeo.org/learn/manuals/>
-- <https://grass.osgeo.org/learn/tutorials/>
+- **Manuales de usuario**: <https://grass.osgeo.org/learn/manuals/>
+- **Lista de tutoriales**: <https://grass.osgeo.org/learn/tutorials/>
 - [GRASS wiki](https://grasswiki.osgeo.org/wiki/GRASS-Wiki): ejemplos, explicaciones y ayuda sobre módulos o tareas particulares, [tutoriales](https://grasswiki.osgeo.org/wiki/Category:Tutorial), aplicaciones, noticias, etc.
-- [Jupyter notebooks](https://grasswiki.osgeo.org/wiki/GRASS_GIS_Jupyter_notebooks) con ejemplos de rutinas para diferentes aplicaciones
-- lista de mails grass-user: [subscribite](https://lists.osgeo.org/mailman/listinfo/grass-user) y envía tu consulta o revisa los [archivos](https://lists.osgeo.org/pipermail/grass-user/)
+- [Jupyter notebooks](https://grasswiki.osgeo.org/wiki/GRASS_GIS_Jupyter_notebooks) con ejemplos de diferentes rutinas
+- **lista de mails grass-user**: [subscribite](https://lists.osgeo.org/mailman/listinfo/grass-user) y envía tu consulta o revisa los [archivos](https://lists.osgeo.org/pipermail/grass-user/)
+- sumate a nuestro [**canal de chat en gitter**](https://app.gitter.im/#/room/#grassgis_community:gitter.im)
 
 
 ## Enlaces (muy) útiles
@@ -634,9 +635,14 @@ Estas tareas deben **SIEMPRE** realizarse desde dentro de GRASS
 
 ---
 
-<br><br><br>
+<br><br>
 
 ::: {.center}
 
 ![](../assets/img/grass_logo_alphab.png)
+
+Seguinos en redes sociales
+
+[{{< fa brands twitter size=2x >}}](https://twitter.com/GRASSGIS) [{{< fa brands mastodon size=2x >}}](https://fosstodon.org/@grassgis)
+
 :::

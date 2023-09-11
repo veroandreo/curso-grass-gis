@@ -648,4 +648,9 @@ end
 
 :::{.center}
 ![](../assets/img/grass_logo_alphab.png)
+
+Seguinos en redes sociales
+
+[{{< fa brands twitter size=2x >}}](https://twitter.com/GRASSGIS) [{{< fa brands mastodon size=2x >}}](https://fosstodon.org/@grassgis)
+
 :::
