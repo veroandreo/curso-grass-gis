@@ -117,8 +117,8 @@ mundo para una amplia gama de aplicaciones.
 El curso es principalmente **práctico**. 
 Salvo el primer día, se trabajará mayormente con Jupyter notebooks. 
 Las mismas podrán ejecutarse de manera local o en 
-[Google Colab](https://colab.research.google.com/).
-<!-- o en la plataforma [The Whole Tale](https://wholetale.org/).  -->
+[Google Colab](https://colab.research.google.com/) o en la plataforma 
+[The Whole Tale](https://wholetale.org/).
 
 Las personas participantes necesitan traer sus laptops con el 
 **software instalado y los datos descargados de antemano**, ya que 
@@ -164,27 +164,18 @@ Podemos visitar la web de
 [preguntas frecuentes](https://research.google.com/colaboratory/faq.html) 
 para obtener mayor información sobre el funcionamiento y las prestaciones 
 de esta plataforma.
-<!-- [**Whole Tale**](https://wholetale.org/) -->
 
-<!-- Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)  -->
-<!-- financiada por NSF para construir una plataforma escalable y multiusuario de -->
-<!-- código abierto, basada en la web para investigaciones reproducibles.  -->
-<!-- Permite la creación, publicación y ejecución de *tales*:  -->
-<!-- objetos de investigación ejecutables que capturan datos, código y el  -->
-<!-- entorno de software completo utilizado para producir los resultados de la  -->
-<!-- investigación. También es fantástico para enseñar, ya que los participantes  -->
-<!-- no necesitan instalar todos los paquetes de software necesarios.  -->
-<!-- ¡Solo necesitan registrarse con un correo electrónico institucional o personal  -->
-<!-- y ya están listos para comenzar! -->
-
-<!-- **Whole Tale:**  -->
-
-<!-- 1. Ir a [Curso GRASS GIS 2023]() -->
-<!-- 2. Log in (hay diferentes opciones) -->
-<!-- 3. Ejecutar la *Tale* (botón azul arriba a la derecha) -->
-<!-- 4. Confirmar *Copy* y *Run Tale* -->
-<!-- 5. Si sigue mostrando "Importing...", recargar -->
-<!-- 6. Run Tale -->
+Otra opción es ejecutar las notebook dentro de la plataforma [**The Whole Tale**](https://wholetale.org/).
+Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)
+financiada por NSF para construir una plataforma escalable y multiusuario de
+código abierto, basada en la web para investigaciones reproducibles.
+Permite la creación, publicación y ejecución de *tales*:
+objetos de investigación ejecutables que capturan datos, código y el
+entorno de software completo utilizado para producir los resultados de la
+investigación. También es fantástico para enseñar, ya que los participantes
+no necesitan instalar todos los paquetes de software necesarios.
+¡Solo necesitan registrarse con un correo electrónico institucional o personal
+y ya están listos para comenzar!
 
 **Cómo ejecutar Google Colab:**
 
@@ -201,12 +192,31 @@ necesitaremos instalar en cada sesión. Para ello, tenemos una
 notebook con [instrucciones](install_colab_and_mount_gdrive.html) que
 podemos luego copiar y pegar en cada notebook antes de comenzar. 
 
+**Cómo ejecutar Whole Tale:**
+
+1. Ir a [Curso GRASS 2023](https://dashboard.wholetale.org/run/64fe3a0647204f0fe728aaf2)
+2. Log in (hay diferentes opciones)
+3. Ejecutar la *Tale* (botón azul arriba a la derecha)
+4. Confirmar *Copy* y *Run Tale*
+5. Si sigue mostrando "Importing...", recargar la página (F5)
+6. Run Tale
+
+:::{.callout-important}
+Las notebooks están preparadas por defecto para correr en el entorno de Colab
+conectado al Drive. Para ejecutar el curso en The Whole Tale, será necesario
+adecuar algunas rutas a carpetas y archivos, y para la sesión de GRASS y R, 
+deberemos cambiar las celdas o chunks de `python` a `r` y borrar el comando 
+mágico `%%R`.
+:::
+
 #### Datos necesarios
 
 * Usaremos el siguiente [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
 con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para 
-usar. Pueden hacer una copia directamente a su Google drive así queda listo
-para trabajar desde Colab. 
+usar. Si van a usar Colab, pueden **hacer una copia** de esta 
+[carpeta](https://drive.google.com/drive/folders/11uHY2v3OFNApSVtNkPNs9rfMNj1YmkFg?usp=sharing)
+directamente a su Google drive así queda todo listo para trabajar. 
+En Whole Tale, los datos ya están subidos. 
 
 # Software necesario para ejecutar el curso completo localmente {#sec-software}
 

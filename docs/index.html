@@ -4681,7 +4681,7 @@ vertical-align: -.125em;
 </section>
 <section id="metodología" class="level1">
 <h1>Metodología</h1>
-<p>El curso es principalmente <strong>práctico</strong>. Salvo el primer día, se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local o en <a href="https://colab.research.google.com/">Google Colab</a>. <!-- o en la plataforma [The Whole Tale](https://wholetale.org/).  --></p>
+<p>El curso es principalmente <strong>práctico</strong>. Salvo el primer día, se trabajará mayormente con Jupyter notebooks. Las mismas podrán ejecutarse de manera local o en <a href="https://colab.research.google.com/">Google Colab</a> o en la plataforma <a href="https://wholetale.org/">The Whole Tale</a>.</p>
 <p>Las personas participantes necesitan traer sus laptops con el <strong>software instalado y los datos descargados de antemano</strong>, ya que <em>no se ha planificado una instancia de instalación de software</em> durante el curso.</p>
 <p>El curso es de un <strong>nivel intermedio</strong>. Se asumen conocimientos básicos de teledetección, SIG, línea de comandos, Python y R.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -4714,25 +4714,8 @@ Importante
 </section>
 <section id="día-2-al-5-ejecutamos-grass-online" class="level2">
 <h2 class="anchored" data-anchor-id="día-2-al-5-ejecutamos-grass-online">Día 2 al 5: Ejecutamos GRASS online</h2>
-<p>El resto del curso se ejecutará <strong>con notebooks en línea</strong> dentro de la plataforma <a href="https://colab.research.google.com/"><strong>Google Colab</strong></a>. Podemos visitar la web de <a href="https://research.google.com/colaboratory/faq.html">preguntas frecuentes</a> para obtener mayor información sobre el funcionamiento y las prestaciones de esta plataforma. <!-- [**Whole Tale**](https://wholetale.org/) --></p>
-<!-- Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS)  -->
-<!-- financiada por NSF para construir una plataforma escalable y multiusuario de -->
-<!-- código abierto, basada en la web para investigaciones reproducibles.  -->
-<!-- Permite la creación, publicación y ejecución de *tales*:  -->
-
-<!-- objetos de investigación ejecutables que capturan datos, código y el  -->
-<!-- entorno de software completo utilizado para producir los resultados de la  -->
-<!-- investigación. También es fantástico para enseñar, ya que los participantes  -->
-<!-- no necesitan instalar todos los paquetes de software necesarios.  -->
-<!-- ¡Solo necesitan registrarse con un correo electrónico institucional o personal  -->
-<!-- y ya están listos para comenzar! -->
-<!-- **Whole Tale:**  -->
-<!-- 1. Ir a [Curso GRASS GIS 2023]() -->
-<!-- 2. Log in (hay diferentes opciones) -->
-<!-- 3. Ejecutar la *Tale* (botón azul arriba a la derecha) -->
-<!-- 4. Confirmar *Copy* y *Run Tale* -->
-<!-- 5. Si sigue mostrando "Importing...", recargar -->
-<!-- 6. Run Tale -->
+<p>El resto del curso se ejecutará <strong>con notebooks en línea</strong> dentro de la plataforma <a href="https://colab.research.google.com/"><strong>Google Colab</strong></a>. Podemos visitar la web de <a href="https://research.google.com/colaboratory/faq.html">preguntas frecuentes</a> para obtener mayor información sobre el funcionamiento y las prestaciones de esta plataforma.</p>
+<p>Otra opción es ejecutar las notebook dentro de la plataforma <a href="https://wholetale.org/"><strong>The Whole Tale</strong></a>. Whole Tale es una iniciativa de la Data Infrastructure Building Block (DIBBS) financiada por NSF para construir una plataforma escalable y multiusuario de código abierto, basada en la web para investigaciones reproducibles. Permite la creación, publicación y ejecución de <em>tales</em>: objetos de investigación ejecutables que capturan datos, código y el entorno de software completo utilizado para producir los resultados de la investigación. También es fantástico para enseñar, ya que los participantes no necesitan instalar todos los paquetes de software necesarios. ¡Solo necesitan registrarse con un correo electrónico institucional o personal y ya están listos para comenzar!</p>
 <p><strong>Cómo ejecutar Google Colab:</strong></p>
 <ol type="1">
 <li>Open colab: <a href="https://colab.research.google.com/" class="uri">https://colab.research.google.com/</a></li>
@@ -4748,10 +4731,32 @@ Importante
 </figure>
 </div>
 <p>En Google Colab no tenemos preinstalado el software necesario, así que necesitaremos instalar en cada sesión. Para ello, tenemos una notebook con <a href="install_colab_and_mount_gdrive.html">instrucciones</a> que podemos luego copiar y pegar en cada notebook antes de comenzar.</p>
+<p><strong>Cómo ejecutar Whole Tale:</strong></p>
+<ol type="1">
+<li>Ir a <a href="https://dashboard.wholetale.org/run/64fe3a0647204f0fe728aaf2">Curso GRASS 2023</a></li>
+<li>Log in (hay diferentes opciones)</li>
+<li>Ejecutar la <em>Tale</em> (botón azul arriba a la derecha)</li>
+<li>Confirmar <em>Copy</em> y <em>Run Tale</em></li>
+<li>Si sigue mostrando “Importing…”, recargar la página (F5)</li>
+<li>Run Tale</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Importante
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Las notebooks están preparadas por defecto para correr en el entorno de Colab conectado al Drive. Para ejecutar el curso en The Whole Tale, será necesario adecuar algunas rutas a carpetas y archivos, y para la sesión de GRASS y R, deberemos cambiar las celdas o chunks de <code>python</code> a <code>r</code> y borrar el comando mágico <code>%%R</code>.</p>
+</div>
+</div>
 <section id="datos-necesarios-1" class="level4">
 <h4 class="anchored" data-anchor-id="datos-necesarios-1">Datos necesarios</h4>
 <ul>
-<li>Usaremos el siguiente <a href="https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing">archivo comprimido (~ 3.5 Gb)</a> con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para usar. Pueden hacer una copia directamente a su Google drive así queda listo para trabajar desde Colab.</li>
+<li>Usaremos el siguiente <a href="https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing">archivo comprimido (~ 3.5 Gb)</a> con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para usar. Si van a usar Colab, pueden <strong>hacer una copia</strong> de esta <a href="https://drive.google.com/drive/folders/11uHY2v3OFNApSVtNkPNs9rfMNj1YmkFg?usp=sharing">carpeta</a> directamente a su Google drive así queda todo listo para trabajar. En Whole Tale, los datos ya están subidos.</li>
 </ul>
 </section>
 </section>
