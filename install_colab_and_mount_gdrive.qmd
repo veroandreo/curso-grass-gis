@@ -29,6 +29,16 @@ apt install grass subversion grass-dev
 apt remove libproj22
 ```
 
+:::{.callout-note}
+Si al importar datos con reproyección al vuelo, se encuentran con errores del 
+tipo: `Flag -r requires GDAL library: No module named '_gdal'`, se recomienda
+instalar la librería [pygdal](https://github.com/nextgis/pygdal):
+
+```{python}
+pip install pygdal
+```
+:::
+
 ## Conectar nuestro Drive a la sesión de Colab
 
 Luego, montamos nuestro drive donde tenemos la carpeta `curso_grass_2023`. Para 
@@ -120,4 +130,9 @@ en que para la clasificación de los objetos la función llama a R internamente,
 y también para la sesión de 
 [modelado de nicho con GRASS y R](unidad_5/grass_and_r_sdm.html). 
 
+## Ejecutar comandos de R en The Whole Tale
 
+Abrir la notebook de la unidad 5 directamente en RStudio dentro del Tale. Como
+está preparada para Colab, será necesario, además de adecuar algunas rutas a 
+carpetas y archivos, cambiar las celdas o chunks de `python` a `r` y borrar el 
+comando mágico `%%R` pues no será necesario.

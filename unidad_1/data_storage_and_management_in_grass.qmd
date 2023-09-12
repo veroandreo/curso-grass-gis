@@ -229,6 +229,10 @@ de destino. Veamos dos ejemplos y sigamos las instrucciones que nos muestran.
 :::
 ::::
 
+:::{.callout-warning title="Tarea"}
+Importar los rasters y el vector de muestra provistos dentro del mapset *curso*
+que crearon más arriba.
+:::
 
 ## Trabajar sin importar los mapas
 
@@ -258,11 +262,12 @@ En general, el **mecanismo** es el siguiente: se trabaja desde el proyecto de
 destino, y desde allí se llama a los mapas en el proyecto de origen.
 
 :::{.callout-caution title="Tarea"}
-- Crear un nuevo location con el nombre *UTM18N* a partir de una de las 
-bandas de L8 e importarla.
+- Crear un nuevo proyecto (*location*) con el nombre *UTM18N* a partir de una 
+de las bandas de L8 provistas como rasters de muestra e importarla.
 - Importar a *nc_spm_08_grass7/user1* (con re-proyección al vuelo) la banda 
 de L8 importada al proyecto *UTM18N*. ¿En qué mapset estaba?
-- Definir (e imprimir) la región computacional al raster importado.
+- Definir (e imprimir) la región computacional al raster importado en ambos
+proyectos.
 :::
 
 También está la opción de copiar y pegar mapas de un proyecto a otro desde

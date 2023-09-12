@@ -151,7 +151,7 @@ No se pierdan la página [GRASS history](https://grass.osgeo.org/about/history/)
 **Mejor no**
 
 -   para visualizar datos geográficos de forma fácil y rápida (mejor usar QGIS)
--   si te asustan los *location* y *mapsets*
+-   si te asusta organizar tus datos en *proyectos* y *mapsets*
 -   si no tenés idea sobre CRS
 :::
 :::
@@ -167,13 +167,13 @@ Alguna vez trataron de abrir GRASS GIS?
 
 ## Nociones básicas
 
--   La **BASE DE DATOS GRASS o GRASS DATABASE** (también llamada "GISDBASE") es un directorio, usualmente llamado `grassdata` que contiene todos nuestros *LOCATIONs*
--   Un **LOCATION** se define por su sistema de coordenadas.
--   Un **MAPSET** es un subdirectorio dentro de un *Location*, equivalente a la noción de proyecto en otros GIS. Los **MAPSETs** pueden hacer referencia a distintos temas, regiones, etc.
+-   La **BASE DE DATOS GRASS o GRASS DATABASE** (también llamada "GISDBASE") es un directorio, usualmente llamado `grassdata` que contiene todos nuestros *PROYECTOs*
+-   Un **PROYECTO** (*LOCATION*) se define por su sistema de coordenadas.
+-   Un **MAPSET** es un subdirectorio dentro de un *proyecto*. Los **MAPSETs** pueden hacer referencia a distintos temas, regiones, variables, etc.
 
-## GRASS DB, Location y Mapsets
+## GRASS DB, Proyectos y Mapsets
 
-Para iniciar GRASS GIS se necesita especificar una ruta compuesta de *Database*, *Location* y *Mapset*
+Para iniciar GRASS GIS se necesita especificar una ruta compuesta de *Database*, *Proyecto* y *Mapset*
 
 ::: {.center}
 <img src="../assets/img/grass_database.png" width="65%"/>
@@ -186,13 +186,13 @@ Para iniciar GRASS GIS se necesita especificar una ruta compuesta de *Database*,
 
 **Por qué esta estructura?**
 
--   GRASS GIS tiene un *formato nativo* para los datos raster y vectoriales, por lo tanto estos deben ser *importados* or *vinculados* a un Location y Mapset (ver [r.external](https://grass.osgeo.org/grass-stable/manuals/r.external.html) por ejemplo).
+-   GRASS GIS tiene un *formato nativo* para los datos raster y vectoriales, por lo tanto estos deben ser *importados* or *vinculados* a un Proyecto (*Location*) y Mapset (ver [r.external](https://grass.osgeo.org/grass-stable/manuals/r.external.html) por ejemplo).
 
 **Cuáles son las ventajas?**
 
--   GRASS DATABASE, LOCATIONs y MAPSETs son directorios *que pueden ser fácilmente compartidos con otros usuarios*.
--   La base de datos de GRASS (`grassdata`) puede ser *local o remota*, y permite configurar *permisos especiales* para cada mapset en un LOCATION.
--   Todos los mapas dentro de un LOCATION tienen necesariamente el mismo sistema de coordenadas.
+-   GRASS DATABASE, PROYECTOs y MAPSETs son directorios *que pueden ser fácilmente compartidos con otros usuarios*.
+-   La base de datos de GRASS (`grassdata`) puede ser *local o remota*, y permite configurar *permisos especiales* para cada mapset en un proyecto (*location*).
+-   Todos los mapas dentro de un proyecto tienen necesariamente el mismo sistema de coordenadas.
 
 ---
 
@@ -492,7 +492,7 @@ Para más info, ver el <a href="https://neteler.gitlab.io/actinia-introduction/"
  ## IMPORT VECTOR DATA
 
  # import SHAPE file, clip to region extent and reproject to
- # current location projection
+ # current proyect (location) projection
  v.import input=research_area.shp output=research_area extent=region
 ```
 
@@ -558,7 +558,7 @@ Estas tareas deben **SIEMPRE** realizarse desde dentro de GRASS
  # print mapsets in the search path
  g.mapsets -p
 
- # list available mapsets in the location
+ # list available mapsets in the proyect (location)
  g.mapsets -l
 
  # add mapset to the search path

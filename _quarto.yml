@@ -19,7 +19,6 @@ website:
       - text: Unidad 1
         href: unidad_1/unit1_index.qmd
       - menu:
-        - href: unidad_1/disclaimer.qmd
         - href: unidad_1/intro_to_grass.qmd
         - href: unidad_1/functions_in_grass.qmd
         - href: unidad_1/explore_grass_gui.qmd

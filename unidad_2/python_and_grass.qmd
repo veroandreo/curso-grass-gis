@@ -37,6 +37,8 @@ apt install grass subversion grass-dev
 apt remove libproj22
 ```
 
+Chequeamos el path de instalación de GRASS.
+
 ```{python}
 !grass --config path
 ```
@@ -212,7 +214,7 @@ homedir = "/content/drive/MyDrive/curso_grass_2023"
 
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
-project = "nc_spm_08_grass7"
+project = "posgar2007_4_cba"
 mapset = "PERMANENT"
 ```
 
@@ -261,13 +263,13 @@ Listamos los mapas raster del mapset PERMANENT:
 
 ```{python}
 lista = gs.list_grouped(type = "raster")["PERMANENT"]
-lista[:5]
+lista
 ```
 
 Obtenemos info de un mapa raster:
 
 ```{python}
-gs.raster_info("aspect")["cols"]
+gs.raster_info("elevation")["cols"]
 ```
 
 :::{.callout-caution title="Tarea"}
@@ -284,25 +286,25 @@ Imprimimos la region computacional actual:
 gs.region()
 ```
 
-Cambiamos la región computacional al vector `urbanarea`:
+Cambiamos la región computacional al vector `area_edificada_cba`:
 
 ```{python}
-gs.region_env(vector="urbanarea")
+gs.run_command("g.region", vector="area_edificada_cba")
 ```
 
 Verificamos los atributos del vector seleccionado:
 
 ```{python}
-gs.vector_db_select('urbanarea').values()
+gs.vector_db_select("area_edificada_cba")
 ```
 
-Extraemos el área urbana de Raleigh:
+Extraemos el área urbana de Río Cuarto:
 
 ```{python}
 gs.run_command("v.extract", 
-               input="urbanarea", 
-               where="NAME == 'Raleigh'", 
-               output="urban_area_raleigh")
+               input="area_edificada_cba", 
+               where="fna == 'Gran Río Cuarto'", 
+               output="urban_area_rio_iv")
 ```
 
 Listamos los vectores por un patrón:
@@ -314,7 +316,7 @@ gs.list_grouped(type="vector", pattern="urban*")
 Verificamos los atributos del nuevo vector creado:
 
 ```{python}
-gs.vector_db_select("urban_area_raleigh")
+gs.vector_db_select("urban_area_rio_iv")
 ```
 
 y obtenemos información sobre el mismo. Notar que podemos seleccionar qué 
@@ -322,16 +324,7 @@ información queremos extraer, i.e., la salida es un diccionario.
 
 ```{python}
 # show attributes
-gs.vector_info("urban_area_raleigh")
-```
-
-Usamos otra manera de establecer la región computacional:
-
-```{python}
-region = gs.parse_command("g.region", 
-                          vector="urban_area_raleigh", 
-                          flags="g")
-region
+gs.vector_info("urban_area_rio_iv")
 ```
 
 ## Ejemplos con `grass.jupyter`
@@ -344,7 +337,7 @@ OpenStreetMap, por ejemplo.
 ```{python}
 raleigh_map = gj.InteractiveMap(width = 500, use_region=True, tiles="OpenStreetMap")
 raleigh_map.add_raster("elevation")
-raleigh_map.add_vector("urban_area_raleigh")
+raleigh_map.add_vector("urban_area_rio_iv")
 raleigh_map.add_layer_control(position = "bottomright")
 raleigh_map.show()
 ```
@@ -355,7 +348,7 @@ salida es similar a utilizar el Map Display en la GUI y exportar el resultado.
 ```{python}
 raleigh_map = gj.Map(width=500)
 raleigh_map.d_rast(map="elevation")
-raleigh_map.d_vect(map="lakes")
+raleigh_map.d_vect(map="embalses")
 raleigh_map.d_legend(raster="elevation", 
                      title="Height (m)", 
                      fontsize=10, 
@@ -385,7 +378,7 @@ g.region(flags="p")
 ```
 
 ```{python}
-v.info(map="roadsmajor")
+v.info(map="cursos_agua")
 ```
 
 ```{python}

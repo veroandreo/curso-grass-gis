@@ -4525,10 +4525,6 @@ vertical-align: -.125em;
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="../unidad_1/disclaimer.html" rel target>
- <span class="dropdown-text">Disclaimer</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../unidad_1/intro_to_grass.html" rel target>
  <span class="dropdown-text">Intro a GRASS GIS</span></a>
   </li>  
@@ -4692,7 +4688,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10 de septiembre de 2023</p>
+      <p class="date">12 de septiembre de 2023</p>
     </div>
   </div>
   
@@ -4718,6 +4714,7 @@ vertical-align: -.125em;
 <span id="cb2-5"><a href="#cb2-5"></a>apt install grass subversion grass<span class="op">-</span>dev</span>
 <span id="cb2-6"><a href="#cb2-6"></a>apt remove libproj22</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Chequeamos el path de instalación de GRASS.</p>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">!</span>grass <span class="op">--</span>config path</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -4873,7 +4870,7 @@ Nota
 <span id="cb4-5"><a href="#cb4-5"></a></span>
 <span id="cb4-6"><a href="#cb4-6"></a><span class="co"># GRASS GIS database variables</span></span>
 <span id="cb4-7"><a href="#cb4-7"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
-<span id="cb4-8"><a href="#cb4-8"></a>project <span class="op">=</span> <span class="st">&quot;nc_spm_08_grass7&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
 <span id="cb4-9"><a href="#cb4-9"></a>mapset <span class="op">=</span> <span class="st">&quot;PERMANENT&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="5">
@@ -4910,11 +4907,11 @@ Nota
 <p>Listamos los mapas raster del mapset PERMANENT:</p>
 <div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a>lista <span class="op">=</span> gs.list_grouped(<span class="bu">type</span> <span class="op">=</span> <span class="st">&quot;raster&quot;</span>)[<span class="st">&quot;PERMANENT&quot;</span>]</span>
-<span id="cb9-2"><a href="#cb9-2"></a>lista[:<span class="dv">5</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2"></a>lista</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Obtenemos info de un mapa raster:</p>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>gs.raster_info(<span class="st">&quot;aspect&quot;</span>)[<span class="st">&quot;cols&quot;</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>gs.raster_info(<span class="st">&quot;elevation&quot;</span>)[<span class="st">&quot;cols&quot;</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled" title="Tarea">
 <div class="callout-header d-flex align-content-center">
@@ -4936,20 +4933,20 @@ Tarea
 <div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>gs.region()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Cambiamos la región computacional al vector <code>urbanarea</code>:</p>
+<p>Cambiamos la región computacional al vector <code>area_edificada_cba</code>:</p>
 <div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>gs.region_env(vector<span class="op">=</span><span class="st">&quot;urbanarea&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>gs.run_command(<span class="st">&quot;g.region&quot;</span>, vector<span class="op">=</span><span class="st">&quot;area_edificada_cba&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Verificamos los atributos del vector seleccionado:</p>
 <div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>gs.vector_db_select(<span class="st">&#39;urbanarea&#39;</span>).values()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>gs.vector_db_select(<span class="st">&quot;area_edificada_cba&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Extraemos el área urbana de Raleigh:</p>
+<p>Extraemos el área urbana de Río Cuarto:</p>
 <div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>gs.run_command(<span class="st">&quot;v.extract&quot;</span>, </span>
-<span id="cb15-2"><a href="#cb15-2"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;urbanarea&quot;</span>, </span>
-<span id="cb15-3"><a href="#cb15-3"></a>               where<span class="op">=</span><span class="st">&quot;NAME == &#39;Raleigh&#39;&quot;</span>, </span>
-<span id="cb15-4"><a href="#cb15-4"></a>               output<span class="op">=</span><span class="st">&quot;urban_area_raleigh&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-2"><a href="#cb15-2"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;area_edificada_cba&quot;</span>, </span>
+<span id="cb15-3"><a href="#cb15-3"></a>               where<span class="op">=</span><span class="st">&quot;fna == &#39;Gran Río Cuarto&#39;&quot;</span>, </span>
+<span id="cb15-4"><a href="#cb15-4"></a>               output<span class="op">=</span><span class="st">&quot;urban_area_rio_iv&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Listamos los vectores por un patrón:</p>
 <div class="cell" data-execution_count="16">
@@ -4957,61 +4954,54 @@ Tarea
 </div>
 <p>Verificamos los atributos del nuevo vector creado:</p>
 <div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>gs.vector_db_select(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>gs.vector_db_select(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>y obtenemos información sobre el mismo. Notar que podemos seleccionar qué información queremos extraer, i.e., la salida es un diccionario.</p>
 <div class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># show attributes</span></span>
-<span id="cb18-2"><a href="#cb18-2"></a>gs.vector_info(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Usamos otra manera de establecer la región computacional:</p>
-<div class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>region <span class="op">=</span> gs.parse_command(<span class="st">&quot;g.region&quot;</span>, </span>
-<span id="cb19-2"><a href="#cb19-2"></a>                          vector<span class="op">=</span><span class="st">&quot;urban_area_raleigh&quot;</span>, </span>
-<span id="cb19-3"><a href="#cb19-3"></a>                          flags<span class="op">=</span><span class="st">&quot;g&quot;</span>)</span>
-<span id="cb19-4"><a href="#cb19-4"></a>region</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-2"><a href="#cb18-2"></a>gs.vector_info(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="ejemplos-con-grass.jupyter" class="level2">
 <h2 class="anchored" data-anchor-id="ejemplos-con-grass.jupyter">Ejemplos con <code>grass.jupyter</code></h2>
 <p>Ahora vamos a demostrar el uso de las dos clases más comunes del paquete <code>grass.jupyter</code> para graficar mapas. Usamos primeramente la clase interactiva que nos permite mostrar nuestras salidas sobre mapas base como el de OpenStreetMap, por ejemplo.</p>
-<div class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>raleigh_map <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, use_region<span class="op">=</span><span class="va">True</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
-<span id="cb20-2"><a href="#cb20-2"></a>raleigh_map.add_raster(<span class="st">&quot;elevation&quot;</span>)</span>
-<span id="cb20-3"><a href="#cb20-3"></a>raleigh_map.add_vector(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span>
-<span id="cb20-4"><a href="#cb20-4"></a>raleigh_map.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
-<span id="cb20-5"><a href="#cb20-5"></a>raleigh_map.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>raleigh_map <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, use_region<span class="op">=</span><span class="va">True</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>raleigh_map.add_raster(<span class="st">&quot;elevation&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>raleigh_map.add_vector(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span>
+<span id="cb19-4"><a href="#cb19-4"></a>raleigh_map.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
+<span id="cb19-5"><a href="#cb19-5"></a>raleigh_map.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A continuación, creamos una salida estática, utilizando la clase <code>Map</code>. Esta salida es similar a utilizar el Map Display en la GUI y exportar el resultado.</p>
-<div class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>raleigh_map <span class="op">=</span> gj.Map(width<span class="op">=</span><span class="dv">500</span>)</span>
-<span id="cb21-2"><a href="#cb21-2"></a>raleigh_map.d_rast(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>)</span>
-<span id="cb21-3"><a href="#cb21-3"></a>raleigh_map.d_vect(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;lakes&quot;</span>)</span>
-<span id="cb21-4"><a href="#cb21-4"></a>raleigh_map.d_legend(raster<span class="op">=</span><span class="st">&quot;elevation&quot;</span>, </span>
-<span id="cb21-5"><a href="#cb21-5"></a>                     title<span class="op">=</span><span class="st">&quot;Height (m)&quot;</span>, </span>
-<span id="cb21-6"><a href="#cb21-6"></a>                     fontsize<span class="op">=</span><span class="dv">10</span>, </span>
-<span id="cb21-7"><a href="#cb21-7"></a>                     at<span class="op">=</span>(<span class="dv">70</span>, <span class="dv">90</span>, <span class="dv">80</span>, <span class="dv">90</span>), </span>
-<span id="cb21-8"><a href="#cb21-8"></a>                     flags<span class="op">=</span><span class="st">&quot;b&quot;</span>)</span>
-<span id="cb21-9"><a href="#cb21-9"></a>raleigh_map.d_barscale()</span>
-<span id="cb21-10"><a href="#cb21-10"></a>raleigh_map.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>raleigh_map <span class="op">=</span> gj.Map(width<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>raleigh_map.d_rast(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>)</span>
+<span id="cb20-3"><a href="#cb20-3"></a>raleigh_map.d_vect(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;embalses&quot;</span>)</span>
+<span id="cb20-4"><a href="#cb20-4"></a>raleigh_map.d_legend(raster<span class="op">=</span><span class="st">&quot;elevation&quot;</span>, </span>
+<span id="cb20-5"><a href="#cb20-5"></a>                     title<span class="op">=</span><span class="st">&quot;Height (m)&quot;</span>, </span>
+<span id="cb20-6"><a href="#cb20-6"></a>                     fontsize<span class="op">=</span><span class="dv">10</span>, </span>
+<span id="cb20-7"><a href="#cb20-7"></a>                     at<span class="op">=</span>(<span class="dv">70</span>, <span class="dv">90</span>, <span class="dv">80</span>, <span class="dv">90</span>), </span>
+<span id="cb20-8"><a href="#cb20-8"></a>                     flags<span class="op">=</span><span class="st">&quot;b&quot;</span>)</span>
+<span id="cb20-9"><a href="#cb20-9"></a>raleigh_map.d_barscale()</span>
+<span id="cb20-10"><a href="#cb20-10"></a>raleigh_map.show()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="ejemplos-con-grass.pygrass" class="level2">
 <h2 class="anchored" data-anchor-id="ejemplos-con-grass.pygrass">Ejemplos con <code>grass.pygrass</code></h2>
 <p>Finalmente, vamos a ejemplificar el uso de la interfaz <code>modules</code> dentro de <code>grass.pygrass</code>. Si bien esta interfaz nos permite ejecutar comandos de GRASS casi como si los ejecutásemos en la terminal, las salidas no están optimizadas para ser usadas como entrada para otros comandos. Para ello, es más conveniente usar <code>grass.script</code> o funciones de más bajo nivel de <code>grass.pygrass</code> que permiten acceder a los componentes básicos de los objetos dentro de GRASS.</p>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> general <span class="im">as</span> g</span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> raster <span class="im">as</span> r</span>
+<span id="cb21-3"><a href="#cb21-3"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> vector <span class="im">as</span> v</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <div class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> general <span class="im">as</span> g</span>
-<span id="cb22-2"><a href="#cb22-2"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> raster <span class="im">as</span> r</span>
-<span id="cb22-3"><a href="#cb22-3"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> vector <span class="im">as</span> v</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a>g.region(flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a>g.region(flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a>v.info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;cursos_agua&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a>v.info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;roadsmajor&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a>r.report(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>, nsteps<span class="op">=</span><span class="st">&quot;10&quot;</span>, quiet<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a>r.report(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>, nsteps<span class="op">=</span><span class="st">&quot;10&quot;</span>, quiet<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -5438,411 +5428,404 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="sourceCode" id="cb26" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1"></a><span class="co">---</span></span>
-<span id="cb26-2"><a href="#cb26-2"></a><span class="an">title:</span><span class="co"> Python y GRASS GIS</span></span>
-<span id="cb26-3"><a href="#cb26-3"></a><span class="an">author:</span><span class="co"> Verónica Andreo</span></span>
-<span id="cb26-4"><a href="#cb26-4"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb26-5"><a href="#cb26-5"></a><span class="an">format:</span></span>
-<span id="cb26-6"><a href="#cb26-6"></a><span class="co">  html:</span></span>
-<span id="cb26-7"><a href="#cb26-7"></a><span class="co">    code-tools: true</span></span>
-<span id="cb26-8"><a href="#cb26-8"></a><span class="co">    code-copy: true</span></span>
-<span id="cb26-9"><a href="#cb26-9"></a><span class="co">    code-fold: false</span></span>
-<span id="cb26-10"><a href="#cb26-10"></a><span class="an">execute:</span></span>
-<span id="cb26-11"><a href="#cb26-11"></a><span class="co">  eval: false</span></span>
-<span id="cb26-12"><a href="#cb26-12"></a><span class="co">  cache: false</span></span>
-<span id="cb26-13"><a href="#cb26-13"></a><span class="co">  keep-ipynb: true</span></span>
-<span id="cb26-14"><a href="#cb26-14"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
-<span id="cb26-15"><a href="#cb26-15"></a><span class="co">---</span></span>
-<span id="cb26-16"><a href="#cb26-16"></a></span>
-<span id="cb26-17"><a href="#cb26-17"></a>En esta notebook, nos vamos a introducir en el uso de GRASS GIS con Python, y no </span>
-<span id="cb26-18"><a href="#cb26-18"></a>solo eso, sino que ejecutaremos GRASS con Python dentro de Google Colab conectado</span>
-<span id="cb26-19"><a href="#cb26-19"></a>a una base de datos o <span class="in">`grassdata`</span> dentro de nuestro Google Drive. </span>
-<span id="cb26-20"><a href="#cb26-20"></a></span>
-<span id="cb26-21"><a href="#cb26-21"></a>Antes de empezar entonces y para ganar tiempo, conectemos nuestro drive e instalemos </span>
-<span id="cb26-22"><a href="#cb26-22"></a>GRASS en Google Colab.</span>
-<span id="cb26-23"><a href="#cb26-23"></a></span>
-<span id="cb26-26"><a href="#cb26-26"></a><span class="in">```{python}</span></span>
-<span id="cb26-27"><a href="#cb26-27"></a><span class="co"># import drive from google colab</span></span>
-<span id="cb26-28"><a href="#cb26-28"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
-<span id="cb26-29"><a href="#cb26-29"></a><span class="co"># mount drive</span></span>
-<span id="cb26-30"><a href="#cb26-30"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span>
-<span id="cb26-31"><a href="#cb26-31"></a><span class="in">```</span></span>
-<span id="cb26-32"><a href="#cb26-32"></a></span>
-<span id="cb26-35"><a href="#cb26-35"></a><span class="in">```{python}</span></span>
-<span id="cb26-36"><a href="#cb26-36"></a><span class="op">%%</span>bash</span>
-<span id="cb26-37"><a href="#cb26-37"></a>DEBIAN_FRONTEND<span class="op">=</span>noninteractive </span>
-<span id="cb26-38"><a href="#cb26-38"></a>sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa:ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable </span>
-<span id="cb26-39"><a href="#cb26-39"></a>apt update </span>
-<span id="cb26-40"><a href="#cb26-40"></a>apt install grass subversion grass<span class="op">-</span>dev</span>
-<span id="cb26-41"><a href="#cb26-41"></a>apt remove libproj22</span>
-<span id="cb26-42"><a href="#cb26-42"></a><span class="in">```</span></span>
-<span id="cb26-43"><a href="#cb26-43"></a></span>
-<span id="cb26-46"><a href="#cb26-46"></a><span class="in">```{python}</span></span>
-<span id="cb26-47"><a href="#cb26-47"></a><span class="op">!</span>grass <span class="op">--</span>config path</span>
-<span id="cb26-48"><a href="#cb26-48"></a><span class="in">```</span></span>
-<span id="cb26-49"><a href="#cb26-49"></a></span>
-<span id="cb26-50"><a href="#cb26-50"></a>Mientras, vamos a recorrer brevemente los principales paquetes/librerías de </span>
-<span id="cb26-51"><a href="#cb26-51"></a>Python que son parte de GRASS y nos permiten ejcutar sus funciones, a la vez que</span>
-<span id="cb26-52"><a href="#cb26-52"></a>podemos combinar las salidas con otras librerías más tradicionales de Python.</span>
-<span id="cb26-53"><a href="#cb26-53"></a></span>
-<span id="cb26-54"><a href="#cb26-54"></a><span class="fu">### ¿Por qué Jupyter Notebooks y cómo usarlas?</span></span>
-<span id="cb26-55"><a href="#cb26-55"></a></span>
-<span id="cb26-56"><a href="#cb26-56"></a>Las Jupyter Notebook son aplicaciones servidor-cliente que permiten que el </span>
-<span id="cb26-57"><a href="#cb26-57"></a>código escrito en un documento de cuaderno sea</span>
-<span id="cb26-58"><a href="#cb26-58"></a>**editado y ejecutado a través de un navegador web**. </span>
-<span id="cb26-59"><a href="#cb26-59"></a>Pueden ejecutarse en un ordenador local (sin necesidad de acceso a Internet) o </span>
-<span id="cb26-60"><a href="#cb26-60"></a>utilizarse para controlar cálculos en un servidor remoto al que se accede a </span>
-<span id="cb26-61"><a href="#cb26-61"></a>través de Internet (<span class="co">[</span><span class="ot">véase la documentación</span><span class="co">](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)</span>).</span>
-<span id="cb26-62"><a href="#cb26-62"></a></span>
-<span id="cb26-63"><a href="#cb26-63"></a>Las Jupyter Notebooks pueden ser interactivas y permiten combinar código, texto </span>
-<span id="cb26-64"><a href="#cb26-64"></a>explicativo y resultados computacionales en un único documento. En general, son:</span>
-<span id="cb26-65"><a href="#cb26-65"></a></span>
-<span id="cb26-66"><a href="#cb26-66"></a><span class="ss">* </span>convenientes para el desarrollo inicial de código (prototipado)</span>
-<span id="cb26-67"><a href="#cb26-67"></a><span class="ss">* </span>ideales para la segmentación de código, con la posibilidad de volver a </span>
-<span id="cb26-68"><a href="#cb26-68"></a>ejecutar celdas</span>
-<span id="cb26-69"><a href="#cb26-69"></a><span class="ss">* </span>capaces de almacenar valores de variables de celdas ya ejecutadas</span>
-<span id="cb26-70"><a href="#cb26-70"></a></span>
-<span id="cb26-71"><a href="#cb26-71"></a>La notebook puede guardarse como un script ejecutable de Python además del </span>
-<span id="cb26-72"><a href="#cb26-72"></a>formato nativo <span class="in">`.ipynb`</span>, o exportarse a varios formatos de documentación </span>
-<span id="cb26-73"><a href="#cb26-73"></a>como PDF o Sphinx RST con un bonito estilo.</span>
-<span id="cb26-74"><a href="#cb26-74"></a></span>
-<span id="cb26-75"><a href="#cb26-75"></a><span class="fu">#### Edición y uso interactivo</span></span>
-<span id="cb26-76"><a href="#cb26-76"></a></span>
-<span id="cb26-77"><a href="#cb26-77"></a>Editar una Jupyter Notebook es muy fácil: en el navegador web, puedes navegar </span>
-<span id="cb26-78"><a href="#cb26-78"></a>entre celdas de texto o código utilizando el ratón o atajos de teclado (ver </span>
-<span id="cb26-79"><a href="#cb26-79"></a>Menú &gt; Ayuda &gt; Atajos de teclado). Se pueden ejecutar pequeños fragmentos de </span>
-<span id="cb26-80"><a href="#cb26-80"></a>código celda por celda, guardar la notebook en su estado actual, o </span>
-<span id="cb26-81"><a href="#cb26-81"></a>modificar y recalcular celdas o devolverlas a su estado anterior. </span>
-<span id="cb26-82"><a href="#cb26-82"></a>Además de las celdas de código ejecutables, se puede utilizar Markdown en las </span>
-<span id="cb26-83"><a href="#cb26-83"></a>celdas de documentación para hacerlas presentables a los demás.</span>
-<span id="cb26-84"><a href="#cb26-84"></a></span>
-<span id="cb26-85"><a href="#cb26-85"></a><span class="fu"># Paquetes de Python en GRASS</span></span>
-<span id="cb26-86"><a href="#cb26-86"></a></span>
-<span id="cb26-87"><a href="#cb26-87"></a><span class="fu">## `grass.script`</span></span>
-<span id="cb26-88"><a href="#cb26-88"></a></span>
-<span id="cb26-89"><a href="#cb26-89"></a>El paquete **grass.script** o *GRASS GIS Python Scripting Library* provee </span>
-<span id="cb26-90"><a href="#cb26-90"></a>funciones para llamar módulos de GRASS dentro de scripts o rutinas Python. </span>
-<span id="cb26-91"><a href="#cb26-91"></a>Las funciones más comúnmente usadas incluyen:</span>
-<span id="cb26-92"><a href="#cb26-92"></a></span>
-<span id="cb26-93"><a href="#cb26-93"></a><span class="ss">- </span><span class="in">`run_command`</span>: usada cuando la salida de los módulos es un raster o vector, </span>
-<span id="cb26-94"><a href="#cb26-94"></a>no se espera una salida de tipo texto.</span>
-<span id="cb26-95"><a href="#cb26-95"></a><span class="ss">- </span><span class="in">`read_command`</span>: se utiliza cuando la salida de los módulos es de tipo texto.</span>
-<span id="cb26-96"><a href="#cb26-96"></a><span class="ss">- </span><span class="in">`parse_command`</span>: se utiliza con módulos cuya salida puede convertirse en </span>
-<span id="cb26-97"><a href="#cb26-97"></a>pares <span class="in">`key=value`</span> o diccionarios.</span>
-<span id="cb26-98"><a href="#cb26-98"></a><span class="ss">- </span><span class="in">`write_command`</span>: se utiliza con módulos que esperan una entrada de texto, </span>
-<span id="cb26-99"><a href="#cb26-99"></a>ya sea en forma de archivo o desde stdin.</span>
-<span id="cb26-100"><a href="#cb26-100"></a></span>
-<span id="cb26-101"><a href="#cb26-101"></a>Este paquete también proporciona varias funciones de *wrapping* para módulos de </span>
-<span id="cb26-102"><a href="#cb26-102"></a>uso muy frecuente en GRASS, por ejemplo:</span>
-<span id="cb26-103"><a href="#cb26-103"></a></span>
-<span id="cb26-104"><a href="#cb26-104"></a><span class="ss">- </span>Para obtener información de un raster, se utiliza </span>
-<span id="cb26-105"><a href="#cb26-105"></a>script.raster.raster_info(): <span class="in">`gs.raster_info(&#39;elevation&#39;)`</span></span>
-<span id="cb26-106"><a href="#cb26-106"></a><span class="ss">- </span>Para obtener información de un vector, se utiliza </span>
-<span id="cb26-107"><a href="#cb26-107"></a>script.vector.vector_info(): <span class="in">`gs.vector_info(&#39;roadsmajor&#39;)`</span></span>
-<span id="cb26-108"><a href="#cb26-108"></a><span class="ss">- </span>Para listar mapas de diferente tipo en un mapset, se utiliza </span>
-<span id="cb26-109"><a href="#cb26-109"></a>script.core.list_grouped(): <span class="in">`gs.list_grouped(type=[&#39;raster&#39;])`</span></span>
-<span id="cb26-110"><a href="#cb26-110"></a><span class="ss">- </span>Para obtener la región computacional, se utiliza script.core.region():</span>
-<span id="cb26-111"><a href="#cb26-111"></a><span class="in">`gs.region()`</span></span>
-<span id="cb26-112"><a href="#cb26-112"></a></span>
-<span id="cb26-113"><a href="#cb26-113"></a>:::{.callout-note}</span>
-<span id="cb26-114"><a href="#cb26-114"></a>Para más detalles, ver la documentación del paquete en: </span>
-<span id="cb26-115"><a href="#cb26-115"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html&gt;</span></span>
-<span id="cb26-116"><a href="#cb26-116"></a>:::</span>
-<span id="cb26-117"><a href="#cb26-117"></a></span>
-<span id="cb26-118"><a href="#cb26-118"></a><span class="fu">## `grass.jupyter`</span></span>
-<span id="cb26-119"><a href="#cb26-119"></a></span>
-<span id="cb26-120"><a href="#cb26-120"></a>La librería **grass.jupyter** mejora la integración de GRASS y Jupyter, y </span>
-<span id="cb26-121"><a href="#cb26-121"></a>proporciona diferentes clases para facilitar la visualización de mapas de GRASS</span>
-<span id="cb26-122"><a href="#cb26-122"></a>en el entorno Jupyter. Este paquete fue desarrollado por @haedrich_grass_jupyter </span>
-<span id="cb26-123"><a href="#cb26-123"></a>como parte de su proyecto para </span>
-<span id="cb26-124"><a href="#cb26-124"></a><span class="co">[</span><span class="ot">Google Summer of Code</span><span class="co">](https://summerofcode.withgoogle.com/)</span> y con una </span>
-<span id="cb26-125"><a href="#cb26-125"></a><span class="co">[</span><span class="ot">student grant</span><span class="co">](https://grasswiki.osgeo.org/wiki/Student_Grants)</span> de GRASS. </span>
-<span id="cb26-126"><a href="#cb26-126"></a></span>
-<span id="cb26-127"><a href="#cb26-127"></a>Las classes más importantes son:</span>
-<span id="cb26-128"><a href="#cb26-128"></a></span>
-<span id="cb26-129"><a href="#cb26-129"></a><span class="ss">- </span><span class="in">`init`</span>: inicia una sesión de GRASS y configura todas las variables de entorno</span>
-<span id="cb26-130"><a href="#cb26-130"></a>necesarias para ejecutar GRASS desde Python y dentro de una Notebook.</span>
-<span id="cb26-131"><a href="#cb26-131"></a><span class="ss">- </span><span class="in">`Map`</span>: renderiza mapas 2D</span>
-<span id="cb26-132"><a href="#cb26-132"></a><span class="ss">- </span><span class="in">`Map3D`</span>: renderiza mapas 3D</span>
-<span id="cb26-133"><a href="#cb26-133"></a><span class="ss">- </span><span class="in">`InteractiveMap`</span>: permite la visualización interactiva utilizando la librería</span>
-<span id="cb26-134"><a href="#cb26-134"></a><span class="co">[</span><span class="ot">`folium`</span><span class="co">](https://python-visualization.github.io/folium/)</span></span>
-<span id="cb26-135"><a href="#cb26-135"></a><span class="ss">- </span><span class="in">`TimeSeriesMap`</span>: permite la visualización de datos espacio-temporales</span>
-<span id="cb26-136"><a href="#cb26-136"></a></span>
-<span id="cb26-137"><a href="#cb26-137"></a>:::{.callout-note}</span>
-<span id="cb26-138"><a href="#cb26-138"></a>Para más detalles, ver la documentación del paquete en: </span>
-<span id="cb26-139"><a href="#cb26-139"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/grass.jupyter.html&gt;</span></span>
-<span id="cb26-140"><a href="#cb26-140"></a>:::</span>
-<span id="cb26-141"><a href="#cb26-141"></a></span>
-<span id="cb26-142"><a href="#cb26-142"></a><span class="fu">## `grass.pygrass`</span></span>
-<span id="cb26-143"><a href="#cb26-143"></a></span>
-<span id="cb26-144"><a href="#cb26-144"></a>PyGRASS es una interfaz de programación de aplicaciones (API) de Python </span>
-<span id="cb26-145"><a href="#cb26-145"></a>orientada a objetos para GRASS GIS desarrollada por @zambelli_pygrass_2013. </span>
-<span id="cb26-146"><a href="#cb26-146"></a>PyGRASS ofrece interfaces a los módulos y funcionalidades de GRASS, así como</span>
-<span id="cb26-147"><a href="#cb26-147"></a>a los datos vectoriales y ráster, de modo que permite acceder a cada minima </span>
-<span id="cb26-148"><a href="#cb26-148"></a>unidad y desarrollar nuevos módulos con funciones de más bajo nivel. </span>
-<span id="cb26-149"><a href="#cb26-149"></a>PyGRASS mejora la integración entre GRASS GIS y Python, haciendo el uso de </span>
-<span id="cb26-150"><a href="#cb26-150"></a>Python bajo GRASS más consistente con el lenguaje mismo. </span>
-<span id="cb26-151"><a href="#cb26-151"></a>Además, simplifica el scripting y la programación de GRASS y lo hace más </span>
-<span id="cb26-152"><a href="#cb26-152"></a>natural para el usuario.</span>
-<span id="cb26-153"><a href="#cb26-153"></a></span>
-<span id="cb26-154"><a href="#cb26-154"></a>Dentro de esta librería, vamos a usar especialmente </span>
-<span id="cb26-155"><a href="#cb26-155"></a><span class="in">`grass.pygrass.modules.shorcuts`</span> que nos permite llamar a los módulos</span>
-<span id="cb26-156"><a href="#cb26-156"></a>o funciones de GRASS de forma muy parecida a cómo lo haríamos en la consola de </span>
-<span id="cb26-157"><a href="#cb26-157"></a>GRASS.</span>
-<span id="cb26-158"><a href="#cb26-158"></a></span>
-<span id="cb26-159"><a href="#cb26-159"></a>:::{.callout-note}</span>
-<span id="cb26-160"><a href="#cb26-160"></a>Para más detalles, ver la documentación del paquete en: </span>
-<span id="cb26-161"><a href="#cb26-161"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/pygrass_index.html&gt;</span></span>
-<span id="cb26-162"><a href="#cb26-162"></a>:::</span>
-<span id="cb26-163"><a href="#cb26-163"></a></span>
-<span id="cb26-164"><a href="#cb26-164"></a><span class="fu">## Otras librerías Python en GRASS GIS</span></span>
-<span id="cb26-165"><a href="#cb26-165"></a></span>
-<span id="cb26-166"><a href="#cb26-166"></a><span class="fu">### Temporal framework</span></span>
-<span id="cb26-167"><a href="#cb26-167"></a></span>
-<span id="cb26-168"><a href="#cb26-168"></a>El *GRASS GIS Temporal Framework* implementa la funcionalidad SIG temporal de </span>
-<span id="cb26-169"><a href="#cb26-169"></a>GRASS GIS y proporciona una API para implementar módulos de procesamiento </span>
-<span id="cb26-170"><a href="#cb26-170"></a>espacio-temporal. El framework introduce conjuntos de datos espacio-temporales</span>
-<span id="cb26-171"><a href="#cb26-171"></a>que representan series temporales de mapas raster, raster 3D o vectoriales. </span>
-<span id="cb26-172"><a href="#cb26-172"></a>Este marco proporciona las siguientes funcionalidades:</span>
-<span id="cb26-173"><a href="#cb26-173"></a></span>
-<span id="cb26-174"><a href="#cb26-174"></a><span class="ss">- </span>Asignación de marcas de tiempo a mapas y registro de mapas en la base de datos temporal</span>
-<span id="cb26-175"><a href="#cb26-175"></a><span class="ss">- </span>Modificación de marcas de tiempo</span>
-<span id="cb26-176"><a href="#cb26-176"></a><span class="ss">- </span>Creación, cambio de nombre y supresión de conjuntos de datos espacio-temporales</span>
-<span id="cb26-177"><a href="#cb26-177"></a><span class="ss">- </span>Registro y anulación del registro de mapas en conjuntos de datos espacio-temporales</span>
-<span id="cb26-178"><a href="#cb26-178"></a><span class="ss">- </span>Consulta de mapas registrados en conjuntos de datos espacio-temporales mediante SQL</span>
-<span id="cb26-179"><a href="#cb26-179"></a><span class="ss">- </span>Análisis de la topología espacio-temporal de los conjuntos de datos espacio-temporales</span>
-<span id="cb26-180"><a href="#cb26-180"></a><span class="ss">- </span>Muestreo de conjuntos de datos espacio-temporales</span>
-<span id="cb26-181"><a href="#cb26-181"></a><span class="ss">- </span>Cálculo de las relaciones temporales y espaciales entre los mapas registrados</span>
-<span id="cb26-182"><a href="#cb26-182"></a><span class="ss">- </span>Funciones de nivel superior compartidas entre módulos</span>
-<span id="cb26-183"><a href="#cb26-183"></a></span>
-<span id="cb26-184"><a href="#cb26-184"></a>:::{.callout-note}</span>
-<span id="cb26-185"><a href="#cb26-185"></a>Para más detalles, ver la documentación de la librería en: </span>
-<span id="cb26-186"><a href="#cb26-186"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/temporal_framework.html&gt;</span></span>
-<span id="cb26-187"><a href="#cb26-187"></a>:::</span>
-<span id="cb26-188"><a href="#cb26-188"></a></span>
-<span id="cb26-189"><a href="#cb26-189"></a><span class="fu">### Testing framework</span></span>
-<span id="cb26-190"><a href="#cb26-190"></a></span>
-<span id="cb26-191"><a href="#cb26-191"></a>El *GRASS GIS Testing framework* está basado en el paquete <span class="in">`unittest`</span> de Python </span>
-<span id="cb26-192"><a href="#cb26-192"></a>con un gran número de mejoras, extensiones y cambios específicos ajustados a </span>
-<span id="cb26-193"><a href="#cb26-193"></a>GRASS. Estos cambios incluyen la creación de reportes de pruebas HTML compatibles</span>
-<span id="cb26-194"><a href="#cb26-194"></a>con GRASS, o la ejecución de pruebas de manera que las terminaciones de procesos</span>
-<span id="cb26-195"><a href="#cb26-195"></a>potencialmente causadas por funciones de la librería C no influyan en el proceso</span>
-<span id="cb26-196"><a href="#cb26-196"></a>principal de pruebas.</span>
-<span id="cb26-197"><a href="#cb26-197"></a></span>
-<span id="cb26-198"><a href="#cb26-198"></a>Algunas pruebas se ejecutarán sin ningún dato, pero muchas pruebas requieren </span>
-<span id="cb26-199"><a href="#cb26-199"></a>la versión básica de los <span class="co">[</span><span class="ot">datos de muestra</span><span class="co">](https://grass.osgeo.org/sampledata/north_carolina/nc_basic_spm_grass7.zip)</span> </span>
-<span id="cb26-200"><a href="#cb26-200"></a>para Carolina del Norte.</span>
-<span id="cb26-201"><a href="#cb26-201"></a></span>
-<span id="cb26-202"><a href="#cb26-202"></a>:::{.callout-note}</span>
-<span id="cb26-203"><a href="#cb26-203"></a>Para más detalles, ver la documentación de la librería en: </span>
-<span id="cb26-204"><a href="#cb26-204"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/gunittest_testing.html&gt;</span></span>
-<span id="cb26-205"><a href="#cb26-205"></a>:::</span>
-<span id="cb26-206"><a href="#cb26-206"></a></span>
-<span id="cb26-207"><a href="#cb26-207"></a><span class="fu"># Ejemplos con cada paquete</span></span>
-<span id="cb26-208"><a href="#cb26-208"></a></span>
-<span id="cb26-209"><a href="#cb26-209"></a>Primero, iniciemos una sesión de GRASS GIS. Necesitamos definir la ruta hasta </span>
-<span id="cb26-210"><a href="#cb26-210"></a>un mapset, por lo tanto vamos a usar los datos de muestra de GRASS, i.e., el </span>
-<span id="cb26-211"><a href="#cb26-211"></a>sample dataset de North Carolina. </span>
-<span id="cb26-212"><a href="#cb26-212"></a></span>
-<span id="cb26-215"><a href="#cb26-215"></a><span class="in">```{python}</span></span>
-<span id="cb26-216"><a href="#cb26-216"></a><span class="im">import</span> os</span>
-<span id="cb26-217"><a href="#cb26-217"></a></span>
-<span id="cb26-218"><a href="#cb26-218"></a><span class="co"># data directory</span></span>
-<span id="cb26-219"><a href="#cb26-219"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
-<span id="cb26-220"><a href="#cb26-220"></a></span>
-<span id="cb26-221"><a href="#cb26-221"></a><span class="co"># GRASS GIS database variables</span></span>
-<span id="cb26-222"><a href="#cb26-222"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
-<span id="cb26-223"><a href="#cb26-223"></a>project <span class="op">=</span> <span class="st">&quot;nc_spm_08_grass7&quot;</span></span>
-<span id="cb26-224"><a href="#cb26-224"></a>mapset <span class="op">=</span> <span class="st">&quot;PERMANENT&quot;</span></span>
-<span id="cb26-225"><a href="#cb26-225"></a><span class="in">```</span></span>
-<span id="cb26-226"><a href="#cb26-226"></a></span>
-<span id="cb26-229"><a href="#cb26-229"></a><span class="in">```{python}</span></span>
-<span id="cb26-230"><a href="#cb26-230"></a><span class="co"># import standard Python packages we need</span></span>
-<span id="cb26-231"><a href="#cb26-231"></a><span class="im">import</span> sys</span>
-<span id="cb26-232"><a href="#cb26-232"></a><span class="im">import</span> subprocess</span>
-<span id="cb26-233"><a href="#cb26-233"></a></span>
-<span id="cb26-234"><a href="#cb26-234"></a><span class="co"># ask GRASS GIS where its Python packages are to be able to run it from the notebook</span></span>
-<span id="cb26-235"><a href="#cb26-235"></a>sys.path.append(</span>
-<span id="cb26-236"><a href="#cb26-236"></a>    subprocess.check_output([<span class="st">&quot;grass&quot;</span>, <span class="st">&quot;--config&quot;</span>, <span class="st">&quot;python_path&quot;</span>], text<span class="op">=</span><span class="va">True</span>).strip()</span>
-<span id="cb26-237"><a href="#cb26-237"></a>)</span>
-<span id="cb26-238"><a href="#cb26-238"></a><span class="in">```</span></span>
-<span id="cb26-239"><a href="#cb26-239"></a></span>
-<span id="cb26-240"><a href="#cb26-240"></a>Ahora sí, estamos listos para importar los paquetes de GRASS e iniciar una</span>
-<span id="cb26-241"><a href="#cb26-241"></a>sesión:</span>
-<span id="cb26-242"><a href="#cb26-242"></a></span>
-<span id="cb26-245"><a href="#cb26-245"></a><span class="in">```{python}</span></span>
-<span id="cb26-246"><a href="#cb26-246"></a><span class="co"># import the GRASS GIS packages we need</span></span>
-<span id="cb26-247"><a href="#cb26-247"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
-<span id="cb26-248"><a href="#cb26-248"></a><span class="im">import</span> grass.jupyter <span class="im">as</span> gj</span>
-<span id="cb26-249"><a href="#cb26-249"></a></span>
-<span id="cb26-250"><a href="#cb26-250"></a><span class="co"># Start the GRASS GIS Session</span></span>
-<span id="cb26-251"><a href="#cb26-251"></a>session <span class="op">=</span> gj.init(grassdata, project, mapset)</span>
-<span id="cb26-252"><a href="#cb26-252"></a><span class="in">```</span></span>
-<span id="cb26-253"><a href="#cb26-253"></a></span>
-<span id="cb26-254"><a href="#cb26-254"></a>Notar que iniciamos sesión con <span class="in">`gj.init()`</span>. No obstante, también podríamos usar</span>
-<span id="cb26-255"><a href="#cb26-255"></a><span class="in">`session = gs.setup.init(&quot;~/grassdata/nc_spm_08_grass7/PERMANENT&quot;)`</span>.</span>
-<span id="cb26-256"><a href="#cb26-256"></a></span>
-<span id="cb26-257"><a href="#cb26-257"></a>Corroboramos que GRASS inició correctamente:</span>
-<span id="cb26-258"><a href="#cb26-258"></a></span>
-<span id="cb26-261"><a href="#cb26-261"></a><span class="in">```{python}</span></span>
-<span id="cb26-262"><a href="#cb26-262"></a><span class="co"># show current GRASS GIS settings, this also checks if the session works</span></span>
-<span id="cb26-263"><a href="#cb26-263"></a>gs.gisenv()</span>
-<span id="cb26-264"><a href="#cb26-264"></a><span class="in">```</span></span>
-<span id="cb26-265"><a href="#cb26-265"></a></span>
-<span id="cb26-266"><a href="#cb26-266"></a>¿Qué versión de GRASS estamos ejecutando?</span>
-<span id="cb26-267"><a href="#cb26-267"></a></span>
-<span id="cb26-270"><a href="#cb26-270"></a><span class="in">```{python}</span></span>
-<span id="cb26-271"><a href="#cb26-271"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;g.version&quot;</span>, flags<span class="op">=</span><span class="st">&quot;e&quot;</span>))</span>
-<span id="cb26-272"><a href="#cb26-272"></a><span class="in">```</span></span>
-<span id="cb26-273"><a href="#cb26-273"></a></span>
-<span id="cb26-274"><a href="#cb26-274"></a><span class="fu">## Ejemplos con `grass.script`</span></span>
-<span id="cb26-275"><a href="#cb26-275"></a></span>
-<span id="cb26-276"><a href="#cb26-276"></a>Listamos los mapas raster del mapset PERMANENT:</span>
-<span id="cb26-277"><a href="#cb26-277"></a></span>
-<span id="cb26-280"><a href="#cb26-280"></a><span class="in">```{python}</span></span>
-<span id="cb26-281"><a href="#cb26-281"></a>lista <span class="op">=</span> gs.list_grouped(<span class="bu">type</span> <span class="op">=</span> <span class="st">&quot;raster&quot;</span>)[<span class="st">&quot;PERMANENT&quot;</span>]</span>
-<span id="cb26-282"><a href="#cb26-282"></a>lista[:<span class="dv">5</span>]</span>
-<span id="cb26-283"><a href="#cb26-283"></a><span class="in">```</span></span>
-<span id="cb26-284"><a href="#cb26-284"></a></span>
-<span id="cb26-285"><a href="#cb26-285"></a>Obtenemos info de un mapa raster:</span>
-<span id="cb26-286"><a href="#cb26-286"></a></span>
-<span id="cb26-289"><a href="#cb26-289"></a><span class="in">```{python}</span></span>
-<span id="cb26-290"><a href="#cb26-290"></a>gs.raster_info(<span class="st">&quot;aspect&quot;</span>)[<span class="st">&quot;cols&quot;</span>]</span>
-<span id="cb26-291"><a href="#cb26-291"></a><span class="in">```</span></span>
-<span id="cb26-292"><a href="#cb26-292"></a></span>
-<span id="cb26-293"><a href="#cb26-293"></a>:::{.callout-caution title=&quot;Tarea&quot;}</span>
-<span id="cb26-294"><a href="#cb26-294"></a>Ahora, hagamos lo mismo pero para los mapas de tipo vectorial.</span>
-<span id="cb26-295"><a href="#cb26-295"></a>:::</span>
-<span id="cb26-296"><a href="#cb26-296"></a></span>
-<span id="cb26-299"><a href="#cb26-299"></a><span class="in">```{python}</span></span>
-<span id="cb26-300"><a href="#cb26-300"></a><span class="co"># gs.list_grouped(type = &quot;vector&quot;)</span></span>
-<span id="cb26-301"><a href="#cb26-301"></a><span class="in">```</span></span>
-<span id="cb26-302"><a href="#cb26-302"></a></span>
-<span id="cb26-303"><a href="#cb26-303"></a>Imprimimos la region computacional actual:</span>
-<span id="cb26-304"><a href="#cb26-304"></a></span>
-<span id="cb26-307"><a href="#cb26-307"></a><span class="in">```{python}</span></span>
-<span id="cb26-308"><a href="#cb26-308"></a>gs.region()</span>
-<span id="cb26-309"><a href="#cb26-309"></a><span class="in">```</span></span>
-<span id="cb26-310"><a href="#cb26-310"></a></span>
-<span id="cb26-311"><a href="#cb26-311"></a>Cambiamos la región computacional al vector <span class="in">`urbanarea`</span>:</span>
-<span id="cb26-312"><a href="#cb26-312"></a></span>
-<span id="cb26-315"><a href="#cb26-315"></a><span class="in">```{python}</span></span>
-<span id="cb26-316"><a href="#cb26-316"></a>gs.region_env(vector<span class="op">=</span><span class="st">&quot;urbanarea&quot;</span>)</span>
-<span id="cb26-317"><a href="#cb26-317"></a><span class="in">```</span></span>
-<span id="cb26-318"><a href="#cb26-318"></a></span>
-<span id="cb26-319"><a href="#cb26-319"></a>Verificamos los atributos del vector seleccionado:</span>
-<span id="cb26-320"><a href="#cb26-320"></a></span>
-<span id="cb26-323"><a href="#cb26-323"></a><span class="in">```{python}</span></span>
-<span id="cb26-324"><a href="#cb26-324"></a>gs.vector_db_select(<span class="st">&#39;urbanarea&#39;</span>).values()</span>
-<span id="cb26-325"><a href="#cb26-325"></a><span class="in">```</span></span>
-<span id="cb26-326"><a href="#cb26-326"></a></span>
-<span id="cb26-327"><a href="#cb26-327"></a>Extraemos el área urbana de Raleigh:</span>
-<span id="cb26-328"><a href="#cb26-328"></a></span>
-<span id="cb26-331"><a href="#cb26-331"></a><span class="in">```{python}</span></span>
-<span id="cb26-332"><a href="#cb26-332"></a>gs.run_command(<span class="st">&quot;v.extract&quot;</span>, </span>
-<span id="cb26-333"><a href="#cb26-333"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;urbanarea&quot;</span>, </span>
-<span id="cb26-334"><a href="#cb26-334"></a>               where<span class="op">=</span><span class="st">&quot;NAME == &#39;Raleigh&#39;&quot;</span>, </span>
-<span id="cb26-335"><a href="#cb26-335"></a>               output<span class="op">=</span><span class="st">&quot;urban_area_raleigh&quot;</span>)</span>
-<span id="cb26-336"><a href="#cb26-336"></a><span class="in">```</span></span>
-<span id="cb26-337"><a href="#cb26-337"></a></span>
-<span id="cb26-338"><a href="#cb26-338"></a>Listamos los vectores por un patrón:</span>
-<span id="cb26-339"><a href="#cb26-339"></a></span>
-<span id="cb26-342"><a href="#cb26-342"></a><span class="in">```{python}</span></span>
-<span id="cb26-343"><a href="#cb26-343"></a>gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;vector&quot;</span>, pattern<span class="op">=</span><span class="st">&quot;urban*&quot;</span>)</span>
-<span id="cb26-344"><a href="#cb26-344"></a><span class="in">```</span></span>
-<span id="cb26-345"><a href="#cb26-345"></a></span>
-<span id="cb26-346"><a href="#cb26-346"></a>Verificamos los atributos del nuevo vector creado:</span>
-<span id="cb26-347"><a href="#cb26-347"></a></span>
-<span id="cb26-350"><a href="#cb26-350"></a><span class="in">```{python}</span></span>
-<span id="cb26-351"><a href="#cb26-351"></a>gs.vector_db_select(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span>
-<span id="cb26-352"><a href="#cb26-352"></a><span class="in">```</span></span>
-<span id="cb26-353"><a href="#cb26-353"></a></span>
-<span id="cb26-354"><a href="#cb26-354"></a>y obtenemos información sobre el mismo. Notar que podemos seleccionar qué </span>
-<span id="cb26-355"><a href="#cb26-355"></a>información queremos extraer, i.e., la salida es un diccionario.</span>
-<span id="cb26-356"><a href="#cb26-356"></a></span>
-<span id="cb26-359"><a href="#cb26-359"></a><span class="in">```{python}</span></span>
-<span id="cb26-360"><a href="#cb26-360"></a><span class="co"># show attributes</span></span>
-<span id="cb26-361"><a href="#cb26-361"></a>gs.vector_info(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span>
-<span id="cb26-362"><a href="#cb26-362"></a><span class="in">```</span></span>
-<span id="cb26-363"><a href="#cb26-363"></a></span>
-<span id="cb26-364"><a href="#cb26-364"></a>Usamos otra manera de establecer la región computacional:</span>
-<span id="cb26-365"><a href="#cb26-365"></a></span>
-<span id="cb26-368"><a href="#cb26-368"></a><span class="in">```{python}</span></span>
-<span id="cb26-369"><a href="#cb26-369"></a>region <span class="op">=</span> gs.parse_command(<span class="st">&quot;g.region&quot;</span>, </span>
-<span id="cb26-370"><a href="#cb26-370"></a>                          vector<span class="op">=</span><span class="st">&quot;urban_area_raleigh&quot;</span>, </span>
-<span id="cb26-371"><a href="#cb26-371"></a>                          flags<span class="op">=</span><span class="st">&quot;g&quot;</span>)</span>
-<span id="cb26-372"><a href="#cb26-372"></a>region</span>
-<span id="cb26-373"><a href="#cb26-373"></a><span class="in">```</span></span>
-<span id="cb26-374"><a href="#cb26-374"></a></span>
-<span id="cb26-375"><a href="#cb26-375"></a><span class="fu">## Ejemplos con `grass.jupyter`</span></span>
-<span id="cb26-376"><a href="#cb26-376"></a></span>
-<span id="cb26-377"><a href="#cb26-377"></a>Ahora vamos a demostrar el uso de las dos clases más comunes del paquete </span>
-<span id="cb26-378"><a href="#cb26-378"></a><span class="in">`grass.jupyter`</span> para graficar mapas. Usamos primeramente la clase interactiva</span>
-<span id="cb26-379"><a href="#cb26-379"></a>que nos permite mostrar nuestras salidas sobre mapas base como el de</span>
-<span id="cb26-380"><a href="#cb26-380"></a>OpenStreetMap, por ejemplo.</span>
-<span id="cb26-381"><a href="#cb26-381"></a></span>
-<span id="cb26-384"><a href="#cb26-384"></a><span class="in">```{python}</span></span>
-<span id="cb26-385"><a href="#cb26-385"></a>raleigh_map <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, use_region<span class="op">=</span><span class="va">True</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
-<span id="cb26-386"><a href="#cb26-386"></a>raleigh_map.add_raster(<span class="st">&quot;elevation&quot;</span>)</span>
-<span id="cb26-387"><a href="#cb26-387"></a>raleigh_map.add_vector(<span class="st">&quot;urban_area_raleigh&quot;</span>)</span>
-<span id="cb26-388"><a href="#cb26-388"></a>raleigh_map.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
-<span id="cb26-389"><a href="#cb26-389"></a>raleigh_map.show()</span>
-<span id="cb26-390"><a href="#cb26-390"></a><span class="in">```</span></span>
-<span id="cb26-391"><a href="#cb26-391"></a></span>
-<span id="cb26-392"><a href="#cb26-392"></a>A continuación, creamos una salida estática, utilizando la clase <span class="in">`Map`</span>. Esta </span>
-<span id="cb26-393"><a href="#cb26-393"></a>salida es similar a utilizar el Map Display en la GUI y exportar el resultado.</span>
-<span id="cb26-394"><a href="#cb26-394"></a></span>
-<span id="cb26-397"><a href="#cb26-397"></a><span class="in">```{python}</span></span>
-<span id="cb26-398"><a href="#cb26-398"></a>raleigh_map <span class="op">=</span> gj.Map(width<span class="op">=</span><span class="dv">500</span>)</span>
-<span id="cb26-399"><a href="#cb26-399"></a>raleigh_map.d_rast(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>)</span>
-<span id="cb26-400"><a href="#cb26-400"></a>raleigh_map.d_vect(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;lakes&quot;</span>)</span>
-<span id="cb26-401"><a href="#cb26-401"></a>raleigh_map.d_legend(raster<span class="op">=</span><span class="st">&quot;elevation&quot;</span>, </span>
-<span id="cb26-402"><a href="#cb26-402"></a>                     title<span class="op">=</span><span class="st">&quot;Height (m)&quot;</span>, </span>
-<span id="cb26-403"><a href="#cb26-403"></a>                     fontsize<span class="op">=</span><span class="dv">10</span>, </span>
-<span id="cb26-404"><a href="#cb26-404"></a>                     at<span class="op">=</span>(<span class="dv">70</span>, <span class="dv">90</span>, <span class="dv">80</span>, <span class="dv">90</span>), </span>
-<span id="cb26-405"><a href="#cb26-405"></a>                     flags<span class="op">=</span><span class="st">&quot;b&quot;</span>)</span>
-<span id="cb26-406"><a href="#cb26-406"></a>raleigh_map.d_barscale()</span>
-<span id="cb26-407"><a href="#cb26-407"></a>raleigh_map.show()</span>
-<span id="cb26-408"><a href="#cb26-408"></a><span class="in">```</span></span>
-<span id="cb26-409"><a href="#cb26-409"></a></span>
-<span id="cb26-410"><a href="#cb26-410"></a><span class="fu">## Ejemplos con `grass.pygrass`</span></span>
-<span id="cb26-411"><a href="#cb26-411"></a></span>
-<span id="cb26-412"><a href="#cb26-412"></a>Finalmente, vamos a ejemplificar el uso de la interfaz <span class="in">`modules`</span> dentro de </span>
-<span id="cb26-413"><a href="#cb26-413"></a><span class="in">`grass.pygrass`</span>. Si bien esta interfaz nos permite ejecutar comandos de GRASS</span>
-<span id="cb26-414"><a href="#cb26-414"></a>casi como si los ejecutásemos en la terminal, las salidas no están optimizadas</span>
-<span id="cb26-415"><a href="#cb26-415"></a>para ser usadas como entrada para otros comandos. Para ello, es más conveniente</span>
-<span id="cb26-416"><a href="#cb26-416"></a>usar <span class="in">`grass.script`</span> o funciones de más bajo nivel de <span class="in">`grass.pygrass`</span> que permiten</span>
-<span id="cb26-417"><a href="#cb26-417"></a>acceder a los componentes básicos de los objetos dentro de GRASS. </span>
-<span id="cb26-418"><a href="#cb26-418"></a></span>
-<span id="cb26-421"><a href="#cb26-421"></a><span class="in">```{python}</span></span>
-<span id="cb26-422"><a href="#cb26-422"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> general <span class="im">as</span> g</span>
-<span id="cb26-423"><a href="#cb26-423"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> raster <span class="im">as</span> r</span>
-<span id="cb26-424"><a href="#cb26-424"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> vector <span class="im">as</span> v</span>
-<span id="cb26-425"><a href="#cb26-425"></a><span class="in">```</span></span>
-<span id="cb26-426"><a href="#cb26-426"></a></span>
-<span id="cb26-429"><a href="#cb26-429"></a><span class="in">```{python}</span></span>
-<span id="cb26-430"><a href="#cb26-430"></a>g.region(flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span>
-<span id="cb26-431"><a href="#cb26-431"></a><span class="in">```</span></span>
-<span id="cb26-432"><a href="#cb26-432"></a></span>
-<span id="cb26-435"><a href="#cb26-435"></a><span class="in">```{python}</span></span>
-<span id="cb26-436"><a href="#cb26-436"></a>v.info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;roadsmajor&quot;</span>)</span>
-<span id="cb26-437"><a href="#cb26-437"></a><span class="in">```</span></span>
-<span id="cb26-438"><a href="#cb26-438"></a></span>
-<span id="cb26-441"><a href="#cb26-441"></a><span class="in">```{python}</span></span>
-<span id="cb26-442"><a href="#cb26-442"></a>r.report(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>, nsteps<span class="op">=</span><span class="st">&quot;10&quot;</span>, quiet<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb26-443"><a href="#cb26-443"></a><span class="in">```</span></span>
-<span id="cb26-444"><a href="#cb26-444"></a></span>
-<span id="cb26-445"><a href="#cb26-445"></a></span>
-<span id="cb26-446"><a href="#cb26-446"></a><span class="fu"># Otras notebooks demostrando el uso de GRASS con Python</span></span>
-<span id="cb26-447"><a href="#cb26-447"></a></span>
-<span id="cb26-448"><a href="#cb26-448"></a><span class="ss">- </span><span class="ot">&lt;https://github.com/OSGeo/grass/tree/main/doc/notebooks&gt;</span></span>
-<span id="cb26-449"><a href="#cb26-449"></a><span class="ss">- </span><span class="ot">&lt;https://grasswiki.osgeo.org/wiki/GRASS_GIS_Jupyter_notebooks&gt;</span></span>
-<span id="cb26-450"><a href="#cb26-450"></a></span>
-<span id="cb26-451"><a href="#cb26-451"></a></span>
-<span id="cb26-452"><a href="#cb26-452"></a><span class="fu"># Referencias</span></span>
-<span id="cb26-453"><a href="#cb26-453"></a></span>
-<span id="cb26-454"><a href="#cb26-454"></a>::: {#refs}</span>
-<span id="cb26-455"><a href="#cb26-455"></a>:::</span>
+<div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1"></a><span class="co">---</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="an">title:</span><span class="co"> Python y GRASS GIS</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="an">author:</span><span class="co"> Verónica Andreo</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a><span class="an">format:</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a><span class="co">  html:</span></span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="co">    code-tools: true</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a><span class="co">    code-copy: true</span></span>
+<span id="cb25-9"><a href="#cb25-9"></a><span class="co">    code-fold: false</span></span>
+<span id="cb25-10"><a href="#cb25-10"></a><span class="an">execute:</span></span>
+<span id="cb25-11"><a href="#cb25-11"></a><span class="co">  eval: false</span></span>
+<span id="cb25-12"><a href="#cb25-12"></a><span class="co">  cache: false</span></span>
+<span id="cb25-13"><a href="#cb25-13"></a><span class="co">  keep-ipynb: true</span></span>
+<span id="cb25-14"><a href="#cb25-14"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb25-15"><a href="#cb25-15"></a><span class="co">---</span></span>
+<span id="cb25-16"><a href="#cb25-16"></a></span>
+<span id="cb25-17"><a href="#cb25-17"></a>En esta notebook, nos vamos a introducir en el uso de GRASS GIS con Python, y no </span>
+<span id="cb25-18"><a href="#cb25-18"></a>solo eso, sino que ejecutaremos GRASS con Python dentro de Google Colab conectado</span>
+<span id="cb25-19"><a href="#cb25-19"></a>a una base de datos o <span class="in">`grassdata`</span> dentro de nuestro Google Drive. </span>
+<span id="cb25-20"><a href="#cb25-20"></a></span>
+<span id="cb25-21"><a href="#cb25-21"></a>Antes de empezar entonces y para ganar tiempo, conectemos nuestro drive e instalemos </span>
+<span id="cb25-22"><a href="#cb25-22"></a>GRASS en Google Colab.</span>
+<span id="cb25-23"><a href="#cb25-23"></a></span>
+<span id="cb25-26"><a href="#cb25-26"></a><span class="in">```{python}</span></span>
+<span id="cb25-27"><a href="#cb25-27"></a><span class="co"># import drive from google colab</span></span>
+<span id="cb25-28"><a href="#cb25-28"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb25-29"><a href="#cb25-29"></a><span class="co"># mount drive</span></span>
+<span id="cb25-30"><a href="#cb25-30"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span>
+<span id="cb25-31"><a href="#cb25-31"></a><span class="in">```</span></span>
+<span id="cb25-32"><a href="#cb25-32"></a></span>
+<span id="cb25-35"><a href="#cb25-35"></a><span class="in">```{python}</span></span>
+<span id="cb25-36"><a href="#cb25-36"></a><span class="op">%%</span>bash</span>
+<span id="cb25-37"><a href="#cb25-37"></a>DEBIAN_FRONTEND<span class="op">=</span>noninteractive </span>
+<span id="cb25-38"><a href="#cb25-38"></a>sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa:ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable </span>
+<span id="cb25-39"><a href="#cb25-39"></a>apt update </span>
+<span id="cb25-40"><a href="#cb25-40"></a>apt install grass subversion grass<span class="op">-</span>dev</span>
+<span id="cb25-41"><a href="#cb25-41"></a>apt remove libproj22</span>
+<span id="cb25-42"><a href="#cb25-42"></a><span class="in">```</span></span>
+<span id="cb25-43"><a href="#cb25-43"></a></span>
+<span id="cb25-44"><a href="#cb25-44"></a>Chequeamos el path de instalación de GRASS.</span>
+<span id="cb25-45"><a href="#cb25-45"></a></span>
+<span id="cb25-48"><a href="#cb25-48"></a><span class="in">```{python}</span></span>
+<span id="cb25-49"><a href="#cb25-49"></a><span class="op">!</span>grass <span class="op">--</span>config path</span>
+<span id="cb25-50"><a href="#cb25-50"></a><span class="in">```</span></span>
+<span id="cb25-51"><a href="#cb25-51"></a></span>
+<span id="cb25-52"><a href="#cb25-52"></a>Mientras, vamos a recorrer brevemente los principales paquetes/librerías de </span>
+<span id="cb25-53"><a href="#cb25-53"></a>Python que son parte de GRASS y nos permiten ejcutar sus funciones, a la vez que</span>
+<span id="cb25-54"><a href="#cb25-54"></a>podemos combinar las salidas con otras librerías más tradicionales de Python.</span>
+<span id="cb25-55"><a href="#cb25-55"></a></span>
+<span id="cb25-56"><a href="#cb25-56"></a><span class="fu">### ¿Por qué Jupyter Notebooks y cómo usarlas?</span></span>
+<span id="cb25-57"><a href="#cb25-57"></a></span>
+<span id="cb25-58"><a href="#cb25-58"></a>Las Jupyter Notebook son aplicaciones servidor-cliente que permiten que el </span>
+<span id="cb25-59"><a href="#cb25-59"></a>código escrito en un documento de cuaderno sea</span>
+<span id="cb25-60"><a href="#cb25-60"></a>**editado y ejecutado a través de un navegador web**. </span>
+<span id="cb25-61"><a href="#cb25-61"></a>Pueden ejecutarse en un ordenador local (sin necesidad de acceso a Internet) o </span>
+<span id="cb25-62"><a href="#cb25-62"></a>utilizarse para controlar cálculos en un servidor remoto al que se accede a </span>
+<span id="cb25-63"><a href="#cb25-63"></a>través de Internet (<span class="co">[</span><span class="ot">véase la documentación</span><span class="co">](https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)</span>).</span>
+<span id="cb25-64"><a href="#cb25-64"></a></span>
+<span id="cb25-65"><a href="#cb25-65"></a>Las Jupyter Notebooks pueden ser interactivas y permiten combinar código, texto </span>
+<span id="cb25-66"><a href="#cb25-66"></a>explicativo y resultados computacionales en un único documento. En general, son:</span>
+<span id="cb25-67"><a href="#cb25-67"></a></span>
+<span id="cb25-68"><a href="#cb25-68"></a><span class="ss">* </span>convenientes para el desarrollo inicial de código (prototipado)</span>
+<span id="cb25-69"><a href="#cb25-69"></a><span class="ss">* </span>ideales para la segmentación de código, con la posibilidad de volver a </span>
+<span id="cb25-70"><a href="#cb25-70"></a>ejecutar celdas</span>
+<span id="cb25-71"><a href="#cb25-71"></a><span class="ss">* </span>capaces de almacenar valores de variables de celdas ya ejecutadas</span>
+<span id="cb25-72"><a href="#cb25-72"></a></span>
+<span id="cb25-73"><a href="#cb25-73"></a>La notebook puede guardarse como un script ejecutable de Python además del </span>
+<span id="cb25-74"><a href="#cb25-74"></a>formato nativo <span class="in">`.ipynb`</span>, o exportarse a varios formatos de documentación </span>
+<span id="cb25-75"><a href="#cb25-75"></a>como PDF o Sphinx RST con un bonito estilo.</span>
+<span id="cb25-76"><a href="#cb25-76"></a></span>
+<span id="cb25-77"><a href="#cb25-77"></a><span class="fu">#### Edición y uso interactivo</span></span>
+<span id="cb25-78"><a href="#cb25-78"></a></span>
+<span id="cb25-79"><a href="#cb25-79"></a>Editar una Jupyter Notebook es muy fácil: en el navegador web, puedes navegar </span>
+<span id="cb25-80"><a href="#cb25-80"></a>entre celdas de texto o código utilizando el ratón o atajos de teclado (ver </span>
+<span id="cb25-81"><a href="#cb25-81"></a>Menú &gt; Ayuda &gt; Atajos de teclado). Se pueden ejecutar pequeños fragmentos de </span>
+<span id="cb25-82"><a href="#cb25-82"></a>código celda por celda, guardar la notebook en su estado actual, o </span>
+<span id="cb25-83"><a href="#cb25-83"></a>modificar y recalcular celdas o devolverlas a su estado anterior. </span>
+<span id="cb25-84"><a href="#cb25-84"></a>Además de las celdas de código ejecutables, se puede utilizar Markdown en las </span>
+<span id="cb25-85"><a href="#cb25-85"></a>celdas de documentación para hacerlas presentables a los demás.</span>
+<span id="cb25-86"><a href="#cb25-86"></a></span>
+<span id="cb25-87"><a href="#cb25-87"></a><span class="fu"># Paquetes de Python en GRASS</span></span>
+<span id="cb25-88"><a href="#cb25-88"></a></span>
+<span id="cb25-89"><a href="#cb25-89"></a><span class="fu">## `grass.script`</span></span>
+<span id="cb25-90"><a href="#cb25-90"></a></span>
+<span id="cb25-91"><a href="#cb25-91"></a>El paquete **grass.script** o *GRASS GIS Python Scripting Library* provee </span>
+<span id="cb25-92"><a href="#cb25-92"></a>funciones para llamar módulos de GRASS dentro de scripts o rutinas Python. </span>
+<span id="cb25-93"><a href="#cb25-93"></a>Las funciones más comúnmente usadas incluyen:</span>
+<span id="cb25-94"><a href="#cb25-94"></a></span>
+<span id="cb25-95"><a href="#cb25-95"></a><span class="ss">- </span><span class="in">`run_command`</span>: usada cuando la salida de los módulos es un raster o vector, </span>
+<span id="cb25-96"><a href="#cb25-96"></a>no se espera una salida de tipo texto.</span>
+<span id="cb25-97"><a href="#cb25-97"></a><span class="ss">- </span><span class="in">`read_command`</span>: se utiliza cuando la salida de los módulos es de tipo texto.</span>
+<span id="cb25-98"><a href="#cb25-98"></a><span class="ss">- </span><span class="in">`parse_command`</span>: se utiliza con módulos cuya salida puede convertirse en </span>
+<span id="cb25-99"><a href="#cb25-99"></a>pares <span class="in">`key=value`</span> o diccionarios.</span>
+<span id="cb25-100"><a href="#cb25-100"></a><span class="ss">- </span><span class="in">`write_command`</span>: se utiliza con módulos que esperan una entrada de texto, </span>
+<span id="cb25-101"><a href="#cb25-101"></a>ya sea en forma de archivo o desde stdin.</span>
+<span id="cb25-102"><a href="#cb25-102"></a></span>
+<span id="cb25-103"><a href="#cb25-103"></a>Este paquete también proporciona varias funciones de *wrapping* para módulos de </span>
+<span id="cb25-104"><a href="#cb25-104"></a>uso muy frecuente en GRASS, por ejemplo:</span>
+<span id="cb25-105"><a href="#cb25-105"></a></span>
+<span id="cb25-106"><a href="#cb25-106"></a><span class="ss">- </span>Para obtener información de un raster, se utiliza </span>
+<span id="cb25-107"><a href="#cb25-107"></a>script.raster.raster_info(): <span class="in">`gs.raster_info(&#39;elevation&#39;)`</span></span>
+<span id="cb25-108"><a href="#cb25-108"></a><span class="ss">- </span>Para obtener información de un vector, se utiliza </span>
+<span id="cb25-109"><a href="#cb25-109"></a>script.vector.vector_info(): <span class="in">`gs.vector_info(&#39;roadsmajor&#39;)`</span></span>
+<span id="cb25-110"><a href="#cb25-110"></a><span class="ss">- </span>Para listar mapas de diferente tipo en un mapset, se utiliza </span>
+<span id="cb25-111"><a href="#cb25-111"></a>script.core.list_grouped(): <span class="in">`gs.list_grouped(type=[&#39;raster&#39;])`</span></span>
+<span id="cb25-112"><a href="#cb25-112"></a><span class="ss">- </span>Para obtener la región computacional, se utiliza script.core.region():</span>
+<span id="cb25-113"><a href="#cb25-113"></a><span class="in">`gs.region()`</span></span>
+<span id="cb25-114"><a href="#cb25-114"></a></span>
+<span id="cb25-115"><a href="#cb25-115"></a>:::{.callout-note}</span>
+<span id="cb25-116"><a href="#cb25-116"></a>Para más detalles, ver la documentación del paquete en: </span>
+<span id="cb25-117"><a href="#cb25-117"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html&gt;</span></span>
+<span id="cb25-118"><a href="#cb25-118"></a>:::</span>
+<span id="cb25-119"><a href="#cb25-119"></a></span>
+<span id="cb25-120"><a href="#cb25-120"></a><span class="fu">## `grass.jupyter`</span></span>
+<span id="cb25-121"><a href="#cb25-121"></a></span>
+<span id="cb25-122"><a href="#cb25-122"></a>La librería **grass.jupyter** mejora la integración de GRASS y Jupyter, y </span>
+<span id="cb25-123"><a href="#cb25-123"></a>proporciona diferentes clases para facilitar la visualización de mapas de GRASS</span>
+<span id="cb25-124"><a href="#cb25-124"></a>en el entorno Jupyter. Este paquete fue desarrollado por @haedrich_grass_jupyter </span>
+<span id="cb25-125"><a href="#cb25-125"></a>como parte de su proyecto para </span>
+<span id="cb25-126"><a href="#cb25-126"></a><span class="co">[</span><span class="ot">Google Summer of Code</span><span class="co">](https://summerofcode.withgoogle.com/)</span> y con una </span>
+<span id="cb25-127"><a href="#cb25-127"></a><span class="co">[</span><span class="ot">student grant</span><span class="co">](https://grasswiki.osgeo.org/wiki/Student_Grants)</span> de GRASS. </span>
+<span id="cb25-128"><a href="#cb25-128"></a></span>
+<span id="cb25-129"><a href="#cb25-129"></a>Las classes más importantes son:</span>
+<span id="cb25-130"><a href="#cb25-130"></a></span>
+<span id="cb25-131"><a href="#cb25-131"></a><span class="ss">- </span><span class="in">`init`</span>: inicia una sesión de GRASS y configura todas las variables de entorno</span>
+<span id="cb25-132"><a href="#cb25-132"></a>necesarias para ejecutar GRASS desde Python y dentro de una Notebook.</span>
+<span id="cb25-133"><a href="#cb25-133"></a><span class="ss">- </span><span class="in">`Map`</span>: renderiza mapas 2D</span>
+<span id="cb25-134"><a href="#cb25-134"></a><span class="ss">- </span><span class="in">`Map3D`</span>: renderiza mapas 3D</span>
+<span id="cb25-135"><a href="#cb25-135"></a><span class="ss">- </span><span class="in">`InteractiveMap`</span>: permite la visualización interactiva utilizando la librería</span>
+<span id="cb25-136"><a href="#cb25-136"></a><span class="co">[</span><span class="ot">`folium`</span><span class="co">](https://python-visualization.github.io/folium/)</span></span>
+<span id="cb25-137"><a href="#cb25-137"></a><span class="ss">- </span><span class="in">`TimeSeriesMap`</span>: permite la visualización de datos espacio-temporales</span>
+<span id="cb25-138"><a href="#cb25-138"></a></span>
+<span id="cb25-139"><a href="#cb25-139"></a>:::{.callout-note}</span>
+<span id="cb25-140"><a href="#cb25-140"></a>Para más detalles, ver la documentación del paquete en: </span>
+<span id="cb25-141"><a href="#cb25-141"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/grass.jupyter.html&gt;</span></span>
+<span id="cb25-142"><a href="#cb25-142"></a>:::</span>
+<span id="cb25-143"><a href="#cb25-143"></a></span>
+<span id="cb25-144"><a href="#cb25-144"></a><span class="fu">## `grass.pygrass`</span></span>
+<span id="cb25-145"><a href="#cb25-145"></a></span>
+<span id="cb25-146"><a href="#cb25-146"></a>PyGRASS es una interfaz de programación de aplicaciones (API) de Python </span>
+<span id="cb25-147"><a href="#cb25-147"></a>orientada a objetos para GRASS GIS desarrollada por @zambelli_pygrass_2013. </span>
+<span id="cb25-148"><a href="#cb25-148"></a>PyGRASS ofrece interfaces a los módulos y funcionalidades de GRASS, así como</span>
+<span id="cb25-149"><a href="#cb25-149"></a>a los datos vectoriales y ráster, de modo que permite acceder a cada minima </span>
+<span id="cb25-150"><a href="#cb25-150"></a>unidad y desarrollar nuevos módulos con funciones de más bajo nivel. </span>
+<span id="cb25-151"><a href="#cb25-151"></a>PyGRASS mejora la integración entre GRASS GIS y Python, haciendo el uso de </span>
+<span id="cb25-152"><a href="#cb25-152"></a>Python bajo GRASS más consistente con el lenguaje mismo. </span>
+<span id="cb25-153"><a href="#cb25-153"></a>Además, simplifica el scripting y la programación de GRASS y lo hace más </span>
+<span id="cb25-154"><a href="#cb25-154"></a>natural para el usuario.</span>
+<span id="cb25-155"><a href="#cb25-155"></a></span>
+<span id="cb25-156"><a href="#cb25-156"></a>Dentro de esta librería, vamos a usar especialmente </span>
+<span id="cb25-157"><a href="#cb25-157"></a><span class="in">`grass.pygrass.modules.shorcuts`</span> que nos permite llamar a los módulos</span>
+<span id="cb25-158"><a href="#cb25-158"></a>o funciones de GRASS de forma muy parecida a cómo lo haríamos en la consola de </span>
+<span id="cb25-159"><a href="#cb25-159"></a>GRASS.</span>
+<span id="cb25-160"><a href="#cb25-160"></a></span>
+<span id="cb25-161"><a href="#cb25-161"></a>:::{.callout-note}</span>
+<span id="cb25-162"><a href="#cb25-162"></a>Para más detalles, ver la documentación del paquete en: </span>
+<span id="cb25-163"><a href="#cb25-163"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/pygrass_index.html&gt;</span></span>
+<span id="cb25-164"><a href="#cb25-164"></a>:::</span>
+<span id="cb25-165"><a href="#cb25-165"></a></span>
+<span id="cb25-166"><a href="#cb25-166"></a><span class="fu">## Otras librerías Python en GRASS GIS</span></span>
+<span id="cb25-167"><a href="#cb25-167"></a></span>
+<span id="cb25-168"><a href="#cb25-168"></a><span class="fu">### Temporal framework</span></span>
+<span id="cb25-169"><a href="#cb25-169"></a></span>
+<span id="cb25-170"><a href="#cb25-170"></a>El *GRASS GIS Temporal Framework* implementa la funcionalidad SIG temporal de </span>
+<span id="cb25-171"><a href="#cb25-171"></a>GRASS GIS y proporciona una API para implementar módulos de procesamiento </span>
+<span id="cb25-172"><a href="#cb25-172"></a>espacio-temporal. El framework introduce conjuntos de datos espacio-temporales</span>
+<span id="cb25-173"><a href="#cb25-173"></a>que representan series temporales de mapas raster, raster 3D o vectoriales. </span>
+<span id="cb25-174"><a href="#cb25-174"></a>Este marco proporciona las siguientes funcionalidades:</span>
+<span id="cb25-175"><a href="#cb25-175"></a></span>
+<span id="cb25-176"><a href="#cb25-176"></a><span class="ss">- </span>Asignación de marcas de tiempo a mapas y registro de mapas en la base de datos temporal</span>
+<span id="cb25-177"><a href="#cb25-177"></a><span class="ss">- </span>Modificación de marcas de tiempo</span>
+<span id="cb25-178"><a href="#cb25-178"></a><span class="ss">- </span>Creación, cambio de nombre y supresión de conjuntos de datos espacio-temporales</span>
+<span id="cb25-179"><a href="#cb25-179"></a><span class="ss">- </span>Registro y anulación del registro de mapas en conjuntos de datos espacio-temporales</span>
+<span id="cb25-180"><a href="#cb25-180"></a><span class="ss">- </span>Consulta de mapas registrados en conjuntos de datos espacio-temporales mediante SQL</span>
+<span id="cb25-181"><a href="#cb25-181"></a><span class="ss">- </span>Análisis de la topología espacio-temporal de los conjuntos de datos espacio-temporales</span>
+<span id="cb25-182"><a href="#cb25-182"></a><span class="ss">- </span>Muestreo de conjuntos de datos espacio-temporales</span>
+<span id="cb25-183"><a href="#cb25-183"></a><span class="ss">- </span>Cálculo de las relaciones temporales y espaciales entre los mapas registrados</span>
+<span id="cb25-184"><a href="#cb25-184"></a><span class="ss">- </span>Funciones de nivel superior compartidas entre módulos</span>
+<span id="cb25-185"><a href="#cb25-185"></a></span>
+<span id="cb25-186"><a href="#cb25-186"></a>:::{.callout-note}</span>
+<span id="cb25-187"><a href="#cb25-187"></a>Para más detalles, ver la documentación de la librería en: </span>
+<span id="cb25-188"><a href="#cb25-188"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/temporal_framework.html&gt;</span></span>
+<span id="cb25-189"><a href="#cb25-189"></a>:::</span>
+<span id="cb25-190"><a href="#cb25-190"></a></span>
+<span id="cb25-191"><a href="#cb25-191"></a><span class="fu">### Testing framework</span></span>
+<span id="cb25-192"><a href="#cb25-192"></a></span>
+<span id="cb25-193"><a href="#cb25-193"></a>El *GRASS GIS Testing framework* está basado en el paquete <span class="in">`unittest`</span> de Python </span>
+<span id="cb25-194"><a href="#cb25-194"></a>con un gran número de mejoras, extensiones y cambios específicos ajustados a </span>
+<span id="cb25-195"><a href="#cb25-195"></a>GRASS. Estos cambios incluyen la creación de reportes de pruebas HTML compatibles</span>
+<span id="cb25-196"><a href="#cb25-196"></a>con GRASS, o la ejecución de pruebas de manera que las terminaciones de procesos</span>
+<span id="cb25-197"><a href="#cb25-197"></a>potencialmente causadas por funciones de la librería C no influyan en el proceso</span>
+<span id="cb25-198"><a href="#cb25-198"></a>principal de pruebas.</span>
+<span id="cb25-199"><a href="#cb25-199"></a></span>
+<span id="cb25-200"><a href="#cb25-200"></a>Algunas pruebas se ejecutarán sin ningún dato, pero muchas pruebas requieren </span>
+<span id="cb25-201"><a href="#cb25-201"></a>la versión básica de los <span class="co">[</span><span class="ot">datos de muestra</span><span class="co">](https://grass.osgeo.org/sampledata/north_carolina/nc_basic_spm_grass7.zip)</span> </span>
+<span id="cb25-202"><a href="#cb25-202"></a>para Carolina del Norte.</span>
+<span id="cb25-203"><a href="#cb25-203"></a></span>
+<span id="cb25-204"><a href="#cb25-204"></a>:::{.callout-note}</span>
+<span id="cb25-205"><a href="#cb25-205"></a>Para más detalles, ver la documentación de la librería en: </span>
+<span id="cb25-206"><a href="#cb25-206"></a><span class="ot">&lt;https://grass.osgeo.org/grass-stable/manuals/libpython/gunittest_testing.html&gt;</span></span>
+<span id="cb25-207"><a href="#cb25-207"></a>:::</span>
+<span id="cb25-208"><a href="#cb25-208"></a></span>
+<span id="cb25-209"><a href="#cb25-209"></a><span class="fu"># Ejemplos con cada paquete</span></span>
+<span id="cb25-210"><a href="#cb25-210"></a></span>
+<span id="cb25-211"><a href="#cb25-211"></a>Primero, iniciemos una sesión de GRASS GIS. Necesitamos definir la ruta hasta </span>
+<span id="cb25-212"><a href="#cb25-212"></a>un mapset, por lo tanto vamos a usar los datos de muestra de GRASS, i.e., el </span>
+<span id="cb25-213"><a href="#cb25-213"></a>sample dataset de North Carolina. </span>
+<span id="cb25-214"><a href="#cb25-214"></a></span>
+<span id="cb25-217"><a href="#cb25-217"></a><span class="in">```{python}</span></span>
+<span id="cb25-218"><a href="#cb25-218"></a><span class="im">import</span> os</span>
+<span id="cb25-219"><a href="#cb25-219"></a></span>
+<span id="cb25-220"><a href="#cb25-220"></a><span class="co"># data directory</span></span>
+<span id="cb25-221"><a href="#cb25-221"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
+<span id="cb25-222"><a href="#cb25-222"></a></span>
+<span id="cb25-223"><a href="#cb25-223"></a><span class="co"># GRASS GIS database variables</span></span>
+<span id="cb25-224"><a href="#cb25-224"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
+<span id="cb25-225"><a href="#cb25-225"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
+<span id="cb25-226"><a href="#cb25-226"></a>mapset <span class="op">=</span> <span class="st">&quot;PERMANENT&quot;</span></span>
+<span id="cb25-227"><a href="#cb25-227"></a><span class="in">```</span></span>
+<span id="cb25-228"><a href="#cb25-228"></a></span>
+<span id="cb25-231"><a href="#cb25-231"></a><span class="in">```{python}</span></span>
+<span id="cb25-232"><a href="#cb25-232"></a><span class="co"># import standard Python packages we need</span></span>
+<span id="cb25-233"><a href="#cb25-233"></a><span class="im">import</span> sys</span>
+<span id="cb25-234"><a href="#cb25-234"></a><span class="im">import</span> subprocess</span>
+<span id="cb25-235"><a href="#cb25-235"></a></span>
+<span id="cb25-236"><a href="#cb25-236"></a><span class="co"># ask GRASS GIS where its Python packages are to be able to run it from the notebook</span></span>
+<span id="cb25-237"><a href="#cb25-237"></a>sys.path.append(</span>
+<span id="cb25-238"><a href="#cb25-238"></a>    subprocess.check_output([<span class="st">&quot;grass&quot;</span>, <span class="st">&quot;--config&quot;</span>, <span class="st">&quot;python_path&quot;</span>], text<span class="op">=</span><span class="va">True</span>).strip()</span>
+<span id="cb25-239"><a href="#cb25-239"></a>)</span>
+<span id="cb25-240"><a href="#cb25-240"></a><span class="in">```</span></span>
+<span id="cb25-241"><a href="#cb25-241"></a></span>
+<span id="cb25-242"><a href="#cb25-242"></a>Ahora sí, estamos listos para importar los paquetes de GRASS e iniciar una</span>
+<span id="cb25-243"><a href="#cb25-243"></a>sesión:</span>
+<span id="cb25-244"><a href="#cb25-244"></a></span>
+<span id="cb25-247"><a href="#cb25-247"></a><span class="in">```{python}</span></span>
+<span id="cb25-248"><a href="#cb25-248"></a><span class="co"># import the GRASS GIS packages we need</span></span>
+<span id="cb25-249"><a href="#cb25-249"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
+<span id="cb25-250"><a href="#cb25-250"></a><span class="im">import</span> grass.jupyter <span class="im">as</span> gj</span>
+<span id="cb25-251"><a href="#cb25-251"></a></span>
+<span id="cb25-252"><a href="#cb25-252"></a><span class="co"># Start the GRASS GIS Session</span></span>
+<span id="cb25-253"><a href="#cb25-253"></a>session <span class="op">=</span> gj.init(grassdata, project, mapset)</span>
+<span id="cb25-254"><a href="#cb25-254"></a><span class="in">```</span></span>
+<span id="cb25-255"><a href="#cb25-255"></a></span>
+<span id="cb25-256"><a href="#cb25-256"></a>Notar que iniciamos sesión con <span class="in">`gj.init()`</span>. No obstante, también podríamos usar</span>
+<span id="cb25-257"><a href="#cb25-257"></a><span class="in">`session = gs.setup.init(&quot;~/grassdata/nc_spm_08_grass7/PERMANENT&quot;)`</span>.</span>
+<span id="cb25-258"><a href="#cb25-258"></a></span>
+<span id="cb25-259"><a href="#cb25-259"></a>Corroboramos que GRASS inició correctamente:</span>
+<span id="cb25-260"><a href="#cb25-260"></a></span>
+<span id="cb25-263"><a href="#cb25-263"></a><span class="in">```{python}</span></span>
+<span id="cb25-264"><a href="#cb25-264"></a><span class="co"># show current GRASS GIS settings, this also checks if the session works</span></span>
+<span id="cb25-265"><a href="#cb25-265"></a>gs.gisenv()</span>
+<span id="cb25-266"><a href="#cb25-266"></a><span class="in">```</span></span>
+<span id="cb25-267"><a href="#cb25-267"></a></span>
+<span id="cb25-268"><a href="#cb25-268"></a>¿Qué versión de GRASS estamos ejecutando?</span>
+<span id="cb25-269"><a href="#cb25-269"></a></span>
+<span id="cb25-272"><a href="#cb25-272"></a><span class="in">```{python}</span></span>
+<span id="cb25-273"><a href="#cb25-273"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;g.version&quot;</span>, flags<span class="op">=</span><span class="st">&quot;e&quot;</span>))</span>
+<span id="cb25-274"><a href="#cb25-274"></a><span class="in">```</span></span>
+<span id="cb25-275"><a href="#cb25-275"></a></span>
+<span id="cb25-276"><a href="#cb25-276"></a><span class="fu">## Ejemplos con `grass.script`</span></span>
+<span id="cb25-277"><a href="#cb25-277"></a></span>
+<span id="cb25-278"><a href="#cb25-278"></a>Listamos los mapas raster del mapset PERMANENT:</span>
+<span id="cb25-279"><a href="#cb25-279"></a></span>
+<span id="cb25-282"><a href="#cb25-282"></a><span class="in">```{python}</span></span>
+<span id="cb25-283"><a href="#cb25-283"></a>lista <span class="op">=</span> gs.list_grouped(<span class="bu">type</span> <span class="op">=</span> <span class="st">&quot;raster&quot;</span>)[<span class="st">&quot;PERMANENT&quot;</span>]</span>
+<span id="cb25-284"><a href="#cb25-284"></a>lista</span>
+<span id="cb25-285"><a href="#cb25-285"></a><span class="in">```</span></span>
+<span id="cb25-286"><a href="#cb25-286"></a></span>
+<span id="cb25-287"><a href="#cb25-287"></a>Obtenemos info de un mapa raster:</span>
+<span id="cb25-288"><a href="#cb25-288"></a></span>
+<span id="cb25-291"><a href="#cb25-291"></a><span class="in">```{python}</span></span>
+<span id="cb25-292"><a href="#cb25-292"></a>gs.raster_info(<span class="st">&quot;elevation&quot;</span>)[<span class="st">&quot;cols&quot;</span>]</span>
+<span id="cb25-293"><a href="#cb25-293"></a><span class="in">```</span></span>
+<span id="cb25-294"><a href="#cb25-294"></a></span>
+<span id="cb25-295"><a href="#cb25-295"></a>:::{.callout-caution title=&quot;Tarea&quot;}</span>
+<span id="cb25-296"><a href="#cb25-296"></a>Ahora, hagamos lo mismo pero para los mapas de tipo vectorial.</span>
+<span id="cb25-297"><a href="#cb25-297"></a>:::</span>
+<span id="cb25-298"><a href="#cb25-298"></a></span>
+<span id="cb25-301"><a href="#cb25-301"></a><span class="in">```{python}</span></span>
+<span id="cb25-302"><a href="#cb25-302"></a><span class="co"># gs.list_grouped(type = &quot;vector&quot;)</span></span>
+<span id="cb25-303"><a href="#cb25-303"></a><span class="in">```</span></span>
+<span id="cb25-304"><a href="#cb25-304"></a></span>
+<span id="cb25-305"><a href="#cb25-305"></a>Imprimimos la region computacional actual:</span>
+<span id="cb25-306"><a href="#cb25-306"></a></span>
+<span id="cb25-309"><a href="#cb25-309"></a><span class="in">```{python}</span></span>
+<span id="cb25-310"><a href="#cb25-310"></a>gs.region()</span>
+<span id="cb25-311"><a href="#cb25-311"></a><span class="in">```</span></span>
+<span id="cb25-312"><a href="#cb25-312"></a></span>
+<span id="cb25-313"><a href="#cb25-313"></a>Cambiamos la región computacional al vector <span class="in">`area_edificada_cba`</span>:</span>
+<span id="cb25-314"><a href="#cb25-314"></a></span>
+<span id="cb25-317"><a href="#cb25-317"></a><span class="in">```{python}</span></span>
+<span id="cb25-318"><a href="#cb25-318"></a>gs.run_command(<span class="st">&quot;g.region&quot;</span>, vector<span class="op">=</span><span class="st">&quot;area_edificada_cba&quot;</span>)</span>
+<span id="cb25-319"><a href="#cb25-319"></a><span class="in">```</span></span>
+<span id="cb25-320"><a href="#cb25-320"></a></span>
+<span id="cb25-321"><a href="#cb25-321"></a>Verificamos los atributos del vector seleccionado:</span>
+<span id="cb25-322"><a href="#cb25-322"></a></span>
+<span id="cb25-325"><a href="#cb25-325"></a><span class="in">```{python}</span></span>
+<span id="cb25-326"><a href="#cb25-326"></a>gs.vector_db_select(<span class="st">&quot;area_edificada_cba&quot;</span>)</span>
+<span id="cb25-327"><a href="#cb25-327"></a><span class="in">```</span></span>
+<span id="cb25-328"><a href="#cb25-328"></a></span>
+<span id="cb25-329"><a href="#cb25-329"></a>Extraemos el área urbana de Río Cuarto:</span>
+<span id="cb25-330"><a href="#cb25-330"></a></span>
+<span id="cb25-333"><a href="#cb25-333"></a><span class="in">```{python}</span></span>
+<span id="cb25-334"><a href="#cb25-334"></a>gs.run_command(<span class="st">&quot;v.extract&quot;</span>, </span>
+<span id="cb25-335"><a href="#cb25-335"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;area_edificada_cba&quot;</span>, </span>
+<span id="cb25-336"><a href="#cb25-336"></a>               where<span class="op">=</span><span class="st">&quot;fna == &#39;Gran Río Cuarto&#39;&quot;</span>, </span>
+<span id="cb25-337"><a href="#cb25-337"></a>               output<span class="op">=</span><span class="st">&quot;urban_area_rio_iv&quot;</span>)</span>
+<span id="cb25-338"><a href="#cb25-338"></a><span class="in">```</span></span>
+<span id="cb25-339"><a href="#cb25-339"></a></span>
+<span id="cb25-340"><a href="#cb25-340"></a>Listamos los vectores por un patrón:</span>
+<span id="cb25-341"><a href="#cb25-341"></a></span>
+<span id="cb25-344"><a href="#cb25-344"></a><span class="in">```{python}</span></span>
+<span id="cb25-345"><a href="#cb25-345"></a>gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;vector&quot;</span>, pattern<span class="op">=</span><span class="st">&quot;urban*&quot;</span>)</span>
+<span id="cb25-346"><a href="#cb25-346"></a><span class="in">```</span></span>
+<span id="cb25-347"><a href="#cb25-347"></a></span>
+<span id="cb25-348"><a href="#cb25-348"></a>Verificamos los atributos del nuevo vector creado:</span>
+<span id="cb25-349"><a href="#cb25-349"></a></span>
+<span id="cb25-352"><a href="#cb25-352"></a><span class="in">```{python}</span></span>
+<span id="cb25-353"><a href="#cb25-353"></a>gs.vector_db_select(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span>
+<span id="cb25-354"><a href="#cb25-354"></a><span class="in">```</span></span>
+<span id="cb25-355"><a href="#cb25-355"></a></span>
+<span id="cb25-356"><a href="#cb25-356"></a>y obtenemos información sobre el mismo. Notar que podemos seleccionar qué </span>
+<span id="cb25-357"><a href="#cb25-357"></a>información queremos extraer, i.e., la salida es un diccionario.</span>
+<span id="cb25-358"><a href="#cb25-358"></a></span>
+<span id="cb25-361"><a href="#cb25-361"></a><span class="in">```{python}</span></span>
+<span id="cb25-362"><a href="#cb25-362"></a><span class="co"># show attributes</span></span>
+<span id="cb25-363"><a href="#cb25-363"></a>gs.vector_info(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span>
+<span id="cb25-364"><a href="#cb25-364"></a><span class="in">```</span></span>
+<span id="cb25-365"><a href="#cb25-365"></a></span>
+<span id="cb25-366"><a href="#cb25-366"></a><span class="fu">## Ejemplos con `grass.jupyter`</span></span>
+<span id="cb25-367"><a href="#cb25-367"></a></span>
+<span id="cb25-368"><a href="#cb25-368"></a>Ahora vamos a demostrar el uso de las dos clases más comunes del paquete </span>
+<span id="cb25-369"><a href="#cb25-369"></a><span class="in">`grass.jupyter`</span> para graficar mapas. Usamos primeramente la clase interactiva</span>
+<span id="cb25-370"><a href="#cb25-370"></a>que nos permite mostrar nuestras salidas sobre mapas base como el de</span>
+<span id="cb25-371"><a href="#cb25-371"></a>OpenStreetMap, por ejemplo.</span>
+<span id="cb25-372"><a href="#cb25-372"></a></span>
+<span id="cb25-375"><a href="#cb25-375"></a><span class="in">```{python}</span></span>
+<span id="cb25-376"><a href="#cb25-376"></a>raleigh_map <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, use_region<span class="op">=</span><span class="va">True</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
+<span id="cb25-377"><a href="#cb25-377"></a>raleigh_map.add_raster(<span class="st">&quot;elevation&quot;</span>)</span>
+<span id="cb25-378"><a href="#cb25-378"></a>raleigh_map.add_vector(<span class="st">&quot;urban_area_rio_iv&quot;</span>)</span>
+<span id="cb25-379"><a href="#cb25-379"></a>raleigh_map.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
+<span id="cb25-380"><a href="#cb25-380"></a>raleigh_map.show()</span>
+<span id="cb25-381"><a href="#cb25-381"></a><span class="in">```</span></span>
+<span id="cb25-382"><a href="#cb25-382"></a></span>
+<span id="cb25-383"><a href="#cb25-383"></a>A continuación, creamos una salida estática, utilizando la clase <span class="in">`Map`</span>. Esta </span>
+<span id="cb25-384"><a href="#cb25-384"></a>salida es similar a utilizar el Map Display en la GUI y exportar el resultado.</span>
+<span id="cb25-385"><a href="#cb25-385"></a></span>
+<span id="cb25-388"><a href="#cb25-388"></a><span class="in">```{python}</span></span>
+<span id="cb25-389"><a href="#cb25-389"></a>raleigh_map <span class="op">=</span> gj.Map(width<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb25-390"><a href="#cb25-390"></a>raleigh_map.d_rast(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>)</span>
+<span id="cb25-391"><a href="#cb25-391"></a>raleigh_map.d_vect(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;embalses&quot;</span>)</span>
+<span id="cb25-392"><a href="#cb25-392"></a>raleigh_map.d_legend(raster<span class="op">=</span><span class="st">&quot;elevation&quot;</span>, </span>
+<span id="cb25-393"><a href="#cb25-393"></a>                     title<span class="op">=</span><span class="st">&quot;Height (m)&quot;</span>, </span>
+<span id="cb25-394"><a href="#cb25-394"></a>                     fontsize<span class="op">=</span><span class="dv">10</span>, </span>
+<span id="cb25-395"><a href="#cb25-395"></a>                     at<span class="op">=</span>(<span class="dv">70</span>, <span class="dv">90</span>, <span class="dv">80</span>, <span class="dv">90</span>), </span>
+<span id="cb25-396"><a href="#cb25-396"></a>                     flags<span class="op">=</span><span class="st">&quot;b&quot;</span>)</span>
+<span id="cb25-397"><a href="#cb25-397"></a>raleigh_map.d_barscale()</span>
+<span id="cb25-398"><a href="#cb25-398"></a>raleigh_map.show()</span>
+<span id="cb25-399"><a href="#cb25-399"></a><span class="in">```</span></span>
+<span id="cb25-400"><a href="#cb25-400"></a></span>
+<span id="cb25-401"><a href="#cb25-401"></a><span class="fu">## Ejemplos con `grass.pygrass`</span></span>
+<span id="cb25-402"><a href="#cb25-402"></a></span>
+<span id="cb25-403"><a href="#cb25-403"></a>Finalmente, vamos a ejemplificar el uso de la interfaz <span class="in">`modules`</span> dentro de </span>
+<span id="cb25-404"><a href="#cb25-404"></a><span class="in">`grass.pygrass`</span>. Si bien esta interfaz nos permite ejecutar comandos de GRASS</span>
+<span id="cb25-405"><a href="#cb25-405"></a>casi como si los ejecutásemos en la terminal, las salidas no están optimizadas</span>
+<span id="cb25-406"><a href="#cb25-406"></a>para ser usadas como entrada para otros comandos. Para ello, es más conveniente</span>
+<span id="cb25-407"><a href="#cb25-407"></a>usar <span class="in">`grass.script`</span> o funciones de más bajo nivel de <span class="in">`grass.pygrass`</span> que permiten</span>
+<span id="cb25-408"><a href="#cb25-408"></a>acceder a los componentes básicos de los objetos dentro de GRASS. </span>
+<span id="cb25-409"><a href="#cb25-409"></a></span>
+<span id="cb25-412"><a href="#cb25-412"></a><span class="in">```{python}</span></span>
+<span id="cb25-413"><a href="#cb25-413"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> general <span class="im">as</span> g</span>
+<span id="cb25-414"><a href="#cb25-414"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> raster <span class="im">as</span> r</span>
+<span id="cb25-415"><a href="#cb25-415"></a><span class="im">from</span> grass.pygrass.modules.shortcuts <span class="im">import</span> vector <span class="im">as</span> v</span>
+<span id="cb25-416"><a href="#cb25-416"></a><span class="in">```</span></span>
+<span id="cb25-417"><a href="#cb25-417"></a></span>
+<span id="cb25-420"><a href="#cb25-420"></a><span class="in">```{python}</span></span>
+<span id="cb25-421"><a href="#cb25-421"></a>g.region(flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span>
+<span id="cb25-422"><a href="#cb25-422"></a><span class="in">```</span></span>
+<span id="cb25-423"><a href="#cb25-423"></a></span>
+<span id="cb25-426"><a href="#cb25-426"></a><span class="in">```{python}</span></span>
+<span id="cb25-427"><a href="#cb25-427"></a>v.info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;cursos_agua&quot;</span>)</span>
+<span id="cb25-428"><a href="#cb25-428"></a><span class="in">```</span></span>
+<span id="cb25-429"><a href="#cb25-429"></a></span>
+<span id="cb25-432"><a href="#cb25-432"></a><span class="in">```{python}</span></span>
+<span id="cb25-433"><a href="#cb25-433"></a>r.report(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;elevation&quot;</span>, nsteps<span class="op">=</span><span class="st">&quot;10&quot;</span>, quiet<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-434"><a href="#cb25-434"></a><span class="in">```</span></span>
+<span id="cb25-435"><a href="#cb25-435"></a></span>
+<span id="cb25-436"><a href="#cb25-436"></a></span>
+<span id="cb25-437"><a href="#cb25-437"></a><span class="fu"># Otras notebooks demostrando el uso de GRASS con Python</span></span>
+<span id="cb25-438"><a href="#cb25-438"></a></span>
+<span id="cb25-439"><a href="#cb25-439"></a><span class="ss">- </span><span class="ot">&lt;https://github.com/OSGeo/grass/tree/main/doc/notebooks&gt;</span></span>
+<span id="cb25-440"><a href="#cb25-440"></a><span class="ss">- </span><span class="ot">&lt;https://grasswiki.osgeo.org/wiki/GRASS_GIS_Jupyter_notebooks&gt;</span></span>
+<span id="cb25-441"><a href="#cb25-441"></a></span>
+<span id="cb25-442"><a href="#cb25-442"></a></span>
+<span id="cb25-443"><a href="#cb25-443"></a><span class="fu"># Referencias</span></span>
+<span id="cb25-444"><a href="#cb25-444"></a></span>
+<span id="cb25-445"><a href="#cb25-445"></a>::: {#refs}</span>
+<span id="cb25-446"><a href="#cb25-446"></a>:::</span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

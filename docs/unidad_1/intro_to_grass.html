@@ -448,8 +448,8 @@ Verónica Andreo
 <p><br></p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e7ffc01421fd92c8f823" style="width:384px;height:384px;"></div>
-<script type="application/json" data-for="htmlwidget-e7ffc01421fd92c8f823">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[-31.5204194,-64.4653258,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"Gulich",null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-31.5204194,-31.5204194],"lng":[-64.4653258,-64.4653258]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5f602097dea076bf79ec" style="width:384px;height:384px;"></div>
+<script type="application/json" data-for="htmlwidget-5f602097dea076bf79ec">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[-31.5204194,-64.4653258,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},"Gulich",null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[-31.5204194,-31.5204194],"lng":[-64.4653258,-64.4653258]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -550,7 +550,7 @@ Verónica Andreo
 <p><strong>Mejor no</strong></p>
 <ul>
 <li>para visualizar datos geográficos de forma fácil y rápida (mejor usar QGIS)</li>
-<li>si te asustan los <em>location</em> y <em>mapsets</em></li>
+<li>si te asusta organizar tus datos en <em>proyectos</em> y <em>mapsets</em></li>
 <li>si no tenés idea sobre CRS</li>
 </ul>
 </div>
@@ -566,14 +566,14 @@ Verónica Andreo
 <section class="slide level2">
 <h2>Nociones básicas</h2>
 <ul>
-<li>La <strong>BASE DE DATOS GRASS o GRASS DATABASE</strong> (también llamada “GISDBASE”) es un directorio, usualmente llamado <code>grassdata</code> que contiene todos nuestros <em>LOCATIONs</em></li>
-<li>Un <strong>LOCATION</strong> se define por su sistema de coordenadas.</li>
-<li>Un <strong>MAPSET</strong> es un subdirectorio dentro de un <em>Location</em>, equivalente a la noción de proyecto en otros GIS. Los <strong>MAPSETs</strong> pueden hacer referencia a distintos temas, regiones, etc.</li>
+<li>La <strong>BASE DE DATOS GRASS o GRASS DATABASE</strong> (también llamada “GISDBASE”) es un directorio, usualmente llamado <code>grassdata</code> que contiene todos nuestros <em>PROYECTOs</em></li>
+<li>Un <strong>PROYECTO</strong> (<em>LOCATION</em>) se define por su sistema de coordenadas.</li>
+<li>Un <strong>MAPSET</strong> es un subdirectorio dentro de un <em>proyecto</em>. Los <strong>MAPSETs</strong> pueden hacer referencia a distintos temas, regiones, variables, etc.</li>
 </ul>
 </section>
 <section class="slide level2">
-<h2>GRASS DB, Location y Mapsets</h2>
-<p>Para iniciar GRASS GIS se necesita especificar una ruta compuesta de <em>Database</em>, <em>Location</em> y <em>Mapset</em></p>
+<h2>GRASS DB, Proyectos y Mapsets</h2>
+<p>Para iniciar GRASS GIS se necesita especificar una ruta compuesta de <em>Database</em>, <em>Proyecto</em> y <em>Mapset</em></p>
 <div class="center">
 <p><img src="../assets/img/grass_database.png" width="65%"></p>
 <p><a href="https://grass.osgeo.org/grass-stable/manuals/grass_database.html">GRASS database</a></p>
@@ -583,13 +583,13 @@ Verónica Andreo
 
 <p><strong>Por qué esta estructura?</strong></p>
 <ul>
-<li>GRASS GIS tiene un <em>formato nativo</em> para los datos raster y vectoriales, por lo tanto estos deben ser <em>importados</em> or <em>vinculados</em> a un Location y Mapset (ver <a href="https://grass.osgeo.org/grass-stable/manuals/r.external.html">r.external</a> por ejemplo).</li>
+<li>GRASS GIS tiene un <em>formato nativo</em> para los datos raster y vectoriales, por lo tanto estos deben ser <em>importados</em> or <em>vinculados</em> a un Proyecto (<em>Location</em>) y Mapset (ver <a href="https://grass.osgeo.org/grass-stable/manuals/r.external.html">r.external</a> por ejemplo).</li>
 </ul>
 <p><strong>Cuáles son las ventajas?</strong></p>
 <ul>
-<li>GRASS DATABASE, LOCATIONs y MAPSETs son directorios <em>que pueden ser fácilmente compartidos con otros usuarios</em>.</li>
-<li>La base de datos de GRASS (<code>grassdata</code>) puede ser <em>local o remota</em>, y permite configurar <em>permisos especiales</em> para cada mapset en un LOCATION.</li>
-<li>Todos los mapas dentro de un LOCATION tienen necesariamente el mismo sistema de coordenadas.</li>
+<li>GRASS DATABASE, PROYECTOs y MAPSETs son directorios <em>que pueden ser fácilmente compartidos con otros usuarios</em>.</li>
+<li>La base de datos de GRASS (<code>grassdata</code>) puede ser <em>local o remota</em>, y permite configurar <em>permisos especiales</em> para cada mapset en un proyecto (<em>location</em>).</li>
+<li>Todos los mapas dentro de un proyecto tienen necesariamente el mismo sistema de coordenadas.</li>
 </ul>
 </section>
 <section class="slide level2">
@@ -969,7 +969,7 @@ Verónica Andreo
 <span id="cb3-12"><a href="#cb3-12"></a> <span class="co">## IMPORT VECTOR DATA</span></span>
 <span id="cb3-13"><a href="#cb3-13"></a></span>
 <span id="cb3-14"><a href="#cb3-14"></a> <span class="co"># import SHAPE file, clip to region extent and reproject to</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a> <span class="co"># current location projection</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a> <span class="co"># current proyect (location) projection</span></span>
 <span id="cb3-16"><a href="#cb3-16"></a> <span class="ex">v.import</span> input=research_area.shp output=research_area extent=region</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section class="slide level2">
@@ -1039,7 +1039,7 @@ Verónica Andreo
 <span id="cb7-7"><a href="#cb7-7"></a> <span class="co"># print mapsets in the search path</span></span>
 <span id="cb7-8"><a href="#cb7-8"></a> <span class="ex">g.mapsets</span> <span class="at">-p</span></span>
 <span id="cb7-9"><a href="#cb7-9"></a></span>
-<span id="cb7-10"><a href="#cb7-10"></a> <span class="co"># list available mapsets in the location</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a> <span class="co"># list available mapsets in the proyect (location)</span></span>
 <span id="cb7-11"><a href="#cb7-11"></a> <span class="ex">g.mapsets</span> <span class="at">-l</span></span>
 <span id="cb7-12"><a href="#cb7-12"></a></span>
 <span id="cb7-13"><a href="#cb7-13"></a> <span class="co"># add mapset to the search path</span></span>

@@ -18,8 +18,6 @@ y ráster, haremos consultas sobre los mismos y configuraremos la región
 computacional, entre otras cosas. 
 
 
-
-
 # Iniciamos GRASS GIS
 
 Para iniciar GRASS localmente, podemos:
@@ -201,7 +199,7 @@ g.region -p
 nuevos ajustes.
 2. Alinear la resolución de la región computacional a un mapa raster e imprimir 
 los nuevos ajustes para comprobar.
-3. Comfiguremos la region computacional al mapa `elevation`, imprimamos su 
+3. Configuremos la region computacional al mapa `elevation`, imprimamos su 
 estadistica univariada, luego cambiemos la region computacional 
 desde el *Map Display* e imprimimos la estadistica del mapa una vez más... 
 qué notan?

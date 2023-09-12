@@ -40,8 +40,18 @@ apt install grass subversion grass-dev
 apt remove libproj22
 ```
 
+Chequeamos el path de instalación de GRASS
+
 ```{python}
 !grass --config path
+```
+
+e instalamos otras librerías de python que nos serán útiles.
+
+```{python}
+!pip install pygdal
+!pip install sentinelsat
+!pip install scikit-learn
 ```
 
 ## Datos Sentinel 2
@@ -215,7 +225,7 @@ la función y sus usos, visitar el
 
 ```{python}
 # list all available S2 level 2A scenes that meet the criteria specified
-s2_credentials = os.path.join(homedir, "sentinel")
+s2_credentials = os.path.join(homedir, "gisdata", "sentinel")
 start_date = "2020-03-01"
 end_date = "2020-04-30"
 
@@ -333,7 +343,8 @@ Listamos los mapas importados:
 
 ```{python}
 # list raster maps
-gs.list_grouped(type="raster")['sentinel2']
+lista = gs.list_grouped(type="raster")['sentinel2']
+lista
 ```
 
 A continuación, chequeamos los metadatos de uno de los mapas o bandas. Notar que
@@ -363,7 +374,7 @@ el contraste y las mostramos usando la clase `Map` de `grass.jupyter`.
 ```{python}
 # apply grey color to RGB bands
 gs.run_command("r.colors", 
-               map="T20JLL_20200330T141049_B04_10m,T20JLL_20200330T141049_B03_10m,T20JLL_20200330T141049_B02_10m",
+               map=lista,
                color="grey")
 ```
 
@@ -589,6 +600,10 @@ sns.histplot(ax=axs[1], data=ndwi.ravel(), kde=True, color="skyblue")
 plt.show()
 ```
 
+```{python}
+plt.imshow(ndvi, cmap="Greens")
+```
+
 ### Segmentación
 
 Existen varios módulos para relizar segmentación en GRASS GIS, los mas conocidos
@@ -682,6 +697,8 @@ seg_map.add_vector("superpixels")
 seg_map.add_vector("segments")
 seg_map.add_layer_control(position = "bottomright")
 seg_map.show()
+
+#... si tarda mucho en ejecutar dentro de Colab, usar la class `Map`
 ```
 
 :::{.callout-warning title="Tarea"}

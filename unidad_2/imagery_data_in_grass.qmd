@@ -42,9 +42,20 @@ apt install grass subversion grass-dev
 apt remove libproj22
 ```
 
+
+Chequeamos el path de instalación de GRASS
+
 ```{python}
 !grass --config path
 ```
+
+e instalamos otras librerías de python que nos serán útiles.
+
+```{python}
+!pip install pygdal
+!pip install landsatxplore
+```
+
 
 # Datos para esta sesión
 
@@ -220,8 +231,9 @@ como se detalla a continuación.
 
 ```{python}
 # search for Landsat 8 scenes
+# l8_credentials = os.path.join(homedir, "gisdata", "landsat")
 # gs.run_command("i.landsat.download", 
-#               settings=os.path.join(homedir, "landsat"),
+#               settings=l8_credentials,
 #               dataset="landsat_8_c1",
 #               clouds="35",
 #               start="2019-10-27",
@@ -236,7 +248,7 @@ Sin embargo, también es posible descargar imágenes seleccionadas via su *id*.
 ```{python}
 # download selected scenes
 # gs.run_command("i.landsat.download", 
-#               settings=os.path.join(homedir, "landsat"),
+#               settings=l8_credentials,
 #               id="LC82290822020062LGN00,LC82290822020014LGN00",
 #               output=os.path.join(homedir, "gisdata", "landsat_data"))
 ```
@@ -319,11 +331,12 @@ método Dark Object Substraction (DOS).
 
 ```{python}
 # convert from DN to surface reflectance and temperature
+metadata = os.path.join(homedir, "gisdata", "landsat_data", "LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt")
 gs.run_command("i.landsat.toar",
                input="LC08_L1TP_229082_20200114_20200127_01_T1_B",
                output="LC08_229082_20200114_SR_B",
                sensor="oli8",
-               metfile=os.path.join(homedir, "gisdata", "landsat_data", "LC08_L1TP_229082_20200114_20200127_01_T1_MTL.txt"),
+               metfile=metadata,
                method="dos1")
 ```
 
