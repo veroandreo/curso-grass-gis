@@ -40,6 +40,37 @@ apt remove libproj22
 !grass --config path
 ```
 
+La función que usaremos en esta sesión para realizar clasificación supervisada de los
+objetos llama internamente a ciertas librerías de R. Para poder tenerlas de 
+antemano en nuestro entorno, primero instalamos y cargamos en la notebook el 
+paquete de python que nos permite hacer interfaz con R.
+
+```{python}
+!pip install rpy2==3.5.1
+%reload_ext rpy2.ipython
+```
+
+Chequeamos nuestra sesión de R.
+
+```{python}
+%R sessionInfo()
+```
+
+Instalamos todos los paquetes necesarios para este ejercicio. 
+*This might take a while...*
+
+```{python}
+%%R
+install.packages("caret")
+install.packages("kernlab")
+install.packages("e1071")
+install.packages("randomForest")
+install.packages("rpart")
+install.packages("ggplot")
+install.packages("lattice")
+install.packages("doParallel")
+```
+
 # Datos para esta sesión
 
 :::: columns
@@ -143,7 +174,8 @@ gs.run_command("r.import",
 Chequeamos la lista de mapas raster en el mapset.
 
 ```{python}
-gs.list_grouped(type="raster")["obia_spot"]
+lista = gs.list_grouped(type="raster")["obia_spot"]
+lista
 ```
 
 Establecemos la región computacional a una de las bandas importadas, de modo que
@@ -162,7 +194,7 @@ realizar la composición color natural posteriormente.
 ```{python}
 # apply grey color to RGB bands
 gs.run_command("r.colors", 
-               map="SPOT_20180621_PANSHARP.1,SPOT_20180621_PANSHARP.2,SPOT_20180621_PANSHARP.3",
+               map=lista,
                color="grey")
 ```
 
@@ -746,7 +778,7 @@ gs.run_command("v.db.dropcolumn",
 # save patched attr table as csv 
 gs.run_command("v.db.select",
                map="train_segments",
-               file="rain_segs_stats_class.csv")
+               file="train_segs_stats_class.csv")
 ```
 
 ```{python}
