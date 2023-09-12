@@ -36,8 +36,17 @@ apt install grass subversion grass-dev
 apt remove libproj22
 ```
 
+Chequeamos el path de instalación de GRASS
+
 ```{python}
 !grass --config path
+```
+
+e instalamos otras librerías de python que nos serán útiles.
+
+```{python}
+!pip install pygdal
+!pip install landsatxplore
 ```
 
 La función que usaremos en esta sesión para realizar clasificación supervisada de los

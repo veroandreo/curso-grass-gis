@@ -213,10 +213,12 @@ mágico `%%R`.
 
 * Usaremos el siguiente [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
 con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para 
-usar. Si van a usar Colab, pueden **hacer una copia** de esta 
+usar. 
+
+**Nota:** Si van a usar Colab, pueden **hacer una copia** de esta 
 [carpeta](https://drive.google.com/drive/folders/11uHY2v3OFNApSVtNkPNs9rfMNj1YmkFg?usp=sharing)
 directamente a su Google drive así queda todo listo para trabajar. 
-En Whole Tale, los datos ya están subidos. 
+Para quienes usen The Whole Tale, los datos ya están subidos en el entorno. 
 
 # Software necesario para ejecutar el curso completo localmente {#sec-software}
 

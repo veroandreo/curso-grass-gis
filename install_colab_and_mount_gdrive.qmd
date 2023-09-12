@@ -136,3 +136,49 @@ Abrir la notebook de la unidad 5 directamente en RStudio dentro del Tale. Como
 está preparada para Colab, será necesario, además de adecuar algunas rutas a 
 carpetas y archivos, cambiar las celdas o chunks de `python` a `r` y borrar el 
 comando mágico `%%R` pues no será necesario.
+
+## Descarga rápida de datos en Drive
+
+Instalamos el paquete `gdown` en el entorno Colab
+
+```{python}
+!pip install -U --no-cache-dir gdown --pre
+```
+
+Montamos nuestro drive
+
+```{python}
+# import drive from google colab
+from google.colab import drive 
+# define mounting point and mount drive
+drive.mount("/content/drive")
+```
+
+Establecemos el homedir y entramos al directorio
+
+```{python}
+import os
+homedir = "/content/drive/MyDrive/curso_grass_2023"
+os.chdir(homedir)
+```
+
+Descargamos el archivo para los días 2 a 5 via su "id"
+
+```{python}
+!gdown "1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB"
+```
+
+Lo descomprimimos en el `homedir` 
+
+```{python}
+from zipfile import ZipFile
+import os
+
+with ZipFile('datos_curso_grass_dia2a5.zip', 'r') as f:
+  #extract in current directory
+  f.extractall()
+  f.close()
+```
+
+Listo!
+

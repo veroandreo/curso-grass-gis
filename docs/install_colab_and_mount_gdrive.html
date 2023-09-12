@@ -4628,6 +4628,7 @@ vertical-align: -.125em;
   <li><a href="#conectar-nuestro-drive-a-la-sesión-de-colab" id="toc-conectar-nuestro-drive-a-la-sesión-de-colab" class="nav-link" data-scroll-target="#conectar-nuestro-drive-a-la-sesión-de-colab">Conectar nuestro Drive a la sesión de Colab</a></li>
   <li><a href="#ejecutar-comandos-de-r-en-colab" id="toc-ejecutar-comandos-de-r-en-colab" class="nav-link" data-scroll-target="#ejecutar-comandos-de-r-en-colab">Ejecutar comandos de R en Colab</a></li>
   <li><a href="#ejecutar-comandos-de-r-en-the-whole-tale" id="toc-ejecutar-comandos-de-r-en-the-whole-tale" class="nav-link" data-scroll-target="#ejecutar-comandos-de-r-en-the-whole-tale">Ejecutar comandos de R en The Whole Tale</a></li>
+  <li><a href="#descarga-rápida-de-datos-en-drive" id="toc-descarga-rápida-de-datos-en-drive" class="nav-link" data-scroll-target="#descarga-rápida-de-datos-en-drive">Descarga rápida de datos en Drive</a></li>
   </ul>
 </nav>
     </div>
@@ -4746,6 +4747,41 @@ Nota
 <section id="ejecutar-comandos-de-r-en-the-whole-tale" class="level2">
 <h2 class="anchored" data-anchor-id="ejecutar-comandos-de-r-en-the-whole-tale">Ejecutar comandos de R en The Whole Tale</h2>
 <p>Abrir la notebook de la unidad 5 directamente en RStudio dentro del Tale. Como está preparada para Colab, será necesario, además de adecuar algunas rutas a carpetas y archivos, cambiar las celdas o chunks de <code>python</code> a <code>r</code> y borrar el comando mágico <code>%%R</code> pues no será necesario.</p>
+</section>
+<section id="descarga-rápida-de-datos-en-drive" class="level2">
+<h2 class="anchored" data-anchor-id="descarga-rápida-de-datos-en-drive">Descarga rápida de datos en Drive</h2>
+<p>Instalamos el paquete <code>gdown</code> en el entorno Colab</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="op">!</span>pip install <span class="op">-</span>U <span class="op">--</span>no<span class="op">-</span>cache<span class="op">-</span><span class="bu">dir</span> gdown <span class="op">--</span>pre</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Montamos nuestro drive</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># import drive from google colab</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="im">from</span> google.colab <span class="im">import</span> drive </span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="co"># define mounting point and mount drive</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Establecemos el homedir y entramos al directorio</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="im">import</span> os</span>
+<span id="cb10-2"><a href="#cb10-2"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>os.chdir(homedir)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Descargamos el archivo para los días 2 a 5 via su “id”</p>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="op">!</span>gdown <span class="st">&quot;1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lo descomprimimos en el <code>homedir</code></p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="im">from</span> zipfile <span class="im">import</span> ZipFile</span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="im">import</span> os</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb12-5"><a href="#cb12-5"></a>  <span class="co">#extract in current directory</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>  f.extractall()</span>
+<span id="cb12-7"><a href="#cb12-7"></a>  f.close()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Listo!</p>
 
 
 <!-- -->
@@ -5158,144 +5194,189 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">---</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="an">title:</span><span class="co"> &quot;Instalar software en Colab&quot;</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="an">author:</span><span class="co"> Verónica Andreo</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="an">format:</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a><span class="co">  html:</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co">    code-tools: true</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">    code-copy: true</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co">    code-fold: false</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a><span class="an">execute:</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a><span class="co">  eval: false</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co">  cache: false</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a><span class="co">  keep-ipynb: true</span></span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a><span class="co">---</span></span>
-<span id="cb8-16"><a href="#cb8-16"></a></span>
-<span id="cb8-17"><a href="#cb8-17"></a><span class="fu">## Instalar GRASS GIS en Colab</span></span>
-<span id="cb8-18"><a href="#cb8-18"></a></span>
-<span id="cb8-19"><a href="#cb8-19"></a>Como primer paso, cada vez que iniciemos una nueva sesión, necesitaremos </span>
-<span id="cb8-20"><a href="#cb8-20"></a>instalar GRASS GIS. Pueden copiar estas celdas a sus copias de las </span>
-<span id="cb8-21"><a href="#cb8-21"></a>notebooks con las que trabajaremos.</span>
-<span id="cb8-22"><a href="#cb8-22"></a></span>
-<span id="cb8-25"><a href="#cb8-25"></a><span class="in">```{python}</span></span>
-<span id="cb8-26"><a href="#cb8-26"></a><span class="op">%%</span>bash</span>
-<span id="cb8-27"><a href="#cb8-27"></a>DEBIAN_FRONTEND<span class="op">=</span>noninteractive </span>
-<span id="cb8-28"><a href="#cb8-28"></a>sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa:ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable </span>
-<span id="cb8-29"><a href="#cb8-29"></a>apt update </span>
-<span id="cb8-30"><a href="#cb8-30"></a>apt install grass subversion grass<span class="op">-</span>dev</span>
-<span id="cb8-31"><a href="#cb8-31"></a>apt remove libproj22</span>
-<span id="cb8-32"><a href="#cb8-32"></a><span class="in">```</span></span>
-<span id="cb8-33"><a href="#cb8-33"></a></span>
-<span id="cb8-34"><a href="#cb8-34"></a>:::{.callout-note}</span>
-<span id="cb8-35"><a href="#cb8-35"></a>Si al importar datos con reproyección al vuelo, se encuentran con errores del </span>
-<span id="cb8-36"><a href="#cb8-36"></a>tipo: <span class="in">`Flag -r requires GDAL library: No module named &#39;_gdal&#39;`</span>, se recomienda</span>
-<span id="cb8-37"><a href="#cb8-37"></a>instalar la librería <span class="co">[</span><span class="ot">pygdal</span><span class="co">](https://github.com/nextgis/pygdal)</span>:</span>
-<span id="cb8-38"><a href="#cb8-38"></a></span>
-<span id="cb8-41"><a href="#cb8-41"></a><span class="in">```{python}</span></span>
-<span id="cb8-42"><a href="#cb8-42"></a>pip install pygdal</span>
-<span id="cb8-43"><a href="#cb8-43"></a><span class="in">```</span></span>
-<span id="cb8-44"><a href="#cb8-44"></a>:::</span>
-<span id="cb8-45"><a href="#cb8-45"></a></span>
-<span id="cb8-46"><a href="#cb8-46"></a><span class="fu">## Conectar nuestro Drive a la sesión de Colab</span></span>
-<span id="cb8-47"><a href="#cb8-47"></a></span>
-<span id="cb8-48"><a href="#cb8-48"></a>Luego, montamos nuestro drive donde tenemos la carpeta <span class="in">`curso_grass_2023`</span>. Para </span>
-<span id="cb8-49"><a href="#cb8-49"></a>eso importamos la librería <span class="in">`drive`</span>.</span>
-<span id="cb8-50"><a href="#cb8-50"></a></span>
-<span id="cb8-53"><a href="#cb8-53"></a><span class="in">```{python}</span></span>
-<span id="cb8-54"><a href="#cb8-54"></a><span class="co"># import drive from google colab</span></span>
-<span id="cb8-55"><a href="#cb8-55"></a><span class="im">from</span> google.colab <span class="im">import</span> drive </span>
-<span id="cb8-56"><a href="#cb8-56"></a><span class="in">```</span></span>
-<span id="cb8-57"><a href="#cb8-57"></a></span>
-<span id="cb8-58"><a href="#cb8-58"></a>Definimos un punto de montaje y montamos nuestro drive, esto es equivalente</span>
-<span id="cb8-59"><a href="#cb8-59"></a>a enchufar y leer un pen drive o un disco externo. Nos va a pedir que le </span>
-<span id="cb8-60"><a href="#cb8-60"></a>demos permisos para acceder.</span>
-<span id="cb8-61"><a href="#cb8-61"></a></span>
-<span id="cb8-64"><a href="#cb8-64"></a><span class="in">```{python}</span></span>
-<span id="cb8-65"><a href="#cb8-65"></a><span class="co"># define mounting point and mount drive</span></span>
-<span id="cb8-66"><a href="#cb8-66"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span>
-<span id="cb8-67"><a href="#cb8-67"></a><span class="in">```</span></span>
-<span id="cb8-68"><a href="#cb8-68"></a></span>
-<span id="cb8-69"><a href="#cb8-69"></a>Definimos la carpeta <span class="in">`curso_grass_2023`</span> como nuestro home, nos movemos allí</span>
-<span id="cb8-70"><a href="#cb8-70"></a>y listamos su contenido para corrobar que estamos donde queremos estar.</span>
-<span id="cb8-71"><a href="#cb8-71"></a></span>
-<span id="cb8-74"><a href="#cb8-74"></a><span class="in">```{python}</span></span>
-<span id="cb8-75"><a href="#cb8-75"></a><span class="im">import</span> os</span>
-<span id="cb8-76"><a href="#cb8-76"></a></span>
-<span id="cb8-77"><a href="#cb8-77"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
-<span id="cb8-78"><a href="#cb8-78"></a>os.chdir(homedir)</span>
-<span id="cb8-79"><a href="#cb8-79"></a>os.listdir()</span>
-<span id="cb8-80"><a href="#cb8-80"></a><span class="in">```</span></span>
-<span id="cb8-81"><a href="#cb8-81"></a></span>
-<span id="cb8-82"><a href="#cb8-82"></a>También podemos montar nuestro drive directamente desde la interfaz gráfica y</span>
-<span id="cb8-83"><a href="#cb8-83"></a>ver allí el contenido de las carpetas:</span>
-<span id="cb8-84"><a href="#cb8-84"></a></span>
-<span id="cb8-85"><a href="#cb8-85"></a><span class="al">![](assets/img/colab_mount_gdrive.png)</span></span>
-<span id="cb8-86"><a href="#cb8-86"></a></span>
-<span id="cb8-87"><a href="#cb8-87"></a><span class="fu">## Ejecutar comandos de R en Colab</span></span>
-<span id="cb8-88"><a href="#cb8-88"></a></span>
-<span id="cb8-89"><a href="#cb8-89"></a>Colab nos permite ejcutar comandos de python por defecto. Usando ciertos</span>
-<span id="cb8-90"><a href="#cb8-90"></a>caracteres mágicos como <span class="in">`!`</span> o <span class="in">`%%bash`</span> podemos ejecutar comandos</span>
-<span id="cb8-91"><a href="#cb8-91"></a>en bash, i.e., como en una terminal de Linux. En este caso, colab tiene</span>
-<span id="cb8-92"><a href="#cb8-92"></a>Ubuntu.</span>
-<span id="cb8-93"><a href="#cb8-93"></a></span>
-<span id="cb8-94"><a href="#cb8-94"></a>Para ejecutar comandos de R, tenemos dos opciones. Una es simplemente </span>
-<span id="cb8-95"><a href="#cb8-95"></a>cambiar de runtime o entorno de ejecución a R. Para esto, vamos al menú </span>
-<span id="cb8-96"><a href="#cb8-96"></a>principal Runtime &gt;&gt; Change runtime type y en el cuadro que se despliega </span>
-<span id="cb8-97"><a href="#cb8-97"></a>elegimos R. El problema con esta aproximación es que no hay una forma</span>
-<span id="cb8-98"><a href="#cb8-98"></a>nativa de montar nuestro GDrive y acceder fácilmente a los archivos.</span>
-<span id="cb8-99"><a href="#cb8-99"></a>Si bien existe un paquete de R </span>
-<span id="cb8-100"><a href="#cb8-100"></a><span class="co">[</span><span class="ot">`googledrive`</span><span class="co">](https://googledrive.tidyverse.org/index.html)</span> que permite</span>
-<span id="cb8-101"><a href="#cb8-101"></a>la conexión, éste no funciona para conectarnos a nuestro grassdata e iniciar</span>
-<span id="cb8-102"><a href="#cb8-102"></a>una sesión de GRASS allí.</span>
-<span id="cb8-103"><a href="#cb8-103"></a></span>
-<span id="cb8-106"><a href="#cb8-106"></a><span class="in">```{python}</span></span>
-<span id="cb8-107"><a href="#cb8-107"></a><span class="co"># install and load googledrive library</span></span>
-<span id="cb8-108"><a href="#cb8-108"></a>install.packages(<span class="st">&quot;googledrive&quot;</span>)</span>
-<span id="cb8-109"><a href="#cb8-109"></a>library(<span class="st">&quot;googledrive&quot;</span>)</span>
-<span id="cb8-110"><a href="#cb8-110"></a></span>
-<span id="cb8-111"><a href="#cb8-111"></a><span class="co"># authorize google drive</span></span>
-<span id="cb8-112"><a href="#cb8-112"></a>drive_auth(</span>
-<span id="cb8-113"><a href="#cb8-113"></a>  email <span class="op">=</span> gargle::gargle_oauth_email(),</span>
-<span id="cb8-114"><a href="#cb8-114"></a>  path <span class="op">=</span> NULL,</span>
-<span id="cb8-115"><a href="#cb8-115"></a>  scopes <span class="op">=</span> <span class="st">&quot;https://www.googleapis.com/auth/drive&quot;</span>,</span>
-<span id="cb8-116"><a href="#cb8-116"></a>  cache <span class="op">=</span> gargle::gargle_oauth_cache(),</span>
-<span id="cb8-117"><a href="#cb8-117"></a>  use_oob <span class="op">=</span> gargle::gargle_oob_default(),</span>
-<span id="cb8-118"><a href="#cb8-118"></a>  token <span class="op">=</span> NULL</span>
-<span id="cb8-119"><a href="#cb8-119"></a>)</span>
-<span id="cb8-120"><a href="#cb8-120"></a></span>
-<span id="cb8-121"><a href="#cb8-121"></a><span class="co"># list content</span></span>
-<span id="cb8-122"><a href="#cb8-122"></a>drive_ls()</span>
-<span id="cb8-123"><a href="#cb8-123"></a><span class="in">```</span></span>
-<span id="cb8-124"><a href="#cb8-124"></a></span>
-<span id="cb8-125"><a href="#cb8-125"></a>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno</span>
-<span id="cb8-126"><a href="#cb8-126"></a>un paquete de python, <span class="co">[</span><span class="ot">rpy2</span><span class="co">](https://rpy2.github.io/)</span>, que nos permite hacer </span>
-<span id="cb8-127"><a href="#cb8-127"></a>interfaz con R. </span>
-<span id="cb8-128"><a href="#cb8-128"></a>La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente</span>
-<span id="cb8-129"><a href="#cb8-129"></a>e iniciar una sesión de GRASS allí sin problemas. </span>
-<span id="cb8-130"><a href="#cb8-130"></a>La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda </span>
-<span id="cb8-131"><a href="#cb8-131"></a>donde ejecutemos comando de R necesitamos escribir el comando mágico <span class="in">`%%R`</span> para </span>
-<span id="cb8-132"><a href="#cb8-132"></a>varias líneas de código o <span class="in">`%R`</span> cuando es una única línea de código en</span>
-<span id="cb8-133"><a href="#cb8-133"></a>R^<span class="co">[</span><span class="ot">Ver &lt;https://www.thediar.com/es/blog/google-colab-drive-r/&gt; y &lt;https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html&gt;</span><span class="co">]</span>.</span>
-<span id="cb8-134"><a href="#cb8-134"></a></span>
-<span id="cb8-137"><a href="#cb8-137"></a><span class="in">```{python}</span></span>
-<span id="cb8-138"><a href="#cb8-138"></a><span class="op">!</span>pip install rpy2<span class="op">==</span><span class="fl">3.5.1</span></span>
-<span id="cb8-139"><a href="#cb8-139"></a><span class="op">%</span>reload_ext rpy2.ipython</span>
-<span id="cb8-140"><a href="#cb8-140"></a><span class="in">```</span></span>
-<span id="cb8-141"><a href="#cb8-141"></a></span>
-<span id="cb8-142"><a href="#cb8-142"></a>Esto será necesario para nuestra sesión de <span class="co">[</span><span class="ot">OBIA</span><span class="co">](unidad_3/exercise_obia.html)</span>, </span>
-<span id="cb8-143"><a href="#cb8-143"></a>en que para la clasificación de los objetos la función llama a R internamente, </span>
-<span id="cb8-144"><a href="#cb8-144"></a>y también para la sesión de </span>
-<span id="cb8-145"><a href="#cb8-145"></a><span class="co">[</span><span class="ot">modelado de nicho con GRASS y R</span><span class="co">](unidad_5/grass_and_r_sdm.html)</span>. </span>
-<span id="cb8-146"><a href="#cb8-146"></a></span>
-<span id="cb8-147"><a href="#cb8-147"></a><span class="fu">## Ejecutar comandos de R en The Whole Tale</span></span>
-<span id="cb8-148"><a href="#cb8-148"></a></span>
-<span id="cb8-149"><a href="#cb8-149"></a>Abrir la notebook de la unidad 5 directamente en RStudio dentro del Tale. Como</span>
-<span id="cb8-150"><a href="#cb8-150"></a>está preparada para Colab, será necesario, además de adecuar algunas rutas a </span>
-<span id="cb8-151"><a href="#cb8-151"></a>carpetas y archivos, cambiar las celdas o chunks de <span class="in">`python`</span> a <span class="in">`r`</span> y borrar el </span>
-<span id="cb8-152"><a href="#cb8-152"></a>comando mágico <span class="in">`%%R`</span> pues no será necesario.</span>
+<div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">---</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="an">title:</span><span class="co"> &quot;Instalar software en Colab&quot;</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="an">author:</span><span class="co"> Verónica Andreo</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="an">format:</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">  html:</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co">    code-tools: true</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co">    code-copy: true</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co">    code-fold: false</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="an">execute:</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co">  eval: false</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="co">  cache: false</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="co">  keep-ipynb: true</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">---</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="fu">## Instalar GRASS GIS en Colab</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a></span>
+<span id="cb13-19"><a href="#cb13-19"></a>Como primer paso, cada vez que iniciemos una nueva sesión, necesitaremos </span>
+<span id="cb13-20"><a href="#cb13-20"></a>instalar GRASS GIS. Pueden copiar estas celdas a sus copias de las </span>
+<span id="cb13-21"><a href="#cb13-21"></a>notebooks con las que trabajaremos.</span>
+<span id="cb13-22"><a href="#cb13-22"></a></span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="in">```{python}</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="op">%%</span>bash</span>
+<span id="cb13-27"><a href="#cb13-27"></a>DEBIAN_FRONTEND<span class="op">=</span>noninteractive </span>
+<span id="cb13-28"><a href="#cb13-28"></a>sudo add<span class="op">-</span>apt<span class="op">-</span>repository ppa:ubuntugis<span class="op">/</span>ubuntugis<span class="op">-</span>unstable </span>
+<span id="cb13-29"><a href="#cb13-29"></a>apt update </span>
+<span id="cb13-30"><a href="#cb13-30"></a>apt install grass subversion grass<span class="op">-</span>dev</span>
+<span id="cb13-31"><a href="#cb13-31"></a>apt remove libproj22</span>
+<span id="cb13-32"><a href="#cb13-32"></a><span class="in">```</span></span>
+<span id="cb13-33"><a href="#cb13-33"></a></span>
+<span id="cb13-34"><a href="#cb13-34"></a>:::{.callout-note}</span>
+<span id="cb13-35"><a href="#cb13-35"></a>Si al importar datos con reproyección al vuelo, se encuentran con errores del </span>
+<span id="cb13-36"><a href="#cb13-36"></a>tipo: <span class="in">`Flag -r requires GDAL library: No module named &#39;_gdal&#39;`</span>, se recomienda</span>
+<span id="cb13-37"><a href="#cb13-37"></a>instalar la librería <span class="co">[</span><span class="ot">pygdal</span><span class="co">](https://github.com/nextgis/pygdal)</span>:</span>
+<span id="cb13-38"><a href="#cb13-38"></a></span>
+<span id="cb13-41"><a href="#cb13-41"></a><span class="in">```{python}</span></span>
+<span id="cb13-42"><a href="#cb13-42"></a>pip install pygdal</span>
+<span id="cb13-43"><a href="#cb13-43"></a><span class="in">```</span></span>
+<span id="cb13-44"><a href="#cb13-44"></a>:::</span>
+<span id="cb13-45"><a href="#cb13-45"></a></span>
+<span id="cb13-46"><a href="#cb13-46"></a><span class="fu">## Conectar nuestro Drive a la sesión de Colab</span></span>
+<span id="cb13-47"><a href="#cb13-47"></a></span>
+<span id="cb13-48"><a href="#cb13-48"></a>Luego, montamos nuestro drive donde tenemos la carpeta <span class="in">`curso_grass_2023`</span>. Para </span>
+<span id="cb13-49"><a href="#cb13-49"></a>eso importamos la librería <span class="in">`drive`</span>.</span>
+<span id="cb13-50"><a href="#cb13-50"></a></span>
+<span id="cb13-53"><a href="#cb13-53"></a><span class="in">```{python}</span></span>
+<span id="cb13-54"><a href="#cb13-54"></a><span class="co"># import drive from google colab</span></span>
+<span id="cb13-55"><a href="#cb13-55"></a><span class="im">from</span> google.colab <span class="im">import</span> drive </span>
+<span id="cb13-56"><a href="#cb13-56"></a><span class="in">```</span></span>
+<span id="cb13-57"><a href="#cb13-57"></a></span>
+<span id="cb13-58"><a href="#cb13-58"></a>Definimos un punto de montaje y montamos nuestro drive, esto es equivalente</span>
+<span id="cb13-59"><a href="#cb13-59"></a>a enchufar y leer un pen drive o un disco externo. Nos va a pedir que le </span>
+<span id="cb13-60"><a href="#cb13-60"></a>demos permisos para acceder.</span>
+<span id="cb13-61"><a href="#cb13-61"></a></span>
+<span id="cb13-64"><a href="#cb13-64"></a><span class="in">```{python}</span></span>
+<span id="cb13-65"><a href="#cb13-65"></a><span class="co"># define mounting point and mount drive</span></span>
+<span id="cb13-66"><a href="#cb13-66"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span>
+<span id="cb13-67"><a href="#cb13-67"></a><span class="in">```</span></span>
+<span id="cb13-68"><a href="#cb13-68"></a></span>
+<span id="cb13-69"><a href="#cb13-69"></a>Definimos la carpeta <span class="in">`curso_grass_2023`</span> como nuestro home, nos movemos allí</span>
+<span id="cb13-70"><a href="#cb13-70"></a>y listamos su contenido para corrobar que estamos donde queremos estar.</span>
+<span id="cb13-71"><a href="#cb13-71"></a></span>
+<span id="cb13-74"><a href="#cb13-74"></a><span class="in">```{python}</span></span>
+<span id="cb13-75"><a href="#cb13-75"></a><span class="im">import</span> os</span>
+<span id="cb13-76"><a href="#cb13-76"></a></span>
+<span id="cb13-77"><a href="#cb13-77"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
+<span id="cb13-78"><a href="#cb13-78"></a>os.chdir(homedir)</span>
+<span id="cb13-79"><a href="#cb13-79"></a>os.listdir()</span>
+<span id="cb13-80"><a href="#cb13-80"></a><span class="in">```</span></span>
+<span id="cb13-81"><a href="#cb13-81"></a></span>
+<span id="cb13-82"><a href="#cb13-82"></a>También podemos montar nuestro drive directamente desde la interfaz gráfica y</span>
+<span id="cb13-83"><a href="#cb13-83"></a>ver allí el contenido de las carpetas:</span>
+<span id="cb13-84"><a href="#cb13-84"></a></span>
+<span id="cb13-85"><a href="#cb13-85"></a><span class="al">![](assets/img/colab_mount_gdrive.png)</span></span>
+<span id="cb13-86"><a href="#cb13-86"></a></span>
+<span id="cb13-87"><a href="#cb13-87"></a><span class="fu">## Ejecutar comandos de R en Colab</span></span>
+<span id="cb13-88"><a href="#cb13-88"></a></span>
+<span id="cb13-89"><a href="#cb13-89"></a>Colab nos permite ejcutar comandos de python por defecto. Usando ciertos</span>
+<span id="cb13-90"><a href="#cb13-90"></a>caracteres mágicos como <span class="in">`!`</span> o <span class="in">`%%bash`</span> podemos ejecutar comandos</span>
+<span id="cb13-91"><a href="#cb13-91"></a>en bash, i.e., como en una terminal de Linux. En este caso, colab tiene</span>
+<span id="cb13-92"><a href="#cb13-92"></a>Ubuntu.</span>
+<span id="cb13-93"><a href="#cb13-93"></a></span>
+<span id="cb13-94"><a href="#cb13-94"></a>Para ejecutar comandos de R, tenemos dos opciones. Una es simplemente </span>
+<span id="cb13-95"><a href="#cb13-95"></a>cambiar de runtime o entorno de ejecución a R. Para esto, vamos al menú </span>
+<span id="cb13-96"><a href="#cb13-96"></a>principal Runtime &gt;&gt; Change runtime type y en el cuadro que se despliega </span>
+<span id="cb13-97"><a href="#cb13-97"></a>elegimos R. El problema con esta aproximación es que no hay una forma</span>
+<span id="cb13-98"><a href="#cb13-98"></a>nativa de montar nuestro GDrive y acceder fácilmente a los archivos.</span>
+<span id="cb13-99"><a href="#cb13-99"></a>Si bien existe un paquete de R </span>
+<span id="cb13-100"><a href="#cb13-100"></a><span class="co">[</span><span class="ot">`googledrive`</span><span class="co">](https://googledrive.tidyverse.org/index.html)</span> que permite</span>
+<span id="cb13-101"><a href="#cb13-101"></a>la conexión, éste no funciona para conectarnos a nuestro grassdata e iniciar</span>
+<span id="cb13-102"><a href="#cb13-102"></a>una sesión de GRASS allí.</span>
+<span id="cb13-103"><a href="#cb13-103"></a></span>
+<span id="cb13-106"><a href="#cb13-106"></a><span class="in">```{python}</span></span>
+<span id="cb13-107"><a href="#cb13-107"></a><span class="co"># install and load googledrive library</span></span>
+<span id="cb13-108"><a href="#cb13-108"></a>install.packages(<span class="st">&quot;googledrive&quot;</span>)</span>
+<span id="cb13-109"><a href="#cb13-109"></a>library(<span class="st">&quot;googledrive&quot;</span>)</span>
+<span id="cb13-110"><a href="#cb13-110"></a></span>
+<span id="cb13-111"><a href="#cb13-111"></a><span class="co"># authorize google drive</span></span>
+<span id="cb13-112"><a href="#cb13-112"></a>drive_auth(</span>
+<span id="cb13-113"><a href="#cb13-113"></a>  email <span class="op">=</span> gargle::gargle_oauth_email(),</span>
+<span id="cb13-114"><a href="#cb13-114"></a>  path <span class="op">=</span> NULL,</span>
+<span id="cb13-115"><a href="#cb13-115"></a>  scopes <span class="op">=</span> <span class="st">&quot;https://www.googleapis.com/auth/drive&quot;</span>,</span>
+<span id="cb13-116"><a href="#cb13-116"></a>  cache <span class="op">=</span> gargle::gargle_oauth_cache(),</span>
+<span id="cb13-117"><a href="#cb13-117"></a>  use_oob <span class="op">=</span> gargle::gargle_oob_default(),</span>
+<span id="cb13-118"><a href="#cb13-118"></a>  token <span class="op">=</span> NULL</span>
+<span id="cb13-119"><a href="#cb13-119"></a>)</span>
+<span id="cb13-120"><a href="#cb13-120"></a></span>
+<span id="cb13-121"><a href="#cb13-121"></a><span class="co"># list content</span></span>
+<span id="cb13-122"><a href="#cb13-122"></a>drive_ls()</span>
+<span id="cb13-123"><a href="#cb13-123"></a><span class="in">```</span></span>
+<span id="cb13-124"><a href="#cb13-124"></a></span>
+<span id="cb13-125"><a href="#cb13-125"></a>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno</span>
+<span id="cb13-126"><a href="#cb13-126"></a>un paquete de python, <span class="co">[</span><span class="ot">rpy2</span><span class="co">](https://rpy2.github.io/)</span>, que nos permite hacer </span>
+<span id="cb13-127"><a href="#cb13-127"></a>interfaz con R. </span>
+<span id="cb13-128"><a href="#cb13-128"></a>La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente</span>
+<span id="cb13-129"><a href="#cb13-129"></a>e iniciar una sesión de GRASS allí sin problemas. </span>
+<span id="cb13-130"><a href="#cb13-130"></a>La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda </span>
+<span id="cb13-131"><a href="#cb13-131"></a>donde ejecutemos comando de R necesitamos escribir el comando mágico <span class="in">`%%R`</span> para </span>
+<span id="cb13-132"><a href="#cb13-132"></a>varias líneas de código o <span class="in">`%R`</span> cuando es una única línea de código en</span>
+<span id="cb13-133"><a href="#cb13-133"></a>R^<span class="co">[</span><span class="ot">Ver &lt;https://www.thediar.com/es/blog/google-colab-drive-r/&gt; y &lt;https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html&gt;</span><span class="co">]</span>.</span>
+<span id="cb13-134"><a href="#cb13-134"></a></span>
+<span id="cb13-137"><a href="#cb13-137"></a><span class="in">```{python}</span></span>
+<span id="cb13-138"><a href="#cb13-138"></a><span class="op">!</span>pip install rpy2<span class="op">==</span><span class="fl">3.5.1</span></span>
+<span id="cb13-139"><a href="#cb13-139"></a><span class="op">%</span>reload_ext rpy2.ipython</span>
+<span id="cb13-140"><a href="#cb13-140"></a><span class="in">```</span></span>
+<span id="cb13-141"><a href="#cb13-141"></a></span>
+<span id="cb13-142"><a href="#cb13-142"></a>Esto será necesario para nuestra sesión de <span class="co">[</span><span class="ot">OBIA</span><span class="co">](unidad_3/exercise_obia.html)</span>, </span>
+<span id="cb13-143"><a href="#cb13-143"></a>en que para la clasificación de los objetos la función llama a R internamente, </span>
+<span id="cb13-144"><a href="#cb13-144"></a>y también para la sesión de </span>
+<span id="cb13-145"><a href="#cb13-145"></a><span class="co">[</span><span class="ot">modelado de nicho con GRASS y R</span><span class="co">](unidad_5/grass_and_r_sdm.html)</span>. </span>
+<span id="cb13-146"><a href="#cb13-146"></a></span>
+<span id="cb13-147"><a href="#cb13-147"></a><span class="fu">## Ejecutar comandos de R en The Whole Tale</span></span>
+<span id="cb13-148"><a href="#cb13-148"></a></span>
+<span id="cb13-149"><a href="#cb13-149"></a>Abrir la notebook de la unidad 5 directamente en RStudio dentro del Tale. Como</span>
+<span id="cb13-150"><a href="#cb13-150"></a>está preparada para Colab, será necesario, además de adecuar algunas rutas a </span>
+<span id="cb13-151"><a href="#cb13-151"></a>carpetas y archivos, cambiar las celdas o chunks de <span class="in">`python`</span> a <span class="in">`r`</span> y borrar el </span>
+<span id="cb13-152"><a href="#cb13-152"></a>comando mágico <span class="in">`%%R`</span> pues no será necesario.</span>
+<span id="cb13-153"><a href="#cb13-153"></a></span>
+<span id="cb13-154"><a href="#cb13-154"></a><span class="fu">## Descarga rápida de datos en Drive</span></span>
+<span id="cb13-155"><a href="#cb13-155"></a></span>
+<span id="cb13-156"><a href="#cb13-156"></a>Instalamos el paquete <span class="in">`gdown`</span> en el entorno Colab</span>
+<span id="cb13-157"><a href="#cb13-157"></a></span>
+<span id="cb13-160"><a href="#cb13-160"></a><span class="in">```{python}</span></span>
+<span id="cb13-161"><a href="#cb13-161"></a><span class="op">!</span>pip install <span class="op">-</span>U <span class="op">--</span>no<span class="op">-</span>cache<span class="op">-</span><span class="bu">dir</span> gdown <span class="op">--</span>pre</span>
+<span id="cb13-162"><a href="#cb13-162"></a><span class="in">```</span></span>
+<span id="cb13-163"><a href="#cb13-163"></a></span>
+<span id="cb13-164"><a href="#cb13-164"></a>Montamos nuestro drive</span>
+<span id="cb13-165"><a href="#cb13-165"></a></span>
+<span id="cb13-168"><a href="#cb13-168"></a><span class="in">```{python}</span></span>
+<span id="cb13-169"><a href="#cb13-169"></a><span class="co"># import drive from google colab</span></span>
+<span id="cb13-170"><a href="#cb13-170"></a><span class="im">from</span> google.colab <span class="im">import</span> drive </span>
+<span id="cb13-171"><a href="#cb13-171"></a><span class="co"># define mounting point and mount drive</span></span>
+<span id="cb13-172"><a href="#cb13-172"></a>drive.mount(<span class="st">&quot;/content/drive&quot;</span>)</span>
+<span id="cb13-173"><a href="#cb13-173"></a><span class="in">```</span></span>
+<span id="cb13-174"><a href="#cb13-174"></a></span>
+<span id="cb13-175"><a href="#cb13-175"></a>Establecemos el homedir y entramos al directorio</span>
+<span id="cb13-176"><a href="#cb13-176"></a></span>
+<span id="cb13-179"><a href="#cb13-179"></a><span class="in">```{python}</span></span>
+<span id="cb13-180"><a href="#cb13-180"></a><span class="im">import</span> os</span>
+<span id="cb13-181"><a href="#cb13-181"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
+<span id="cb13-182"><a href="#cb13-182"></a>os.chdir(homedir)</span>
+<span id="cb13-183"><a href="#cb13-183"></a><span class="in">```</span></span>
+<span id="cb13-184"><a href="#cb13-184"></a></span>
+<span id="cb13-185"><a href="#cb13-185"></a>Descargamos el archivo para los días 2 a 5 via su &quot;id&quot;</span>
+<span id="cb13-186"><a href="#cb13-186"></a></span>
+<span id="cb13-189"><a href="#cb13-189"></a><span class="in">```{python}</span></span>
+<span id="cb13-190"><a href="#cb13-190"></a><span class="op">!</span>gdown <span class="st">&quot;1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB&quot;</span></span>
+<span id="cb13-191"><a href="#cb13-191"></a><span class="in">```</span></span>
+<span id="cb13-192"><a href="#cb13-192"></a></span>
+<span id="cb13-193"><a href="#cb13-193"></a>Lo descomprimimos en el <span class="in">`homedir`</span> </span>
+<span id="cb13-194"><a href="#cb13-194"></a></span>
+<span id="cb13-197"><a href="#cb13-197"></a><span class="in">```{python}</span></span>
+<span id="cb13-198"><a href="#cb13-198"></a><span class="im">from</span> zipfile <span class="im">import</span> ZipFile</span>
+<span id="cb13-199"><a href="#cb13-199"></a><span class="im">import</span> os</span>
+<span id="cb13-200"><a href="#cb13-200"></a></span>
+<span id="cb13-201"><a href="#cb13-201"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb13-202"><a href="#cb13-202"></a>  <span class="co">#extract in current directory</span></span>
+<span id="cb13-203"><a href="#cb13-203"></a>  f.extractall()</span>
+<span id="cb13-204"><a href="#cb13-204"></a>  f.close()</span>
+<span id="cb13-205"><a href="#cb13-205"></a><span class="in">```</span></span>
+<span id="cb13-206"><a href="#cb13-206"></a></span>
+<span id="cb13-207"><a href="#cb13-207"></a>Listo!</span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
