@@ -127,6 +127,9 @@ import os
 # data directory
 homedir = "/content/drive/MyDrive/curso_grass_2023"
 
+# change to homedir so output files will be saved there
+os.chdir(homedir)
+
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
 project = "posgar2007_4_cba"
@@ -661,17 +664,17 @@ Una solución podría ser...
 
 ```{python}
 gs.run_command("t.rast.aggregate",
-input="LST_Day_monthly_celsius", 
-output="month_max_LST_per_year",   
-basename="month_max_LST", 
-suffix="gran", 
-method="max_raster", 
-granularity="1 year")
+               input="LST_Day_monthly_celsius", 
+               output="month_max_LST_per_year",   
+               basename="month_max_LST", 
+               suffix="gran", 
+               method="max_raster", 
+               granularity="1 year")
 
 gs.run_command("t.rast.series", 
-input="month_max_LST_per_year", 
-output="slope_month_max_LST", 
-method="slope")
+               input="month_max_LST_per_year", 
+               output="slope_month_max_LST", 
+               method="slope")
 ```
 :::
 

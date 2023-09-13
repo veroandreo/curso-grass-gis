@@ -46,7 +46,6 @@ e instalamos otras librerías de python que nos serán útiles.
 
 ```{python}
 !pip install pygdal
-!pip install landsatxplore
 ```
 
 La función que usaremos en esta sesión para realizar clasificación supervisada de los
@@ -108,6 +107,11 @@ import os
 # data directory
 homedir = "/content/drive/MyDrive/curso_grass_2023"
 
+# change to homedir so output files will be saved there
+os.chdir(homedir)
+```
+
+```{python}
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
 project = "posgar2007_4_cba"
@@ -184,8 +188,8 @@ gs.run_command("r.import",
 Chequeamos la lista de mapas raster en el mapset.
 
 ```{python}
-lista = gs.list_grouped(type="raster")["obia_spot"]
-lista
+pansharp = gs.list_grouped(type="raster", pattern="*PANSHARP*")["obia_spot"]
+pansharp
 ```
 
 Establecemos la región computacional a una de las bandas importadas, de modo que
@@ -193,9 +197,9 @@ límites y resolución de la región queden alineados a los datos importados.
 
 ```{python}
 # align region to one of the raster bands
-gs.run_command("g.region",
-               raster="SPOT_20180621_PANSHARP.1",
-               flags="p")
+print(gs.read_command("g.region",
+                      raster="SPOT_20180621_PANSHARP.1",
+                      flags="p"))
 ```
 
 Establecemos *grey* como paleta de colores para las bandas RGB, para poder 
@@ -204,7 +208,7 @@ realizar la composición color natural posteriormente.
 ```{python}
 # apply grey color to RGB bands
 gs.run_command("r.colors", 
-               map=lista,
+               map=pansharp,
                color="grey")
 ```
 
@@ -315,7 +319,8 @@ gs.run_command("r.colors",
                flags="e")
 ```
 
-Visualizamos las bandas creadas.
+Visualizamos las bandas creadas. Esto puede no funcionar dentro de Colab, en 
+tal caso probar de a un mapa o usar la clase `Map`.
 
 ```{python}
 idx_map = gj.InteractiveMap(width = 400, use_region=False, tiles="OpenStreetMap")
@@ -483,6 +488,10 @@ Vamos a ejecutar entonces *i.superpixels.slic* con bajo valor de compactación
 para generar el semillero para *i.segment.uspo*.
 
 ```{python}
+# install extension
+gs.run_command("g.extension",
+               extension="i.superpixels.slic")
+               
 # run superpixel segmentation to use as seeds
 gs.run_command("i.superpixels.slic",
                input="spot_bands",
@@ -527,7 +536,7 @@ gs.run_command("i.segment.uspo",
                threshold_step=0.005,
                minsizes=3, 
                number_best=5,
-               memory=2000,
+               memory=8000,
                processes=6)
 ```
 
@@ -541,7 +550,7 @@ gs.list_grouped(type="raster",
 !cat uspo_parameters.csv
 ```
 
-Convertimos el mejor resultado, i.e., *\*rank1* a vector para visualizar el 
+Convertimos el mejor resultado, i.e., **rank1* a vector para visualizar el 
 resultado.
 
 ```{python}
@@ -577,7 +586,8 @@ gs.run_command("g.extension",
 
 ```{python}
 # extract stats for all segments 
-# Note: vectormap output does not work for this dataset, see loong workaround with csv output in further steps
+# Note: *vectormap* output does not work for this dataset, 
+# see workaround with csv output in further steps
 gs.run_command("i.segment.stats",
                map="segs_obia_subset_rank1",
                csvfile="segs_stats.csv",
@@ -692,39 +702,16 @@ de i.segment.stats, necesitamos hacer un "workaround" para obtener, en cambio,
 un csv con los segmentos de entrenamiento, sus estadísticas y sus etiquetas. 
 Para eso, haremos lo siguiente:
 
-- convertir a raster el vector `train_segments` con las etiquetas para poder 
-obtener las estadísticas con i.segment.stats,
-- obtener las estadísticas para los segmentos de entrenamiento únicamente con 
-i.segment.stats,
-- importar a GRASS la tabla csv resultante (Sí, podemos importar tablas a GRASS!),
+- convertir a raster el vector `train_segments` con las etiquetas,
+- obtener las estadísticas para los segmentos de entrenamiento con i.segment.stats,
+- importar a GRASS la tabla csv resultante,
 - unir el vector de segmentos de entrenamiento que tiene las etiquetas con la 
 tabla con las estadísticas,
 - eliminar la columna cat_ resultante de la unión, ya que no es un atributo para 
 la clasificación, y
 - exportar la nueva tabla de atributos como csv.
 
-Si, de i.segment.stats ustedes pueden obtener un vector, la tarea es mucho más 
-sencilla: 
-```
-# select segments that are below labeled points
-v.select \
-  ainput=segs_stats \ # vector obtenido con i.segment.stats
-  binput=labeled_points \
-  output=train_segments \
-  operator=overlap
-
-# add column to train segments
-v.db.addcolumn train_segments column="class int"
-
-# assign label from points to segments
-v.distance from=train_segments \
-  to=labeled_points \
-  upload=to_attr \
-  column=class \
-  to_column=train_class
-```
-
-Empecemos...
+Empecemos el workaround...
 
 ```{python}
 # convert train_segments vector to raster
@@ -758,13 +745,14 @@ gs.run_command("db.in.ogr",
 ```
 
 ```{python}
+# check column names
 print(gs.read_command("db.describe",
                       table="train_segs_stats",
                       flags="c"))
 ```
 
 ```{python}
-# paste column class from train_segments to train_segs_stats.csv
+# merge vector train_segments with attr from train_segs_stats table
 gs.run_command("v.db.join",
                map="train_segments",
                column="cat",
@@ -791,9 +779,25 @@ gs.run_command("v.db.select",
 !cat train_segs_stats_class.csv | head
 ```
 
-```{python}
-# remove column cat_ and save fixed csv
-# !cut --complement -f3 -d"|" train_segs_stats_class.csv > train_segs_stats_class_fix.csv
+Si de i.segment.stats ustedes pueden obtener un vector, la tarea es mucho más 
+sencilla: 
+```bash
+# select segments that are below labeled points
+v.select \
+  ainput=segs_stats \ # vector obtenido con i.segment.stats
+  binput=labeled_points \
+  output=train_segments \
+  operator=overlap
+
+# add column to train segments
+v.db.addcolumn train_segments column="class int"
+
+# assign label from points to segments
+v.distance from=train_segments \
+  to=labeled_points \
+  upload=to_attr \
+  column=class \
+  to_column=train_class
 ```
 
 :::{.callout-note title="Una forma de seleccionar y etiquetar datos de entrenamiento"}
@@ -852,19 +856,17 @@ gs.run_command("v.class.mlR",
                model_details="classifier_runs.txt",
                r_script_file="Rscript_mlR.R",
                processes=2, # use more if available
-               flags="nf")
+               flags="n")
 ```
 
 :::{.callout-warning title="Tarea"}
-Crear paleta de colores para las clases de cobertura urbana asignando colores 
-interactivamente
+Crear paleta de colores para las clases de cobertura urbana y guardarla como 
+*obia_urban* en el directorio de trabajo. 
+Ver el [manual](https://grass.osgeo.org/grass-stable/manuals/r.colors.html) 
+para obtener ejemplos sobre la creación de reglas. En la imagen de abajo, se
+sugieren algunos colores.
 
-- Ir agregando valores
-- Seleccionar colores 
-- Previsualizar
-- Guardar la paleta creada como *obia_urban* para reusar posteriormente
-
-![](../assets/img/assign_color_to_train_segments.png){width=70%}
+![](../assets/img/assign_color_to_train_segments.png){width=50%}
 :::
 
 Aplicamos la paleta de colores que creamos.
@@ -964,11 +966,11 @@ gs.run_command("g.extension",
 ```{python}
 # divide our labeled segments into train and test
 gs.run_command("v.divide.training_validation",
-               input="train_segments",
+               input="train_segments", # vector de seg de entr con clases
                column="class", 
                training="training", 
                validation="testing", 
-               training_percent=30)
+               training_percent=70)
 ```
 
 :::{.callout-warning title="Tarea"}
@@ -976,27 +978,23 @@ Ejecutar nuevamente la clasificación usando sólo el vector *training*. Recorda
 convertir a csv.
 :::
 
-Agregamos la columna `pred_class` al vector *test*
+Finalmente, convertimos a raster el vector testing utilizando la columna `class`
+como valor para los pixeles y ejecutamos
+[r.kappa](https://grass.osgeo.org/grass-stable/manuals/r.kappa.html).
 
 ```{python}
-# add column to test point map
-gs.run_command("v.db.addcolumn",
+# convert labeled test segments to raster
+gs.run_command("v.to.rast",
                map="testing",
-               column="pred_class integer")
+               use="attr",
+               attribute_column="class",
+               output="testing")
 ```
-
-Obtener las clases predichas para los segmentos de validación
 
 ```{python}
-# query the classified map
-gs.run_command("v.what.rast",
-               map="testing",
-               column="pred_class",
-               raster="classification_rf")
+# create confusion matrix and estimate precision measures
+print(gs.read_command("r.kappa",
+                      classification="classification_rf",
+                      reference="testing"))
 ```
-
-:::{.callout-warning title="Tarea"}
-Covertir a raster y ejecutar r.kappa.
-:::
-
 

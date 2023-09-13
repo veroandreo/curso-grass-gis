@@ -4525,10 +4525,6 @@ vertical-align: -.125em;
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="../unidad_1/disclaimer.html" rel target>
- <span class="dropdown-text">Disclaimer</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../unidad_1/intro_to_grass.html" rel target>
  <span class="dropdown-text">Intro a GRASS GIS</span></a>
   </li>  
@@ -4693,7 +4689,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10 de septiembre de 2023</p>
+      <p class="date">13 de septiembre de 2023</p>
     </div>
   </div>
   
@@ -4741,10 +4737,13 @@ vertical-align: -.125em;
 <span id="cb4-3"><a href="#cb4-3"></a><span class="co"># data directory</span></span>
 <span id="cb4-4"><a href="#cb4-4"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
 <span id="cb4-5"><a href="#cb4-5"></a></span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co"># GRASS GIS database variables</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
-<span id="cb4-8"><a href="#cb4-8"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a>mapset <span class="op">=</span> <span class="st">&quot;modis_ndvi&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co"># change to homedir so output files will be saved there</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>os.chdir(homedir)</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co"># GRASS GIS database variables</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
+<span id="cb4-11"><a href="#cb4-11"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>mapset <span class="op">=</span> <span class="st">&quot;modis_ndvi&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># import standard Python packages we need</span></span>
@@ -6025,735 +6024,738 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb64-68"><a href="#cb64-68"></a><span class="co"># data directory</span></span>
 <span id="cb64-69"><a href="#cb64-69"></a>homedir <span class="op">=</span> <span class="st">&quot;/content/drive/MyDrive/curso_grass_2023&quot;</span></span>
 <span id="cb64-70"><a href="#cb64-70"></a></span>
-<span id="cb64-71"><a href="#cb64-71"></a><span class="co"># GRASS GIS database variables</span></span>
-<span id="cb64-72"><a href="#cb64-72"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
-<span id="cb64-73"><a href="#cb64-73"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
-<span id="cb64-74"><a href="#cb64-74"></a>mapset <span class="op">=</span> <span class="st">&quot;modis_ndvi&quot;</span></span>
-<span id="cb64-75"><a href="#cb64-75"></a><span class="in">```</span></span>
-<span id="cb64-76"><a href="#cb64-76"></a></span>
-<span id="cb64-79"><a href="#cb64-79"></a><span class="in">```{python}</span></span>
-<span id="cb64-80"><a href="#cb64-80"></a><span class="co"># import standard Python packages we need</span></span>
-<span id="cb64-81"><a href="#cb64-81"></a><span class="im">import</span> sys</span>
-<span id="cb64-82"><a href="#cb64-82"></a><span class="im">import</span> subprocess</span>
-<span id="cb64-83"><a href="#cb64-83"></a></span>
-<span id="cb64-84"><a href="#cb64-84"></a><span class="co"># ask GRASS GIS where its Python packages are to be able to run it from the notebook</span></span>
-<span id="cb64-85"><a href="#cb64-85"></a>sys.path.append(</span>
-<span id="cb64-86"><a href="#cb64-86"></a>    subprocess.check_output([<span class="st">&quot;grass&quot;</span>, <span class="st">&quot;--config&quot;</span>, <span class="st">&quot;python_path&quot;</span>], text<span class="op">=</span><span class="va">True</span>).strip()</span>
-<span id="cb64-87"><a href="#cb64-87"></a>)</span>
-<span id="cb64-88"><a href="#cb64-88"></a><span class="in">```</span></span>
-<span id="cb64-89"><a href="#cb64-89"></a></span>
-<span id="cb64-90"><a href="#cb64-90"></a>Importamos los paquetes de GRASS e iniciamos una sesión:</span>
-<span id="cb64-91"><a href="#cb64-91"></a></span>
-<span id="cb64-94"><a href="#cb64-94"></a><span class="in">```{python}</span></span>
-<span id="cb64-95"><a href="#cb64-95"></a><span class="co"># import the GRASS GIS packages we need</span></span>
-<span id="cb64-96"><a href="#cb64-96"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
-<span id="cb64-97"><a href="#cb64-97"></a><span class="im">import</span> grass.jupyter <span class="im">as</span> gj</span>
-<span id="cb64-98"><a href="#cb64-98"></a></span>
-<span id="cb64-99"><a href="#cb64-99"></a><span class="co"># Start the GRASS GIS Session</span></span>
-<span id="cb64-100"><a href="#cb64-100"></a>session <span class="op">=</span> gj.init(grassdata, project, mapset)</span>
-<span id="cb64-101"><a href="#cb64-101"></a><span class="in">```</span></span>
-<span id="cb64-102"><a href="#cb64-102"></a></span>
-<span id="cb64-105"><a href="#cb64-105"></a><span class="in">```{python}</span></span>
-<span id="cb64-106"><a href="#cb64-106"></a><span class="co"># show current GRASS GIS settings, this also checks if the session works</span></span>
-<span id="cb64-107"><a href="#cb64-107"></a>gs.gisenv()</span>
-<span id="cb64-108"><a href="#cb64-108"></a><span class="in">```</span></span>
-<span id="cb64-109"><a href="#cb64-109"></a></span>
-<span id="cb64-110"><a href="#cb64-110"></a><span class="fu">## Exploramos los datos de NDVI</span></span>
-<span id="cb64-111"><a href="#cb64-111"></a></span>
-<span id="cb64-112"><a href="#cb64-112"></a>Listar los mapas y obtener información de alguno de ellos</span>
-<span id="cb64-113"><a href="#cb64-113"></a></span>
-<span id="cb64-116"><a href="#cb64-116"></a><span class="in">```{python}</span></span>
-<span id="cb64-117"><a href="#cb64-117"></a><span class="co"># list raster files</span></span>
-<span id="cb64-118"><a href="#cb64-118"></a>lista_mapas <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-119"><a href="#cb64-119"></a>lista_mapas[:<span class="dv">10</span>]</span>
-<span id="cb64-120"><a href="#cb64-120"></a><span class="in">```</span></span>
-<span id="cb64-121"><a href="#cb64-121"></a></span>
-<span id="cb64-124"><a href="#cb64-124"></a><span class="in">```{python}</span></span>
-<span id="cb64-125"><a href="#cb64-125"></a><span class="co">#  get info and stats</span></span>
-<span id="cb64-126"><a href="#cb64-126"></a>gs.raster_info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>)</span>
-<span id="cb64-127"><a href="#cb64-127"></a><span class="in">```</span></span>
-<span id="cb64-128"><a href="#cb64-128"></a></span>
-<span id="cb64-131"><a href="#cb64-131"></a><span class="in">```{python}</span></span>
-<span id="cb64-132"><a href="#cb64-132"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;r.univar&quot;</span>,</span>
-<span id="cb64-133"><a href="#cb64-133"></a>                      <span class="bu">map</span><span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>))</span>
-<span id="cb64-134"><a href="#cb64-134"></a><span class="in">```</span></span>
-<span id="cb64-135"><a href="#cb64-135"></a></span>
-<span id="cb64-136"><a href="#cb64-136"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-137"><a href="#cb64-137"></a><span class="ss">- </span>Mostrar los mapas de NDVI, NIR y pixel reliability.</span>
-<span id="cb64-138"><a href="#cb64-138"></a><span class="ss">- </span>Obtener información sobre los valores mínimos y máximos</span>
-<span id="cb64-139"><a href="#cb64-139"></a><span class="ss">- </span>¿Qué se puede decir sobre los valores de cada banda?</span>
-<span id="cb64-140"><a href="#cb64-140"></a><span class="ss">- </span>¿Hay valores nulos?</span>
-<span id="cb64-141"><a href="#cb64-141"></a>:::</span>
-<span id="cb64-142"><a href="#cb64-142"></a></span>
-<span id="cb64-143"><a href="#cb64-143"></a><span class="fu">## Uso de la banda de confiabilidad</span></span>
-<span id="cb64-144"><a href="#cb64-144"></a></span>
-<span id="cb64-145"><a href="#cb64-145"></a>Definir la región computacional</span>
-<span id="cb64-146"><a href="#cb64-146"></a></span>
-<span id="cb64-149"><a href="#cb64-149"></a><span class="in">```{python}</span></span>
-<span id="cb64-150"><a href="#cb64-150"></a><span class="co"># set computational region</span></span>
-<span id="cb64-151"><a href="#cb64-151"></a>gs.region_env(vector<span class="op">=</span><span class="st">&quot;provincia_cba&quot;</span>,</span>
-<span id="cb64-152"><a href="#cb64-152"></a>              align<span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>,</span>
-<span id="cb64-153"><a href="#cb64-153"></a>              flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span>
-<span id="cb64-154"><a href="#cb64-154"></a><span class="in">```</span></span>
-<span id="cb64-155"><a href="#cb64-155"></a></span>
-<span id="cb64-156"><a href="#cb64-156"></a>Establecer los límites provinciales como máscara</span>
-<span id="cb64-157"><a href="#cb64-157"></a></span>
-<span id="cb64-160"><a href="#cb64-160"></a><span class="in">```{python}</span></span>
-<span id="cb64-161"><a href="#cb64-161"></a><span class="co"># set a MASK to Cba boundary</span></span>
-<span id="cb64-162"><a href="#cb64-162"></a>gs.run_command(<span class="st">&quot;r.mask&quot;</span>,</span>
-<span id="cb64-163"><a href="#cb64-163"></a>               vector<span class="op">=</span><span class="st">&quot;provincia_cba&quot;</span>)</span>
-<span id="cb64-164"><a href="#cb64-164"></a><span class="in">```</span></span>
-<span id="cb64-165"><a href="#cb64-165"></a></span>
-<span id="cb64-166"><a href="#cb64-166"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-167"><a href="#cb64-167"></a><span class="ss">- </span>Leer acerca de la banda de confiabilidad en la <span class="co">[</span><span class="ot">Guía de usuario</span><span class="co">](https://lpdaac.usgs.gov/documents/103/MOD13_User_Guide_V6.pdf)</span> de MOD13 (pag 27).</span>
-<span id="cb64-168"><a href="#cb64-168"></a><span class="ss">- </span>Para una misma fecha mapear la banda de confiabilidad y el NDVI.</span>
-<span id="cb64-169"><a href="#cb64-169"></a><span class="ss">- </span>Seleccionar sólo los pixeles con valor 0 (Buena calidad) en la banda de confiabilidad. ¿Qué se observa?</span>
-<span id="cb64-170"><a href="#cb64-170"></a>:::</span>
-<span id="cb64-171"><a href="#cb64-171"></a></span>
-<span id="cb64-172"><a href="#cb64-172"></a>Mantener sólo los pixeles de la mejor calidad</span>
-<span id="cb64-173"><a href="#cb64-173"></a></span>
-<span id="cb64-176"><a href="#cb64-176"></a><span class="in">```{python}</span></span>
-<span id="cb64-177"><a href="#cb64-177"></a><span class="co"># keep only NDVI most reliable pixels (one map)</span></span>
-<span id="cb64-178"><a href="#cb64-178"></a>PR<span class="op">=</span><span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_pixel_reliability&quot;</span></span>
-<span id="cb64-179"><a href="#cb64-179"></a>NDVI<span class="op">=</span><span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_NDVI&quot;</span></span>
-<span id="cb64-180"><a href="#cb64-180"></a></span>
-<span id="cb64-181"><a href="#cb64-181"></a>gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>NDVI<span class="sc">}</span><span class="ss">_filt = if(</span><span class="sc">{</span>PR<span class="sc">}</span><span class="ss"> != 0, null(), </span><span class="sc">{</span>NDVI<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="cb64-182"><a href="#cb64-182"></a><span class="in">```</span></span>
+<span id="cb64-71"><a href="#cb64-71"></a><span class="co"># change to homedir so output files will be saved there</span></span>
+<span id="cb64-72"><a href="#cb64-72"></a>os.chdir(homedir)</span>
+<span id="cb64-73"><a href="#cb64-73"></a></span>
+<span id="cb64-74"><a href="#cb64-74"></a><span class="co"># GRASS GIS database variables</span></span>
+<span id="cb64-75"><a href="#cb64-75"></a>grassdata <span class="op">=</span> os.path.join(homedir, <span class="st">&quot;grassdata&quot;</span>)</span>
+<span id="cb64-76"><a href="#cb64-76"></a>project <span class="op">=</span> <span class="st">&quot;posgar2007_4_cba&quot;</span></span>
+<span id="cb64-77"><a href="#cb64-77"></a>mapset <span class="op">=</span> <span class="st">&quot;modis_ndvi&quot;</span></span>
+<span id="cb64-78"><a href="#cb64-78"></a><span class="in">```</span></span>
+<span id="cb64-79"><a href="#cb64-79"></a></span>
+<span id="cb64-82"><a href="#cb64-82"></a><span class="in">```{python}</span></span>
+<span id="cb64-83"><a href="#cb64-83"></a><span class="co"># import standard Python packages we need</span></span>
+<span id="cb64-84"><a href="#cb64-84"></a><span class="im">import</span> sys</span>
+<span id="cb64-85"><a href="#cb64-85"></a><span class="im">import</span> subprocess</span>
+<span id="cb64-86"><a href="#cb64-86"></a></span>
+<span id="cb64-87"><a href="#cb64-87"></a><span class="co"># ask GRASS GIS where its Python packages are to be able to run it from the notebook</span></span>
+<span id="cb64-88"><a href="#cb64-88"></a>sys.path.append(</span>
+<span id="cb64-89"><a href="#cb64-89"></a>    subprocess.check_output([<span class="st">&quot;grass&quot;</span>, <span class="st">&quot;--config&quot;</span>, <span class="st">&quot;python_path&quot;</span>], text<span class="op">=</span><span class="va">True</span>).strip()</span>
+<span id="cb64-90"><a href="#cb64-90"></a>)</span>
+<span id="cb64-91"><a href="#cb64-91"></a><span class="in">```</span></span>
+<span id="cb64-92"><a href="#cb64-92"></a></span>
+<span id="cb64-93"><a href="#cb64-93"></a>Importamos los paquetes de GRASS e iniciamos una sesión:</span>
+<span id="cb64-94"><a href="#cb64-94"></a></span>
+<span id="cb64-97"><a href="#cb64-97"></a><span class="in">```{python}</span></span>
+<span id="cb64-98"><a href="#cb64-98"></a><span class="co"># import the GRASS GIS packages we need</span></span>
+<span id="cb64-99"><a href="#cb64-99"></a><span class="im">import</span> grass.script <span class="im">as</span> gs</span>
+<span id="cb64-100"><a href="#cb64-100"></a><span class="im">import</span> grass.jupyter <span class="im">as</span> gj</span>
+<span id="cb64-101"><a href="#cb64-101"></a></span>
+<span id="cb64-102"><a href="#cb64-102"></a><span class="co"># Start the GRASS GIS Session</span></span>
+<span id="cb64-103"><a href="#cb64-103"></a>session <span class="op">=</span> gj.init(grassdata, project, mapset)</span>
+<span id="cb64-104"><a href="#cb64-104"></a><span class="in">```</span></span>
+<span id="cb64-105"><a href="#cb64-105"></a></span>
+<span id="cb64-108"><a href="#cb64-108"></a><span class="in">```{python}</span></span>
+<span id="cb64-109"><a href="#cb64-109"></a><span class="co"># show current GRASS GIS settings, this also checks if the session works</span></span>
+<span id="cb64-110"><a href="#cb64-110"></a>gs.gisenv()</span>
+<span id="cb64-111"><a href="#cb64-111"></a><span class="in">```</span></span>
+<span id="cb64-112"><a href="#cb64-112"></a></span>
+<span id="cb64-113"><a href="#cb64-113"></a><span class="fu">## Exploramos los datos de NDVI</span></span>
+<span id="cb64-114"><a href="#cb64-114"></a></span>
+<span id="cb64-115"><a href="#cb64-115"></a>Listar los mapas y obtener información de alguno de ellos</span>
+<span id="cb64-116"><a href="#cb64-116"></a></span>
+<span id="cb64-119"><a href="#cb64-119"></a><span class="in">```{python}</span></span>
+<span id="cb64-120"><a href="#cb64-120"></a><span class="co"># list raster files</span></span>
+<span id="cb64-121"><a href="#cb64-121"></a>lista_mapas <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-122"><a href="#cb64-122"></a>lista_mapas[:<span class="dv">10</span>]</span>
+<span id="cb64-123"><a href="#cb64-123"></a><span class="in">```</span></span>
+<span id="cb64-124"><a href="#cb64-124"></a></span>
+<span id="cb64-127"><a href="#cb64-127"></a><span class="in">```{python}</span></span>
+<span id="cb64-128"><a href="#cb64-128"></a><span class="co">#  get info and stats</span></span>
+<span id="cb64-129"><a href="#cb64-129"></a>gs.raster_info(<span class="bu">map</span><span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>)</span>
+<span id="cb64-130"><a href="#cb64-130"></a><span class="in">```</span></span>
+<span id="cb64-131"><a href="#cb64-131"></a></span>
+<span id="cb64-134"><a href="#cb64-134"></a><span class="in">```{python}</span></span>
+<span id="cb64-135"><a href="#cb64-135"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;r.univar&quot;</span>,</span>
+<span id="cb64-136"><a href="#cb64-136"></a>                      <span class="bu">map</span><span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>))</span>
+<span id="cb64-137"><a href="#cb64-137"></a><span class="in">```</span></span>
+<span id="cb64-138"><a href="#cb64-138"></a></span>
+<span id="cb64-139"><a href="#cb64-139"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-140"><a href="#cb64-140"></a><span class="ss">- </span>Mostrar los mapas de NDVI, NIR y pixel reliability.</span>
+<span id="cb64-141"><a href="#cb64-141"></a><span class="ss">- </span>Obtener información sobre los valores mínimos y máximos</span>
+<span id="cb64-142"><a href="#cb64-142"></a><span class="ss">- </span>¿Qué se puede decir sobre los valores de cada banda?</span>
+<span id="cb64-143"><a href="#cb64-143"></a><span class="ss">- </span>¿Hay valores nulos?</span>
+<span id="cb64-144"><a href="#cb64-144"></a>:::</span>
+<span id="cb64-145"><a href="#cb64-145"></a></span>
+<span id="cb64-146"><a href="#cb64-146"></a><span class="fu">## Uso de la banda de confiabilidad</span></span>
+<span id="cb64-147"><a href="#cb64-147"></a></span>
+<span id="cb64-148"><a href="#cb64-148"></a>Definir la región computacional</span>
+<span id="cb64-149"><a href="#cb64-149"></a></span>
+<span id="cb64-152"><a href="#cb64-152"></a><span class="in">```{python}</span></span>
+<span id="cb64-153"><a href="#cb64-153"></a><span class="co"># set computational region</span></span>
+<span id="cb64-154"><a href="#cb64-154"></a>gs.region_env(vector<span class="op">=</span><span class="st">&quot;provincia_cba&quot;</span>,</span>
+<span id="cb64-155"><a href="#cb64-155"></a>              align<span class="op">=</span><span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI&quot;</span>,</span>
+<span id="cb64-156"><a href="#cb64-156"></a>              flags<span class="op">=</span><span class="st">&quot;p&quot;</span>)</span>
+<span id="cb64-157"><a href="#cb64-157"></a><span class="in">```</span></span>
+<span id="cb64-158"><a href="#cb64-158"></a></span>
+<span id="cb64-159"><a href="#cb64-159"></a>Establecer los límites provinciales como máscara</span>
+<span id="cb64-160"><a href="#cb64-160"></a></span>
+<span id="cb64-163"><a href="#cb64-163"></a><span class="in">```{python}</span></span>
+<span id="cb64-164"><a href="#cb64-164"></a><span class="co"># set a MASK to Cba boundary</span></span>
+<span id="cb64-165"><a href="#cb64-165"></a>gs.run_command(<span class="st">&quot;r.mask&quot;</span>,</span>
+<span id="cb64-166"><a href="#cb64-166"></a>               vector<span class="op">=</span><span class="st">&quot;provincia_cba&quot;</span>)</span>
+<span id="cb64-167"><a href="#cb64-167"></a><span class="in">```</span></span>
+<span id="cb64-168"><a href="#cb64-168"></a></span>
+<span id="cb64-169"><a href="#cb64-169"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-170"><a href="#cb64-170"></a><span class="ss">- </span>Leer acerca de la banda de confiabilidad en la <span class="co">[</span><span class="ot">Guía de usuario</span><span class="co">](https://lpdaac.usgs.gov/documents/103/MOD13_User_Guide_V6.pdf)</span> de MOD13 (pag 27).</span>
+<span id="cb64-171"><a href="#cb64-171"></a><span class="ss">- </span>Para una misma fecha mapear la banda de confiabilidad y el NDVI.</span>
+<span id="cb64-172"><a href="#cb64-172"></a><span class="ss">- </span>Seleccionar sólo los pixeles con valor 0 (Buena calidad) en la banda de confiabilidad. ¿Qué se observa?</span>
+<span id="cb64-173"><a href="#cb64-173"></a>:::</span>
+<span id="cb64-174"><a href="#cb64-174"></a></span>
+<span id="cb64-175"><a href="#cb64-175"></a>Mantener sólo los pixeles de la mejor calidad</span>
+<span id="cb64-176"><a href="#cb64-176"></a></span>
+<span id="cb64-179"><a href="#cb64-179"></a><span class="in">```{python}</span></span>
+<span id="cb64-180"><a href="#cb64-180"></a><span class="co"># keep only NDVI most reliable pixels (one map)</span></span>
+<span id="cb64-181"><a href="#cb64-181"></a>PR<span class="op">=</span><span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_pixel_reliability&quot;</span></span>
+<span id="cb64-182"><a href="#cb64-182"></a>NDVI<span class="op">=</span><span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_NDVI&quot;</span></span>
 <span id="cb64-183"><a href="#cb64-183"></a></span>
-<span id="cb64-186"><a href="#cb64-186"></a><span class="in">```{python}</span></span>
-<span id="cb64-187"><a href="#cb64-187"></a><span class="co"># plot result</span></span>
-<span id="cb64-188"><a href="#cb64-188"></a>ndvi_filt <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
-<span id="cb64-189"><a href="#cb64-189"></a>ndvi_filt.add_raster(<span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_NDVI_filt&quot;</span>)</span>
-<span id="cb64-190"><a href="#cb64-190"></a>ndvi_filt.show()</span>
-<span id="cb64-191"><a href="#cb64-191"></a><span class="in">```</span></span>
-<span id="cb64-192"><a href="#cb64-192"></a></span>
-<span id="cb64-193"><a href="#cb64-193"></a>Mantener sólo los pixeles de la mejor calidad para todos los mapas</span>
-<span id="cb64-194"><a href="#cb64-194"></a></span>
-<span id="cb64-197"><a href="#cb64-197"></a><span class="in">```{python}</span></span>
-<span id="cb64-198"><a href="#cb64-198"></a><span class="co"># list of maps</span></span>
-<span id="cb64-199"><a href="#cb64-199"></a>PR <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
-<span id="cb64-200"><a href="#cb64-200"></a>                     pattern<span class="op">=</span><span class="st">&quot;*_pixel_reliability&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-201"><a href="#cb64-201"></a>NDVI <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
-<span id="cb64-202"><a href="#cb64-202"></a>                       pattern<span class="op">=</span><span class="st">&quot;*_Monthly_NDVI&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-203"><a href="#cb64-203"></a></span>
-<span id="cb64-204"><a href="#cb64-204"></a><span class="co"># iterate over the 2 arrays</span></span>
-<span id="cb64-205"><a href="#cb64-205"></a><span class="cf">for</span> i,j <span class="kw">in</span> <span class="bu">zip</span>(PR,NDVI):</span>
-<span id="cb64-206"><a href="#cb64-206"></a>    <span class="bu">print</span>(i, j)</span>
-<span id="cb64-207"><a href="#cb64-207"></a>    gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">_filt = if(</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> != 0, null(), </span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="cb64-208"><a href="#cb64-208"></a><span class="in">```</span></span>
-<span id="cb64-209"><a href="#cb64-209"></a></span>
-<span id="cb64-210"><a href="#cb64-210"></a>:::{.callout-note}</span>
-<span id="cb64-211"><a href="#cb64-211"></a>Cómo podrían hacer lo mismo pero usando módulos temporales? Qué les parece <span class="co">[</span><span class="ot">t.rast.algebra</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/t.rast.algebra.html)</span>? </span>
-<span id="cb64-212"><a href="#cb64-212"></a>OJO! Esto requiere primero crear las series de tiempo y registrar los mapas </span>
-<span id="cb64-213"><a href="#cb64-213"></a>para que funcione!</span>
-<span id="cb64-214"><a href="#cb64-214"></a></span>
-<span id="cb64-217"><a href="#cb64-217"></a><span class="in">```{python}</span></span>
-<span id="cb64-218"><a href="#cb64-218"></a><span class="co"># apply pixel reliability band with t.rast.algebra</span></span>
-<span id="cb64-219"><a href="#cb64-219"></a>expression<span class="op">=</span><span class="st">&quot;NDVI_monthly_filt = if(pixel_rel_monthly != 0, null(), ndvi_monthly)&quot;</span></span>
-<span id="cb64-220"><a href="#cb64-220"></a></span>
-<span id="cb64-221"><a href="#cb64-221"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>,</span>
-<span id="cb64-222"><a href="#cb64-222"></a>               expression<span class="op">=</span>expression,</span>
-<span id="cb64-223"><a href="#cb64-223"></a>               basename<span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
-<span id="cb64-224"><a href="#cb64-224"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
-<span id="cb64-225"><a href="#cb64-225"></a>               nproc<span class="op">=</span><span class="dv">4</span>)</span>
-<span id="cb64-226"><a href="#cb64-226"></a><span class="in">```</span></span>
-<span id="cb64-227"><a href="#cb64-227"></a></span>
-<span id="cb64-228"><a href="#cb64-228"></a>:::</span>
-<span id="cb64-229"><a href="#cb64-229"></a></span>
-<span id="cb64-230"><a href="#cb64-230"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-231"><a href="#cb64-231"></a>Comparar las estadísticas entre los mapas de NDVI originales y filtrados para la misma fecha</span>
-<span id="cb64-232"><a href="#cb64-232"></a>:::</span>
-<span id="cb64-233"><a href="#cb64-233"></a></span>
-<span id="cb64-234"><a href="#cb64-234"></a><span class="fu">## Creación de la serie de tiempo</span></span>
-<span id="cb64-235"><a href="#cb64-235"></a></span>
-<span id="cb64-236"><a href="#cb64-236"></a>Crear STRDS de NDVI</span>
-<span id="cb64-237"><a href="#cb64-237"></a></span>
-<span id="cb64-240"><a href="#cb64-240"></a><span class="in">```{python}</span></span>
-<span id="cb64-241"><a href="#cb64-241"></a><span class="co"># create STRDS</span></span>
-<span id="cb64-242"><a href="#cb64-242"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
-<span id="cb64-243"><a href="#cb64-243"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
-<span id="cb64-244"><a href="#cb64-244"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
-<span id="cb64-245"><a href="#cb64-245"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
-<span id="cb64-246"><a href="#cb64-246"></a>               title<span class="op">=</span><span class="st">&quot;Filtered monthly NDVI&quot;</span>,</span>
-<span id="cb64-247"><a href="#cb64-247"></a>               description<span class="op">=</span><span class="st">&quot;Filtered monthly NDVI - MOD13C2 - Cordoba, 2015-2019&quot;</span>)</span>
-<span id="cb64-248"><a href="#cb64-248"></a><span class="in">```</span></span>
-<span id="cb64-249"><a href="#cb64-249"></a></span>
-<span id="cb64-250"><a href="#cb64-250"></a>Corroborar que la STRDS fue creada</span>
-<span id="cb64-251"><a href="#cb64-251"></a></span>
-<span id="cb64-254"><a href="#cb64-254"></a><span class="in">```{python}</span></span>
-<span id="cb64-255"><a href="#cb64-255"></a><span class="co"># check if it was created</span></span>
-<span id="cb64-256"><a href="#cb64-256"></a>gs.read_command(<span class="st">&quot;t.list&quot;</span>,</span>
-<span id="cb64-257"><a href="#cb64-257"></a>                <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>)</span>
-<span id="cb64-258"><a href="#cb64-258"></a><span class="in">```</span></span>
-<span id="cb64-259"><a href="#cb64-259"></a></span>
-<span id="cb64-260"><a href="#cb64-260"></a>Crear archivo con lista de mapas</span>
-<span id="cb64-261"><a href="#cb64-261"></a></span>
-<span id="cb64-264"><a href="#cb64-264"></a><span class="in">```{python}</span></span>
-<span id="cb64-265"><a href="#cb64-265"></a><span class="co"># list NDVI filtered files</span></span>
-<span id="cb64-266"><a href="#cb64-266"></a>NDVI_filt <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
-<span id="cb64-267"><a href="#cb64-267"></a>                            pattern<span class="op">=</span><span class="st">&quot;*_filt&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-268"><a href="#cb64-268"></a>NDVI_filt[:<span class="dv">10</span>]</span>
-<span id="cb64-269"><a href="#cb64-269"></a><span class="in">```</span></span>
-<span id="cb64-270"><a href="#cb64-270"></a></span>
-<span id="cb64-271"><a href="#cb64-271"></a>Asignar fecha a los mapas, i.e., registrar</span>
-<span id="cb64-272"><a href="#cb64-272"></a></span>
-<span id="cb64-275"><a href="#cb64-275"></a><span class="in">```{python}</span></span>
-<span id="cb64-276"><a href="#cb64-276"></a><span class="co"># register maps</span></span>
-<span id="cb64-277"><a href="#cb64-277"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
-<span id="cb64-278"><a href="#cb64-278"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
-<span id="cb64-279"><a href="#cb64-279"></a>               maps<span class="op">=</span>NDVI_filt,</span>
-<span id="cb64-280"><a href="#cb64-280"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
-<span id="cb64-281"><a href="#cb64-281"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
-<span id="cb64-282"><a href="#cb64-282"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
-<span id="cb64-283"><a href="#cb64-283"></a><span class="in">```</span></span>
-<span id="cb64-284"><a href="#cb64-284"></a></span>
-<span id="cb64-285"><a href="#cb64-285"></a>Imprimir info básica de la STRDS</span>
-<span id="cb64-286"><a href="#cb64-286"></a></span>
-<span id="cb64-289"><a href="#cb64-289"></a><span class="in">```{python}</span></span>
-<span id="cb64-290"><a href="#cb64-290"></a><span class="co"># print time series info</span></span>
-<span id="cb64-291"><a href="#cb64-291"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
-<span id="cb64-292"><a href="#cb64-292"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
-<span id="cb64-293"><a href="#cb64-293"></a><span class="in">```</span></span>
-<span id="cb64-294"><a href="#cb64-294"></a></span>
-<span id="cb64-295"><a href="#cb64-295"></a>Imprimir la lista de mapas en la STRDS</span>
-<span id="cb64-296"><a href="#cb64-296"></a></span>
-<span id="cb64-299"><a href="#cb64-299"></a><span class="in">```{python}</span></span>
-<span id="cb64-300"><a href="#cb64-300"></a><span class="co"># print list of maps in time series</span></span>
-<span id="cb64-301"><a href="#cb64-301"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.list&quot;</span>, </span>
-<span id="cb64-302"><a href="#cb64-302"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
-<span id="cb64-303"><a href="#cb64-303"></a><span class="in">```</span></span>
-<span id="cb64-304"><a href="#cb64-304"></a></span>
-<span id="cb64-305"><a href="#cb64-305"></a>También podemos obtener los valores para un único pixel</span>
-<span id="cb64-306"><a href="#cb64-306"></a></span>
-<span id="cb64-309"><a href="#cb64-309"></a><span class="in">```{python}</span></span>
-<span id="cb64-310"><a href="#cb64-310"></a><span class="co"># Get region center coordinates for query </span></span>
-<span id="cb64-311"><a href="#cb64-311"></a>gs.region(complete<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb64-312"><a href="#cb64-312"></a><span class="in">```</span></span>
-<span id="cb64-313"><a href="#cb64-313"></a></span>
-<span id="cb64-316"><a href="#cb64-316"></a><span class="in">```{python}</span></span>
-<span id="cb64-317"><a href="#cb64-317"></a><span class="co"># Query map at center coordinates</span></span>
-<span id="cb64-318"><a href="#cb64-318"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.what&quot;</span>, </span>
-<span id="cb64-319"><a href="#cb64-319"></a>                      strds<span class="op">=</span><span class="st">&quot;s2_ndvi&quot;</span>, </span>
-<span id="cb64-320"><a href="#cb64-320"></a>                      coordinates<span class="op">=</span><span class="st">&quot;637500,221750&quot;</span>, </span>
-<span id="cb64-321"><a href="#cb64-321"></a>                      layout<span class="op">=</span><span class="st">&quot;col&quot;</span>, </span>
-<span id="cb64-322"><a href="#cb64-322"></a>                      flags<span class="op">=</span><span class="st">&quot;n&quot;</span>))</span>
-<span id="cb64-323"><a href="#cb64-323"></a><span class="in">```</span></span>
-<span id="cb64-324"><a href="#cb64-324"></a></span>
-<span id="cb64-325"><a href="#cb64-325"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-326"><a href="#cb64-326"></a>Explorar visualmente los valores de las series temporales en diferentes puntos. </span>
-<span id="cb64-327"><a href="#cb64-327"></a>Usar <span class="co">[</span><span class="ot">g.gui.tplot</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/g.gui.tplot.html)</span> y seleccionar diferentes puntos interactivamente.</span>
-<span id="cb64-328"><a href="#cb64-328"></a>:::</span>
-<span id="cb64-329"><a href="#cb64-329"></a></span>
-<span id="cb64-330"><a href="#cb64-330"></a><span class="fu">## Datos faltantes</span></span>
-<span id="cb64-331"><a href="#cb64-331"></a></span>
-<span id="cb64-332"><a href="#cb64-332"></a>Obtener las estadísticas de la serie de tiempo</span>
-<span id="cb64-333"><a href="#cb64-333"></a></span>
-<span id="cb64-336"><a href="#cb64-336"></a><span class="in">```{python}</span></span>
-<span id="cb64-337"><a href="#cb64-337"></a><span class="co"># How much missing data we have after filtering for pixel reliability?</span></span>
-<span id="cb64-338"><a href="#cb64-338"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.univar&quot;</span>,</span>
-<span id="cb64-339"><a href="#cb64-339"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
-<span id="cb64-340"><a href="#cb64-340"></a><span class="in">```</span></span>
-<span id="cb64-341"><a href="#cb64-341"></a></span>
-<span id="cb64-342"><a href="#cb64-342"></a>Contar los datos válidos</span>
-<span id="cb64-343"><a href="#cb64-343"></a></span>
-<span id="cb64-346"><a href="#cb64-346"></a><span class="in">```{python}</span></span>
-<span id="cb64-347"><a href="#cb64-347"></a><span class="co"># count valid data</span></span>
-<span id="cb64-348"><a href="#cb64-348"></a>gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
-<span id="cb64-349"><a href="#cb64-349"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
-<span id="cb64-350"><a href="#cb64-350"></a>               method<span class="op">=</span><span class="st">&quot;count&quot;</span>,</span>
-<span id="cb64-351"><a href="#cb64-351"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_count_valid&quot;</span>)</span>
-<span id="cb64-352"><a href="#cb64-352"></a><span class="in">```</span></span>
-<span id="cb64-353"><a href="#cb64-353"></a></span>
-<span id="cb64-354"><a href="#cb64-354"></a>Estimar el porcentaje de datos faltantes</span>
-<span id="cb64-355"><a href="#cb64-355"></a></span>
-<span id="cb64-358"><a href="#cb64-358"></a><span class="in">```{python}</span></span>
-<span id="cb64-359"><a href="#cb64-359"></a><span class="co"># estimate percentage of missing data</span></span>
-<span id="cb64-360"><a href="#cb64-360"></a>gs.mapcalc(exp<span class="op">=</span><span class="st">&quot;ndvi_missing = ((60 - ndvi_count_valid) * 100.0)/60&quot;</span>)</span>
-<span id="cb64-361"><a href="#cb64-361"></a><span class="in">```</span></span>
-<span id="cb64-362"><a href="#cb64-362"></a></span>
-<span id="cb64-363"><a href="#cb64-363"></a>Cómo guardar en una variable el numero de mapas de una serie de tiempo?</span>
-<span id="cb64-364"><a href="#cb64-364"></a></span>
-<span id="cb64-367"><a href="#cb64-367"></a><span class="in">```{python}</span></span>
-<span id="cb64-368"><a href="#cb64-368"></a>n <span class="op">=</span> gs.parse_command(<span class="st">&quot;t.info&quot;</span>, </span>
-<span id="cb64-369"><a href="#cb64-369"></a>                     <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>, </span>
-<span id="cb64-370"><a href="#cb64-370"></a>                     flags<span class="op">=</span><span class="st">&quot;g&quot;</span>)[<span class="st">&quot;number_of_maps&quot;</span>]</span>
-<span id="cb64-371"><a href="#cb64-371"></a>n</span>
-<span id="cb64-372"><a href="#cb64-372"></a><span class="in">```</span></span>
-<span id="cb64-373"><a href="#cb64-373"></a></span>
-<span id="cb64-376"><a href="#cb64-376"></a><span class="in">```{python}</span></span>
-<span id="cb64-377"><a href="#cb64-377"></a>gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;ndvi_missing = ((</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> - ndvi_count_valid) * 100.0)/</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb64-378"><a href="#cb64-378"></a><span class="in">```</span></span>
-<span id="cb64-379"><a href="#cb64-379"></a></span>
-<span id="cb64-380"><a href="#cb64-380"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-381"><a href="#cb64-381"></a><span class="ss">- </span>Mostrar el mapa que representa el porcentaje de datos faltantes y explorar </span>
-<span id="cb64-382"><a href="#cb64-382"></a>los valores. </span>
-<span id="cb64-383"><a href="#cb64-383"></a><span class="ss">- </span>Obtener estadísticas univariadas de este mapa.</span>
-<span id="cb64-384"><a href="#cb64-384"></a><span class="ss">- </span>Dónde estan los mayores porcentajes de datos faltantes? Por qué creen que </span>
-<span id="cb64-385"><a href="#cb64-385"></a>puede ser?</span>
-<span id="cb64-386"><a href="#cb64-386"></a>:::</span>
-<span id="cb64-387"><a href="#cb64-387"></a></span>
-<span id="cb64-388"><a href="#cb64-388"></a><span class="fu">## Reconstrucción temporal: HANTS</span></span>
-<span id="cb64-389"><a href="#cb64-389"></a></span>
-<span id="cb64-390"><a href="#cb64-390"></a><span class="ss">- </span>Harmonic Analysis of Time Series (HANTS)</span>
-<span id="cb64-391"><a href="#cb64-391"></a><span class="ss">- </span>Implementado en la extensión <span class="co">[</span><span class="ot">r.hants</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html)</span></span>
+<span id="cb64-184"><a href="#cb64-184"></a>gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>NDVI<span class="sc">}</span><span class="ss">_filt = if(</span><span class="sc">{</span>PR<span class="sc">}</span><span class="ss"> != 0, null(), </span><span class="sc">{</span>NDVI<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
+<span id="cb64-185"><a href="#cb64-185"></a><span class="in">```</span></span>
+<span id="cb64-186"><a href="#cb64-186"></a></span>
+<span id="cb64-189"><a href="#cb64-189"></a><span class="in">```{python}</span></span>
+<span id="cb64-190"><a href="#cb64-190"></a><span class="co"># plot result</span></span>
+<span id="cb64-191"><a href="#cb64-191"></a>ndvi_filt <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">500</span>, tiles<span class="op">=</span><span class="st">&quot;OpenStreetMap&quot;</span>)</span>
+<span id="cb64-192"><a href="#cb64-192"></a>ndvi_filt.add_raster(<span class="st">&quot;MOD13C2.A2015274.006.single_Monthly_NDVI_filt&quot;</span>)</span>
+<span id="cb64-193"><a href="#cb64-193"></a>ndvi_filt.show()</span>
+<span id="cb64-194"><a href="#cb64-194"></a><span class="in">```</span></span>
+<span id="cb64-195"><a href="#cb64-195"></a></span>
+<span id="cb64-196"><a href="#cb64-196"></a>Mantener sólo los pixeles de la mejor calidad para todos los mapas</span>
+<span id="cb64-197"><a href="#cb64-197"></a></span>
+<span id="cb64-200"><a href="#cb64-200"></a><span class="in">```{python}</span></span>
+<span id="cb64-201"><a href="#cb64-201"></a><span class="co"># list of maps</span></span>
+<span id="cb64-202"><a href="#cb64-202"></a>PR <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
+<span id="cb64-203"><a href="#cb64-203"></a>                     pattern<span class="op">=</span><span class="st">&quot;*_pixel_reliability&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-204"><a href="#cb64-204"></a>NDVI <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
+<span id="cb64-205"><a href="#cb64-205"></a>                       pattern<span class="op">=</span><span class="st">&quot;*_Monthly_NDVI&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-206"><a href="#cb64-206"></a></span>
+<span id="cb64-207"><a href="#cb64-207"></a><span class="co"># iterate over the 2 arrays</span></span>
+<span id="cb64-208"><a href="#cb64-208"></a><span class="cf">for</span> i,j <span class="kw">in</span> <span class="bu">zip</span>(PR,NDVI):</span>
+<span id="cb64-209"><a href="#cb64-209"></a>    <span class="bu">print</span>(i, j)</span>
+<span id="cb64-210"><a href="#cb64-210"></a>    gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">_filt = if(</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> != 0, null(), </span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
+<span id="cb64-211"><a href="#cb64-211"></a><span class="in">```</span></span>
+<span id="cb64-212"><a href="#cb64-212"></a></span>
+<span id="cb64-213"><a href="#cb64-213"></a>:::{.callout-note}</span>
+<span id="cb64-214"><a href="#cb64-214"></a>Cómo podrían hacer lo mismo pero usando módulos temporales? Qué les parece <span class="co">[</span><span class="ot">t.rast.algebra</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/t.rast.algebra.html)</span>? </span>
+<span id="cb64-215"><a href="#cb64-215"></a>OJO! Esto requiere primero crear las series de tiempo y registrar los mapas </span>
+<span id="cb64-216"><a href="#cb64-216"></a>para que funcione!</span>
+<span id="cb64-217"><a href="#cb64-217"></a></span>
+<span id="cb64-220"><a href="#cb64-220"></a><span class="in">```{python}</span></span>
+<span id="cb64-221"><a href="#cb64-221"></a><span class="co"># apply pixel reliability band with t.rast.algebra</span></span>
+<span id="cb64-222"><a href="#cb64-222"></a>expression<span class="op">=</span><span class="st">&quot;NDVI_monthly_filt = if(pixel_rel_monthly != 0, null(), ndvi_monthly)&quot;</span></span>
+<span id="cb64-223"><a href="#cb64-223"></a></span>
+<span id="cb64-224"><a href="#cb64-224"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>,</span>
+<span id="cb64-225"><a href="#cb64-225"></a>               expression<span class="op">=</span>expression,</span>
+<span id="cb64-226"><a href="#cb64-226"></a>               basename<span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
+<span id="cb64-227"><a href="#cb64-227"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
+<span id="cb64-228"><a href="#cb64-228"></a>               nproc<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb64-229"><a href="#cb64-229"></a><span class="in">```</span></span>
+<span id="cb64-230"><a href="#cb64-230"></a></span>
+<span id="cb64-231"><a href="#cb64-231"></a>:::</span>
+<span id="cb64-232"><a href="#cb64-232"></a></span>
+<span id="cb64-233"><a href="#cb64-233"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-234"><a href="#cb64-234"></a>Comparar las estadísticas entre los mapas de NDVI originales y filtrados para la misma fecha</span>
+<span id="cb64-235"><a href="#cb64-235"></a>:::</span>
+<span id="cb64-236"><a href="#cb64-236"></a></span>
+<span id="cb64-237"><a href="#cb64-237"></a><span class="fu">## Creación de la serie de tiempo</span></span>
+<span id="cb64-238"><a href="#cb64-238"></a></span>
+<span id="cb64-239"><a href="#cb64-239"></a>Crear STRDS de NDVI</span>
+<span id="cb64-240"><a href="#cb64-240"></a></span>
+<span id="cb64-243"><a href="#cb64-243"></a><span class="in">```{python}</span></span>
+<span id="cb64-244"><a href="#cb64-244"></a><span class="co"># create STRDS</span></span>
+<span id="cb64-245"><a href="#cb64-245"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
+<span id="cb64-246"><a href="#cb64-246"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
+<span id="cb64-247"><a href="#cb64-247"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
+<span id="cb64-248"><a href="#cb64-248"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
+<span id="cb64-249"><a href="#cb64-249"></a>               title<span class="op">=</span><span class="st">&quot;Filtered monthly NDVI&quot;</span>,</span>
+<span id="cb64-250"><a href="#cb64-250"></a>               description<span class="op">=</span><span class="st">&quot;Filtered monthly NDVI - MOD13C2 - Cordoba, 2015-2019&quot;</span>)</span>
+<span id="cb64-251"><a href="#cb64-251"></a><span class="in">```</span></span>
+<span id="cb64-252"><a href="#cb64-252"></a></span>
+<span id="cb64-253"><a href="#cb64-253"></a>Corroborar que la STRDS fue creada</span>
+<span id="cb64-254"><a href="#cb64-254"></a></span>
+<span id="cb64-257"><a href="#cb64-257"></a><span class="in">```{python}</span></span>
+<span id="cb64-258"><a href="#cb64-258"></a><span class="co"># check if it was created</span></span>
+<span id="cb64-259"><a href="#cb64-259"></a>gs.read_command(<span class="st">&quot;t.list&quot;</span>,</span>
+<span id="cb64-260"><a href="#cb64-260"></a>                <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>)</span>
+<span id="cb64-261"><a href="#cb64-261"></a><span class="in">```</span></span>
+<span id="cb64-262"><a href="#cb64-262"></a></span>
+<span id="cb64-263"><a href="#cb64-263"></a>Crear archivo con lista de mapas</span>
+<span id="cb64-264"><a href="#cb64-264"></a></span>
+<span id="cb64-267"><a href="#cb64-267"></a><span class="in">```{python}</span></span>
+<span id="cb64-268"><a href="#cb64-268"></a><span class="co"># list NDVI filtered files</span></span>
+<span id="cb64-269"><a href="#cb64-269"></a>NDVI_filt <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
+<span id="cb64-270"><a href="#cb64-270"></a>                            pattern<span class="op">=</span><span class="st">&quot;*_filt&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-271"><a href="#cb64-271"></a>NDVI_filt[:<span class="dv">10</span>]</span>
+<span id="cb64-272"><a href="#cb64-272"></a><span class="in">```</span></span>
+<span id="cb64-273"><a href="#cb64-273"></a></span>
+<span id="cb64-274"><a href="#cb64-274"></a>Asignar fecha a los mapas, i.e., registrar</span>
+<span id="cb64-275"><a href="#cb64-275"></a></span>
+<span id="cb64-278"><a href="#cb64-278"></a><span class="in">```{python}</span></span>
+<span id="cb64-279"><a href="#cb64-279"></a><span class="co"># register maps</span></span>
+<span id="cb64-280"><a href="#cb64-280"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
+<span id="cb64-281"><a href="#cb64-281"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
+<span id="cb64-282"><a href="#cb64-282"></a>               maps<span class="op">=</span>NDVI_filt,</span>
+<span id="cb64-283"><a href="#cb64-283"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
+<span id="cb64-284"><a href="#cb64-284"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
+<span id="cb64-285"><a href="#cb64-285"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
+<span id="cb64-286"><a href="#cb64-286"></a><span class="in">```</span></span>
+<span id="cb64-287"><a href="#cb64-287"></a></span>
+<span id="cb64-288"><a href="#cb64-288"></a>Imprimir info básica de la STRDS</span>
+<span id="cb64-289"><a href="#cb64-289"></a></span>
+<span id="cb64-292"><a href="#cb64-292"></a><span class="in">```{python}</span></span>
+<span id="cb64-293"><a href="#cb64-293"></a><span class="co"># print time series info</span></span>
+<span id="cb64-294"><a href="#cb64-294"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
+<span id="cb64-295"><a href="#cb64-295"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
+<span id="cb64-296"><a href="#cb64-296"></a><span class="in">```</span></span>
+<span id="cb64-297"><a href="#cb64-297"></a></span>
+<span id="cb64-298"><a href="#cb64-298"></a>Imprimir la lista de mapas en la STRDS</span>
+<span id="cb64-299"><a href="#cb64-299"></a></span>
+<span id="cb64-302"><a href="#cb64-302"></a><span class="in">```{python}</span></span>
+<span id="cb64-303"><a href="#cb64-303"></a><span class="co"># print list of maps in time series</span></span>
+<span id="cb64-304"><a href="#cb64-304"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.list&quot;</span>, </span>
+<span id="cb64-305"><a href="#cb64-305"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
+<span id="cb64-306"><a href="#cb64-306"></a><span class="in">```</span></span>
+<span id="cb64-307"><a href="#cb64-307"></a></span>
+<span id="cb64-308"><a href="#cb64-308"></a>También podemos obtener los valores para un único pixel</span>
+<span id="cb64-309"><a href="#cb64-309"></a></span>
+<span id="cb64-312"><a href="#cb64-312"></a><span class="in">```{python}</span></span>
+<span id="cb64-313"><a href="#cb64-313"></a><span class="co"># Get region center coordinates for query </span></span>
+<span id="cb64-314"><a href="#cb64-314"></a>gs.region(complete<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb64-315"><a href="#cb64-315"></a><span class="in">```</span></span>
+<span id="cb64-316"><a href="#cb64-316"></a></span>
+<span id="cb64-319"><a href="#cb64-319"></a><span class="in">```{python}</span></span>
+<span id="cb64-320"><a href="#cb64-320"></a><span class="co"># Query map at center coordinates</span></span>
+<span id="cb64-321"><a href="#cb64-321"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.what&quot;</span>, </span>
+<span id="cb64-322"><a href="#cb64-322"></a>                      strds<span class="op">=</span><span class="st">&quot;s2_ndvi&quot;</span>, </span>
+<span id="cb64-323"><a href="#cb64-323"></a>                      coordinates<span class="op">=</span><span class="st">&quot;637500,221750&quot;</span>, </span>
+<span id="cb64-324"><a href="#cb64-324"></a>                      layout<span class="op">=</span><span class="st">&quot;col&quot;</span>, </span>
+<span id="cb64-325"><a href="#cb64-325"></a>                      flags<span class="op">=</span><span class="st">&quot;n&quot;</span>))</span>
+<span id="cb64-326"><a href="#cb64-326"></a><span class="in">```</span></span>
+<span id="cb64-327"><a href="#cb64-327"></a></span>
+<span id="cb64-328"><a href="#cb64-328"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-329"><a href="#cb64-329"></a>Explorar visualmente los valores de las series temporales en diferentes puntos. </span>
+<span id="cb64-330"><a href="#cb64-330"></a>Usar <span class="co">[</span><span class="ot">g.gui.tplot</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/g.gui.tplot.html)</span> y seleccionar diferentes puntos interactivamente.</span>
+<span id="cb64-331"><a href="#cb64-331"></a>:::</span>
+<span id="cb64-332"><a href="#cb64-332"></a></span>
+<span id="cb64-333"><a href="#cb64-333"></a><span class="fu">## Datos faltantes</span></span>
+<span id="cb64-334"><a href="#cb64-334"></a></span>
+<span id="cb64-335"><a href="#cb64-335"></a>Obtener las estadísticas de la serie de tiempo</span>
+<span id="cb64-336"><a href="#cb64-336"></a></span>
+<span id="cb64-339"><a href="#cb64-339"></a><span class="in">```{python}</span></span>
+<span id="cb64-340"><a href="#cb64-340"></a><span class="co"># How much missing data we have after filtering for pixel reliability?</span></span>
+<span id="cb64-341"><a href="#cb64-341"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.univar&quot;</span>,</span>
+<span id="cb64-342"><a href="#cb64-342"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>))</span>
+<span id="cb64-343"><a href="#cb64-343"></a><span class="in">```</span></span>
+<span id="cb64-344"><a href="#cb64-344"></a></span>
+<span id="cb64-345"><a href="#cb64-345"></a>Contar los datos válidos</span>
+<span id="cb64-346"><a href="#cb64-346"></a></span>
+<span id="cb64-349"><a href="#cb64-349"></a><span class="in">```{python}</span></span>
+<span id="cb64-350"><a href="#cb64-350"></a><span class="co"># count valid data</span></span>
+<span id="cb64-351"><a href="#cb64-351"></a>gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
+<span id="cb64-352"><a href="#cb64-352"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
+<span id="cb64-353"><a href="#cb64-353"></a>               method<span class="op">=</span><span class="st">&quot;count&quot;</span>,</span>
+<span id="cb64-354"><a href="#cb64-354"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_count_valid&quot;</span>)</span>
+<span id="cb64-355"><a href="#cb64-355"></a><span class="in">```</span></span>
+<span id="cb64-356"><a href="#cb64-356"></a></span>
+<span id="cb64-357"><a href="#cb64-357"></a>Estimar el porcentaje de datos faltantes</span>
+<span id="cb64-358"><a href="#cb64-358"></a></span>
+<span id="cb64-361"><a href="#cb64-361"></a><span class="in">```{python}</span></span>
+<span id="cb64-362"><a href="#cb64-362"></a><span class="co"># estimate percentage of missing data</span></span>
+<span id="cb64-363"><a href="#cb64-363"></a>gs.mapcalc(exp<span class="op">=</span><span class="st">&quot;ndvi_missing = ((60 - ndvi_count_valid) * 100.0)/60&quot;</span>)</span>
+<span id="cb64-364"><a href="#cb64-364"></a><span class="in">```</span></span>
+<span id="cb64-365"><a href="#cb64-365"></a></span>
+<span id="cb64-366"><a href="#cb64-366"></a>Cómo guardar en una variable el numero de mapas de una serie de tiempo?</span>
+<span id="cb64-367"><a href="#cb64-367"></a></span>
+<span id="cb64-370"><a href="#cb64-370"></a><span class="in">```{python}</span></span>
+<span id="cb64-371"><a href="#cb64-371"></a>n <span class="op">=</span> gs.parse_command(<span class="st">&quot;t.info&quot;</span>, </span>
+<span id="cb64-372"><a href="#cb64-372"></a>                     <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>, </span>
+<span id="cb64-373"><a href="#cb64-373"></a>                     flags<span class="op">=</span><span class="st">&quot;g&quot;</span>)[<span class="st">&quot;number_of_maps&quot;</span>]</span>
+<span id="cb64-374"><a href="#cb64-374"></a>n</span>
+<span id="cb64-375"><a href="#cb64-375"></a><span class="in">```</span></span>
+<span id="cb64-376"><a href="#cb64-376"></a></span>
+<span id="cb64-379"><a href="#cb64-379"></a><span class="in">```{python}</span></span>
+<span id="cb64-380"><a href="#cb64-380"></a>gs.mapcalc(exp<span class="op">=</span><span class="ss">f&quot;ndvi_missing = ((</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> - ndvi_count_valid) * 100.0)/</span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb64-381"><a href="#cb64-381"></a><span class="in">```</span></span>
+<span id="cb64-382"><a href="#cb64-382"></a></span>
+<span id="cb64-383"><a href="#cb64-383"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-384"><a href="#cb64-384"></a><span class="ss">- </span>Mostrar el mapa que representa el porcentaje de datos faltantes y explorar </span>
+<span id="cb64-385"><a href="#cb64-385"></a>los valores. </span>
+<span id="cb64-386"><a href="#cb64-386"></a><span class="ss">- </span>Obtener estadísticas univariadas de este mapa.</span>
+<span id="cb64-387"><a href="#cb64-387"></a><span class="ss">- </span>Dónde estan los mayores porcentajes de datos faltantes? Por qué creen que </span>
+<span id="cb64-388"><a href="#cb64-388"></a>puede ser?</span>
+<span id="cb64-389"><a href="#cb64-389"></a>:::</span>
+<span id="cb64-390"><a href="#cb64-390"></a></span>
+<span id="cb64-391"><a href="#cb64-391"></a><span class="fu">## Reconstrucción temporal: HANTS</span></span>
 <span id="cb64-392"><a href="#cb64-392"></a></span>
-<span id="cb64-393"><a href="#cb64-393"></a><span class="al">![](../assets/img/evi_evi_hants.png)</span>{width=&quot;65%&quot;}</span>
-<span id="cb64-394"><a href="#cb64-394"></a></span>
+<span id="cb64-393"><a href="#cb64-393"></a><span class="ss">- </span>Harmonic Analysis of Time Series (HANTS)</span>
+<span id="cb64-394"><a href="#cb64-394"></a><span class="ss">- </span>Implementado en la extensión <span class="co">[</span><span class="ot">r.hants</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html)</span></span>
 <span id="cb64-395"><a href="#cb64-395"></a></span>
-<span id="cb64-396"><a href="#cb64-396"></a>Instalar la extensión *r.hants*</span>
+<span id="cb64-396"><a href="#cb64-396"></a><span class="al">![](../assets/img/evi_evi_hants.png)</span>{width=&quot;65%&quot;}</span>
 <span id="cb64-397"><a href="#cb64-397"></a></span>
-<span id="cb64-400"><a href="#cb64-400"></a><span class="in">```{python}</span></span>
-<span id="cb64-401"><a href="#cb64-401"></a><span class="co"># install extension</span></span>
-<span id="cb64-402"><a href="#cb64-402"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
-<span id="cb64-403"><a href="#cb64-403"></a>               extension<span class="op">=</span><span class="st">&quot;r.hants&quot;</span>)</span>
-<span id="cb64-404"><a href="#cb64-404"></a><span class="in">```</span></span>
-<span id="cb64-405"><a href="#cb64-405"></a></span>
-<span id="cb64-406"><a href="#cb64-406"></a>Listar los mapas y aplicar r.hants</span>
-<span id="cb64-407"><a href="#cb64-407"></a></span>
-<span id="cb64-410"><a href="#cb64-410"></a><span class="in">```{python}</span></span>
-<span id="cb64-411"><a href="#cb64-411"></a><span class="co"># list maps</span></span>
-<span id="cb64-412"><a href="#cb64-412"></a>maplist <span class="op">=</span> gs.parse_command(<span class="st">&quot;t.rast.list&quot;</span>,</span>
-<span id="cb64-413"><a href="#cb64-413"></a>                          <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
-<span id="cb64-414"><a href="#cb64-414"></a>                          columns<span class="op">=</span><span class="st">&quot;name&quot;</span>,</span>
-<span id="cb64-415"><a href="#cb64-415"></a>                          method<span class="op">=</span><span class="st">&quot;comma&quot;</span>,</span>
-<span id="cb64-416"><a href="#cb64-416"></a>                          flags<span class="op">=</span><span class="st">&quot;u&quot;</span>)</span>
-<span id="cb64-417"><a href="#cb64-417"></a>maplist <span class="op">=</span> <span class="bu">list</span>(maplist.keys())</span>
-<span id="cb64-418"><a href="#cb64-418"></a><span class="in">```</span></span>
-<span id="cb64-419"><a href="#cb64-419"></a></span>
-<span id="cb64-422"><a href="#cb64-422"></a><span class="in">```{python}</span></span>
-<span id="cb64-423"><a href="#cb64-423"></a><span class="co"># gapfill: r.hants</span></span>
-<span id="cb64-424"><a href="#cb64-424"></a>gs.run_command(<span class="st">&quot;r.hants&quot;</span>,</span>
-<span id="cb64-425"><a href="#cb64-425"></a>               <span class="bu">input</span><span class="op">=</span>maplist,</span>
-<span id="cb64-426"><a href="#cb64-426"></a>               <span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">2000</span>,<span class="dv">10000</span>],</span>
-<span id="cb64-427"><a href="#cb64-427"></a>               nf<span class="op">=</span><span class="dv">5</span>,</span>
-<span id="cb64-428"><a href="#cb64-428"></a>               fet<span class="op">=</span><span class="dv">500</span>,</span>
-<span id="cb64-429"><a href="#cb64-429"></a>               base_period<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb64-430"><a href="#cb64-430"></a><span class="in">```</span></span>
-<span id="cb64-431"><a href="#cb64-431"></a></span>
-<span id="cb64-434"><a href="#cb64-434"></a><span class="in">```{python}</span></span>
-<span id="cb64-435"><a href="#cb64-435"></a><span class="co"># list filled maps</span></span>
-<span id="cb64-436"><a href="#cb64-436"></a>gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-437"><a href="#cb64-437"></a>                pattern<span class="op">=</span><span class="st">&quot;*hants&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-438"><a href="#cb64-438"></a><span class="in">```</span></span>
-<span id="cb64-439"><a href="#cb64-439"></a></span>
-<span id="cb64-440"><a href="#cb64-440"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-441"><a href="#cb64-441"></a>Probar diferentes ajustes de parámetros en</span>
-<span id="cb64-442"><a href="#cb64-442"></a><span class="co">[</span><span class="ot">r.hants</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html)</span> y </span>
-<span id="cb64-443"><a href="#cb64-443"></a>comparar los resultados</span>
-<span id="cb64-444"><a href="#cb64-444"></a>:::</span>
-<span id="cb64-445"><a href="#cb64-445"></a></span>
-<span id="cb64-446"><a href="#cb64-446"></a>Parcheo de serie original y reconstruída</span>
-<span id="cb64-447"><a href="#cb64-447"></a></span>
-<span id="cb64-450"><a href="#cb64-450"></a><span class="in">```{python}</span></span>
-<span id="cb64-451"><a href="#cb64-451"></a><span class="co"># patch original with filled (one map)</span></span>
-<span id="cb64-452"><a href="#cb64-452"></a>NDVI_ORIG <span class="op">=</span> <span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI_filt&quot;</span></span>
-<span id="cb64-453"><a href="#cb64-453"></a>NDVI_HANTS <span class="op">=</span> <span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI_filt_hants&quot;</span></span>
-<span id="cb64-454"><a href="#cb64-454"></a></span>
-<span id="cb64-455"><a href="#cb64-455"></a>gs.run_command(<span class="st">&quot;r.patch&quot;</span>,</span>
-<span id="cb64-456"><a href="#cb64-456"></a>               <span class="bu">input</span><span class="op">=</span>[NDVI_ORIG, NDVI_HANTS],</span>
-<span id="cb64-457"><a href="#cb64-457"></a>               output<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>NDVI_HANTS<span class="sc">}</span><span class="ss">_patch&quot;</span>)</span>
-<span id="cb64-458"><a href="#cb64-458"></a><span class="in">```</span></span>
-<span id="cb64-459"><a href="#cb64-459"></a></span>
-<span id="cb64-460"><a href="#cb64-460"></a>Parcheo de serie original y reconstruída</span>
-<span id="cb64-461"><a href="#cb64-461"></a></span>
-<span id="cb64-464"><a href="#cb64-464"></a><span class="in">```{python}</span></span>
-<span id="cb64-465"><a href="#cb64-465"></a><span class="co"># list of maps</span></span>
-<span id="cb64-466"><a href="#cb64-466"></a>ORIG <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-467"><a href="#cb64-467"></a>                     pattern<span class="op">=</span><span class="st">&quot;*_filt&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-468"><a href="#cb64-468"></a>FILL <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-469"><a href="#cb64-469"></a>                       pattern<span class="op">=</span><span class="st">&quot;*_hants&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-470"><a href="#cb64-470"></a><span class="in">```</span></span>
-<span id="cb64-471"><a href="#cb64-471"></a></span>
-<span id="cb64-474"><a href="#cb64-474"></a><span class="in">```{python}</span></span>
-<span id="cb64-475"><a href="#cb64-475"></a><span class="co"># patching</span></span>
-<span id="cb64-476"><a href="#cb64-476"></a><span class="cf">for</span> i,j <span class="kw">in</span> <span class="bu">zip</span>(ORIG,FILL):</span>
-<span id="cb64-477"><a href="#cb64-477"></a>    <span class="bu">print</span>(i, j)</span>
-<span id="cb64-478"><a href="#cb64-478"></a>    out<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">_patch&quot;</span></span>
-<span id="cb64-479"><a href="#cb64-479"></a>    gs.run_command(<span class="st">&quot;r.patch&quot;</span>,</span>
-<span id="cb64-480"><a href="#cb64-480"></a>                   <span class="bu">input</span><span class="op">=</span>[i, j],</span>
-<span id="cb64-481"><a href="#cb64-481"></a>                   output<span class="op">=</span>out)</span>
-<span id="cb64-482"><a href="#cb64-482"></a><span class="in">```</span></span>
-<span id="cb64-483"><a href="#cb64-483"></a></span>
-<span id="cb64-484"><a href="#cb64-484"></a>Crear serie de tiempo con los datos parcheados</span>
-<span id="cb64-485"><a href="#cb64-485"></a></span>
-<span id="cb64-488"><a href="#cb64-488"></a><span class="in">```{python}</span></span>
-<span id="cb64-489"><a href="#cb64-489"></a><span class="co"># create new time series </span></span>
-<span id="cb64-490"><a href="#cb64-490"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
-<span id="cb64-491"><a href="#cb64-491"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
-<span id="cb64-492"><a href="#cb64-492"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
-<span id="cb64-493"><a href="#cb64-493"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
-<span id="cb64-494"><a href="#cb64-494"></a>               title<span class="op">=</span><span class="st">&quot;Patched monthly NDVI&quot;</span>,</span>
-<span id="cb64-495"><a href="#cb64-495"></a>               description<span class="op">=</span><span class="st">&quot;Filtered, gap-filled and patched monthly NDVI - MOD13C2 - Cordoba, 2015-2019&quot;</span>)</span>
-<span id="cb64-496"><a href="#cb64-496"></a><span class="in">```</span></span>
-<span id="cb64-497"><a href="#cb64-497"></a></span>
-<span id="cb64-498"><a href="#cb64-498"></a>Registrar los mapas en la serie de tiempo</span>
-<span id="cb64-499"><a href="#cb64-499"></a></span>
-<span id="cb64-502"><a href="#cb64-502"></a><span class="in">```{python}</span></span>
-<span id="cb64-503"><a href="#cb64-503"></a><span class="co"># list NDVI patched files</span></span>
-<span id="cb64-504"><a href="#cb64-504"></a>patched_maps <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-505"><a href="#cb64-505"></a>                               pattern<span class="op">=</span><span class="st">&quot;*patch&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-506"><a href="#cb64-506"></a>patched_maps[:<span class="dv">5</span>]</span>
-<span id="cb64-507"><a href="#cb64-507"></a><span class="in">```</span></span>
-<span id="cb64-508"><a href="#cb64-508"></a></span>
-<span id="cb64-511"><a href="#cb64-511"></a><span class="in">```{python}</span></span>
-<span id="cb64-512"><a href="#cb64-512"></a><span class="co"># register maps</span></span>
-<span id="cb64-513"><a href="#cb64-513"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
-<span id="cb64-514"><a href="#cb64-514"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>,</span>
-<span id="cb64-515"><a href="#cb64-515"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
-<span id="cb64-516"><a href="#cb64-516"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-517"><a href="#cb64-517"></a>               maps<span class="op">=</span>patched_maps,</span>
-<span id="cb64-518"><a href="#cb64-518"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
-<span id="cb64-519"><a href="#cb64-519"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>)</span>
-<span id="cb64-520"><a href="#cb64-520"></a><span class="in">```</span></span>
-<span id="cb64-521"><a href="#cb64-521"></a></span>
-<span id="cb64-522"><a href="#cb64-522"></a>Imprimir información de la serie de tiempo</span>
-<span id="cb64-523"><a href="#cb64-523"></a></span>
-<span id="cb64-526"><a href="#cb64-526"></a><span class="in">```{python}</span></span>
-<span id="cb64-527"><a href="#cb64-527"></a><span class="co"># print time series info</span></span>
-<span id="cb64-528"><a href="#cb64-528"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
-<span id="cb64-529"><a href="#cb64-529"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>))</span>
-<span id="cb64-530"><a href="#cb64-530"></a><span class="in">```</span></span>
-<span id="cb64-531"><a href="#cb64-531"></a></span>
-<span id="cb64-532"><a href="#cb64-532"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-533"><a href="#cb64-533"></a><span class="ss">- </span>Evaluar gráficamente los resultados de la reconstrucción de HANTS en pixeles con mayor porcentaje de datos faltantes </span>
-<span id="cb64-534"><a href="#cb64-534"></a><span class="ss">- </span>Obtener estadísticas univariadas para las nuevas series temporales</span>
-<span id="cb64-535"><a href="#cb64-535"></a>:::</span>
-<span id="cb64-536"><a href="#cb64-536"></a></span>
-<span id="cb64-537"><a href="#cb64-537"></a><span class="al">![](https://www.mdpi.com/remotesensing/remotesensing-09-01333/article_deploy/html/images/remotesensing-09-01333-ag.png)</span></span>
-<span id="cb64-538"><a href="#cb64-538"></a></span>
-<span id="cb64-539"><a href="#cb64-539"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-540"><a href="#cb64-540"></a><span class="ss">- </span>Ver la sección de métodos en @metz_new_2017 </span>
-<span id="cb64-541"><a href="#cb64-541"></a><span class="ss">- </span>Qué otros algoritmos existen o qué otra aproximación podría seguirse?</span>
-<span id="cb64-542"><a href="#cb64-542"></a>:::</span>
-<span id="cb64-543"><a href="#cb64-543"></a></span>
-<span id="cb64-544"><a href="#cb64-544"></a><span class="fu">## Agregación con granularidad</span></span>
-<span id="cb64-545"><a href="#cb64-545"></a></span>
-<span id="cb64-546"><a href="#cb64-546"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-547"><a href="#cb64-547"></a><span class="ss">- </span>Obtener el promedio de NDVI cada dos meses</span>
-<span id="cb64-548"><a href="#cb64-548"></a><span class="ss">- </span>Visualizar la serie de tiempo resultante con <span class="in">`TimeSeriesMap`</span></span>
-<span id="cb64-549"><a href="#cb64-549"></a>:::</span>
-<span id="cb64-550"><a href="#cb64-550"></a></span>
-<span id="cb64-551"><a href="#cb64-551"></a><span class="fu">## Indicadores de fenología</span></span>
-<span id="cb64-552"><a href="#cb64-552"></a></span>
-<span id="cb64-553"><a href="#cb64-553"></a><span class="fu">### Fecha de ocurrencia de máximos y mínimos</span></span>
-<span id="cb64-554"><a href="#cb64-554"></a></span>
-<span id="cb64-555"><a href="#cb64-555"></a>Identificamos primero los máximos y mínimos de la serie, luego reemplazamos </span>
-<span id="cb64-556"><a href="#cb64-556"></a>con <span class="in">`start_month()`</span> los valores en la STRDS si coinciden con el mínimo o </span>
-<span id="cb64-557"><a href="#cb64-557"></a>máximo global y finalmente obtenemos el primer mes en el que aparecieron </span>
-<span id="cb64-558"><a href="#cb64-558"></a>el máximo y el mínimo.</span>
-<span id="cb64-559"><a href="#cb64-559"></a></span>
-<span id="cb64-562"><a href="#cb64-562"></a><span class="in">```{python}</span></span>
-<span id="cb64-563"><a href="#cb64-563"></a>methods <span class="op">=</span> [<span class="st">&quot;maximum&quot;</span>,<span class="st">&quot;minimum&quot;</span>]</span>
-<span id="cb64-564"><a href="#cb64-564"></a></span>
-<span id="cb64-565"><a href="#cb64-565"></a><span class="cf">for</span> me <span class="kw">in</span> methods:</span>
-<span id="cb64-566"><a href="#cb64-566"></a>    <span class="co"># get maximum and minimum</span></span>
-<span id="cb64-567"><a href="#cb64-567"></a>    gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
-<span id="cb64-568"><a href="#cb64-568"></a>                   <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
-<span id="cb64-569"><a href="#cb64-569"></a>                   method<span class="op">=</span>me,</span>
-<span id="cb64-570"><a href="#cb64-570"></a>                   output<span class="op">=</span><span class="ss">f&quot;ndvi_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb64-571"><a href="#cb64-571"></a>    <span class="co"># get month of maximum and minimum</span></span>
-<span id="cb64-572"><a href="#cb64-572"></a>    gs.run_command(<span class="st">&quot;t.rast.mapcalc&quot;</span>,</span>
-<span id="cb64-573"><a href="#cb64-573"></a>                   inputs<span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
-<span id="cb64-574"><a href="#cb64-574"></a>                   output<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>,</span>
-<span id="cb64-575"><a href="#cb64-575"></a>                   expression<span class="op">=</span><span class="ss">f&quot;if(ndvi_monthly_patch == ndvi_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">, start_month(), null())&quot;</span>,</span>
-<span id="cb64-576"><a href="#cb64-576"></a>                   basename<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
-<span id="cb64-577"><a href="#cb64-577"></a>    <span class="co"># get the earliest month in which the maximum and minimum appeared</span></span>
-<span id="cb64-578"><a href="#cb64-578"></a>    gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
-<span id="cb64-579"><a href="#cb64-579"></a>                   <span class="bu">input</span><span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>,</span>
-<span id="cb64-580"><a href="#cb64-580"></a>                   method<span class="op">=</span><span class="st">&quot;minimum&quot;</span>,</span>
-<span id="cb64-581"><a href="#cb64-581"></a>                   output<span class="op">=</span><span class="ss">f&quot;earliest_month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
-<span id="cb64-582"><a href="#cb64-582"></a>    <span class="co"># remove intermediate strds </span></span>
-<span id="cb64-583"><a href="#cb64-583"></a>    gs.run_command(<span class="st">&quot;t.remove&quot;</span>,</span>
-<span id="cb64-584"><a href="#cb64-584"></a>                   flags<span class="op">=</span><span class="st">&quot;rfd&quot;</span>,</span>
-<span id="cb64-585"><a href="#cb64-585"></a>                   inputs<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
-<span id="cb64-586"><a href="#cb64-586"></a><span class="in">```</span></span>
-<span id="cb64-587"><a href="#cb64-587"></a></span>
-<span id="cb64-588"><a href="#cb64-588"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-589"><a href="#cb64-589"></a><span class="ss">- </span>Mostrar los mapas resultantes con <span class="in">`InteractiveMap`</span></span>
-<span id="cb64-590"><a href="#cb64-590"></a><span class="ss">- </span>Cuándo se observan los mínimos y máximos? Hay algun patrón? A qué se podría deber?</span>
-<span id="cb64-591"><a href="#cb64-591"></a>:::</span>
-<span id="cb64-592"><a href="#cb64-592"></a></span>
-<span id="cb64-593"><a href="#cb64-593"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-594"><a href="#cb64-594"></a><span class="ss">- </span>Asociar el máximo de LST con el máximo de NDVI y, la fecha de la máxima LST con la fecha del máximo NDVI</span>
-<span id="cb64-595"><a href="#cb64-595"></a><span class="ss">- </span>Agregar el mapset <span class="in">`modis_lst`</span> a los mapsets accesibles.</span>
-<span id="cb64-596"><a href="#cb64-596"></a><span class="ss">- </span>Ver el módulo <span class="co">[</span><span class="ot">r.covar</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/r.covar.html)</span></span>
-<span id="cb64-597"><a href="#cb64-597"></a>:::</span>
-<span id="cb64-598"><a href="#cb64-598"></a></span>
-<span id="cb64-599"><a href="#cb64-599"></a><span class="fu">### Tasa de crecimiento</span></span>
-<span id="cb64-600"><a href="#cb64-600"></a></span>
-<span id="cb64-601"><a href="#cb64-601"></a>Obtener series temporales de pendientes entre mapas consecutivos</span>
-<span id="cb64-602"><a href="#cb64-602"></a></span>
-<span id="cb64-605"><a href="#cb64-605"></a><span class="in">```{python}</span></span>
-<span id="cb64-606"><a href="#cb64-606"></a><span class="co"># time series of slopes</span></span>
-<span id="cb64-607"><a href="#cb64-607"></a>expression <span class="op">=</span> <span class="st">&quot;slope_ndvi = (ndvi_monthly_patch[1] - ndvi_monthly_patch[0]) / td(ndvi_monthly_patch)&quot;</span></span>
-<span id="cb64-608"><a href="#cb64-608"></a></span>
-<span id="cb64-609"><a href="#cb64-609"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>, </span>
-<span id="cb64-610"><a href="#cb64-610"></a>               expression<span class="op">=</span>expression,</span>
-<span id="cb64-611"><a href="#cb64-611"></a>               basename<span class="op">=</span><span class="st">&quot;slope_ndvi&quot;</span>,</span>
-<span id="cb64-612"><a href="#cb64-612"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>)</span>
-<span id="cb64-613"><a href="#cb64-613"></a><span class="in">```</span></span>
-<span id="cb64-614"><a href="#cb64-614"></a></span>
-<span id="cb64-615"><a href="#cb64-615"></a>Obtener la máxima pendiente por año</span>
-<span id="cb64-616"><a href="#cb64-616"></a></span>
-<span id="cb64-619"><a href="#cb64-619"></a><span class="in">```{python}</span></span>
-<span id="cb64-620"><a href="#cb64-620"></a><span class="co"># get max slope per year</span></span>
-<span id="cb64-621"><a href="#cb64-621"></a>gs.run_command(<span class="st">&quot;t.rast.aggregate&quot;</span>,</span>
-<span id="cb64-622"><a href="#cb64-622"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;slope_ndvi&quot;</span>,</span>
-<span id="cb64-623"><a href="#cb64-623"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_slope_yearly&quot;</span>,</span>
-<span id="cb64-624"><a href="#cb64-624"></a>               basename<span class="op">=</span><span class="st">&quot;NDVI_max_slope_year&quot;</span>,</span>
-<span id="cb64-625"><a href="#cb64-625"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
-<span id="cb64-626"><a href="#cb64-626"></a>               method<span class="op">=</span><span class="st">&quot;maximum&quot;</span>,</span>
-<span id="cb64-627"><a href="#cb64-627"></a>               granularity<span class="op">=</span><span class="st">&quot;1 years&quot;</span>)</span>
-<span id="cb64-628"><a href="#cb64-628"></a><span class="in">```</span></span>
-<span id="cb64-629"><a href="#cb64-629"></a></span>
-<span id="cb64-630"><a href="#cb64-630"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-631"><a href="#cb64-631"></a><span class="ss">- </span>Obtener un mapa con la mayor tasa de crecimiento por píxel en el período 2015-2019</span>
-<span id="cb64-632"><a href="#cb64-632"></a><span class="ss">- </span>Qué modulo usarían?</span>
-<span id="cb64-633"><a href="#cb64-633"></a>:::</span>
-<span id="cb64-634"><a href="#cb64-634"></a></span>
-<span id="cb64-635"><a href="#cb64-635"></a><span class="fu">### Período de crecimiento</span></span>
-<span id="cb64-636"><a href="#cb64-636"></a></span>
-<span id="cb64-637"><a href="#cb64-637"></a>Instalar la extensión *r.seasons*</span>
-<span id="cb64-638"><a href="#cb64-638"></a></span>
-<span id="cb64-641"><a href="#cb64-641"></a><span class="in">```{python}</span></span>
-<span id="cb64-642"><a href="#cb64-642"></a><span class="co"># install extension</span></span>
-<span id="cb64-643"><a href="#cb64-643"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
-<span id="cb64-644"><a href="#cb64-644"></a>               extension<span class="op">=</span><span class="st">&quot;r.seasons&quot;</span>)</span>
-<span id="cb64-645"><a href="#cb64-645"></a><span class="in">```</span></span>
-<span id="cb64-646"><a href="#cb64-646"></a></span>
-<span id="cb64-647"><a href="#cb64-647"></a>Determinar el comienzo, el final y la duración del período de crecimiento</span>
-<span id="cb64-648"><a href="#cb64-648"></a></span>
-<span id="cb64-651"><a href="#cb64-651"></a><span class="in">```{python}</span></span>
-<span id="cb64-652"><a href="#cb64-652"></a><span class="co"># start, end and length of growing season</span></span>
-<span id="cb64-653"><a href="#cb64-653"></a>gs.run_command(<span class="st">&quot;r.seasons&quot;</span>,</span>
-<span id="cb64-654"><a href="#cb64-654"></a>               <span class="bu">input</span><span class="op">=</span>patched_maps,</span>
-<span id="cb64-655"><a href="#cb64-655"></a>               prefix<span class="op">=</span><span class="st">&quot;ndvi_season&quot;</span>,</span>
-<span id="cb64-656"><a href="#cb64-656"></a>               n<span class="op">=</span><span class="dv">3</span>,</span>
-<span id="cb64-657"><a href="#cb64-657"></a>               nout<span class="op">=</span><span class="st">&quot;ndvi_season&quot;</span>,</span>
-<span id="cb64-658"><a href="#cb64-658"></a>               threshold_value<span class="op">=</span><span class="dv">3000</span>,</span>
-<span id="cb64-659"><a href="#cb64-659"></a>               min_length<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb64-660"><a href="#cb64-660"></a><span class="in">```</span></span>
-<span id="cb64-661"><a href="#cb64-661"></a></span>
-<span id="cb64-662"><a href="#cb64-662"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-663"><a href="#cb64-663"></a><span class="ss">- </span>Qué nos dice cada mapa? Dónde es más larga la estación de crecimiento?</span>
-<span id="cb64-664"><a href="#cb64-664"></a><span class="ss">- </span>Exportar los mapas resultantes como .png</span>
-<span id="cb64-665"><a href="#cb64-665"></a>:::</span>
-<span id="cb64-666"><a href="#cb64-666"></a></span>
-<span id="cb64-667"><a href="#cb64-667"></a>Crear un mapa de umbrales para usar en *r.seasons*</span>
-<span id="cb64-668"><a href="#cb64-668"></a></span>
-<span id="cb64-671"><a href="#cb64-671"></a><span class="in">```{python}</span></span>
-<span id="cb64-672"><a href="#cb64-672"></a><span class="co"># create a threshold map: min ndvi + 0.1*ndvi</span></span>
-<span id="cb64-673"><a href="#cb64-673"></a>gs.mapcalc(exp<span class="op">=</span><span class="st">&quot;threshold_ndvi = ndvi_min * 1.1&quot;</span>)</span>
-<span id="cb64-674"><a href="#cb64-674"></a><span class="in">```</span></span>
-<span id="cb64-675"><a href="#cb64-675"></a></span>
-<span id="cb64-676"><a href="#cb64-676"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-677"><a href="#cb64-677"></a>Utilizar el mapa de umbrales en <span class="co">[</span><span class="ot">r.seasons</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.seasons.html)</span> y comparar los mapas de salida con los resultados de utilizar sólo un valor de umbral</span>
-<span id="cb64-678"><a href="#cb64-678"></a>:::</span>
-<span id="cb64-679"><a href="#cb64-679"></a></span>
-<span id="cb64-680"><a href="#cb64-680"></a><span class="fu">## Serie de tiempo de NDWI</span></span>
-<span id="cb64-681"><a href="#cb64-681"></a></span>
-<span id="cb64-682"><a href="#cb64-682"></a>Listas de mapas de reflectancia</span>
-<span id="cb64-683"><a href="#cb64-683"></a></span>
-<span id="cb64-686"><a href="#cb64-686"></a><span class="in">```{python}</span></span>
-<span id="cb64-687"><a href="#cb64-687"></a>list_nir <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
-<span id="cb64-688"><a href="#cb64-688"></a>                           pattern<span class="op">=</span><span class="st">&quot;*NIR*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-689"><a href="#cb64-689"></a>list_mir <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
-<span id="cb64-690"><a href="#cb64-690"></a>                           pattern<span class="op">=</span><span class="st">&quot;*MIR*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-691"><a href="#cb64-691"></a></span>
-<span id="cb64-692"><a href="#cb64-692"></a><span class="bu">len</span>(list_nir,list_mir)</span>
-<span id="cb64-693"><a href="#cb64-693"></a><span class="in">```</span></span>
+<span id="cb64-398"><a href="#cb64-398"></a></span>
+<span id="cb64-399"><a href="#cb64-399"></a>Instalar la extensión *r.hants*</span>
+<span id="cb64-400"><a href="#cb64-400"></a></span>
+<span id="cb64-403"><a href="#cb64-403"></a><span class="in">```{python}</span></span>
+<span id="cb64-404"><a href="#cb64-404"></a><span class="co"># install extension</span></span>
+<span id="cb64-405"><a href="#cb64-405"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
+<span id="cb64-406"><a href="#cb64-406"></a>               extension<span class="op">=</span><span class="st">&quot;r.hants&quot;</span>)</span>
+<span id="cb64-407"><a href="#cb64-407"></a><span class="in">```</span></span>
+<span id="cb64-408"><a href="#cb64-408"></a></span>
+<span id="cb64-409"><a href="#cb64-409"></a>Listar los mapas y aplicar r.hants</span>
+<span id="cb64-410"><a href="#cb64-410"></a></span>
+<span id="cb64-413"><a href="#cb64-413"></a><span class="in">```{python}</span></span>
+<span id="cb64-414"><a href="#cb64-414"></a><span class="co"># list maps</span></span>
+<span id="cb64-415"><a href="#cb64-415"></a>maplist <span class="op">=</span> gs.parse_command(<span class="st">&quot;t.rast.list&quot;</span>,</span>
+<span id="cb64-416"><a href="#cb64-416"></a>                          <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly&quot;</span>,</span>
+<span id="cb64-417"><a href="#cb64-417"></a>                          columns<span class="op">=</span><span class="st">&quot;name&quot;</span>,</span>
+<span id="cb64-418"><a href="#cb64-418"></a>                          method<span class="op">=</span><span class="st">&quot;comma&quot;</span>,</span>
+<span id="cb64-419"><a href="#cb64-419"></a>                          flags<span class="op">=</span><span class="st">&quot;u&quot;</span>)</span>
+<span id="cb64-420"><a href="#cb64-420"></a>maplist <span class="op">=</span> <span class="bu">list</span>(maplist.keys())</span>
+<span id="cb64-421"><a href="#cb64-421"></a><span class="in">```</span></span>
+<span id="cb64-422"><a href="#cb64-422"></a></span>
+<span id="cb64-425"><a href="#cb64-425"></a><span class="in">```{python}</span></span>
+<span id="cb64-426"><a href="#cb64-426"></a><span class="co"># gapfill: r.hants</span></span>
+<span id="cb64-427"><a href="#cb64-427"></a>gs.run_command(<span class="st">&quot;r.hants&quot;</span>,</span>
+<span id="cb64-428"><a href="#cb64-428"></a>               <span class="bu">input</span><span class="op">=</span>maplist,</span>
+<span id="cb64-429"><a href="#cb64-429"></a>               <span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">2000</span>,<span class="dv">10000</span>],</span>
+<span id="cb64-430"><a href="#cb64-430"></a>               nf<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb64-431"><a href="#cb64-431"></a>               fet<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb64-432"><a href="#cb64-432"></a>               base_period<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb64-433"><a href="#cb64-433"></a><span class="in">```</span></span>
+<span id="cb64-434"><a href="#cb64-434"></a></span>
+<span id="cb64-437"><a href="#cb64-437"></a><span class="in">```{python}</span></span>
+<span id="cb64-438"><a href="#cb64-438"></a><span class="co"># list filled maps</span></span>
+<span id="cb64-439"><a href="#cb64-439"></a>gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-440"><a href="#cb64-440"></a>                pattern<span class="op">=</span><span class="st">&quot;*hants&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-441"><a href="#cb64-441"></a><span class="in">```</span></span>
+<span id="cb64-442"><a href="#cb64-442"></a></span>
+<span id="cb64-443"><a href="#cb64-443"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-444"><a href="#cb64-444"></a>Probar diferentes ajustes de parámetros en</span>
+<span id="cb64-445"><a href="#cb64-445"></a><span class="co">[</span><span class="ot">r.hants</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.hants.html)</span> y </span>
+<span id="cb64-446"><a href="#cb64-446"></a>comparar los resultados</span>
+<span id="cb64-447"><a href="#cb64-447"></a>:::</span>
+<span id="cb64-448"><a href="#cb64-448"></a></span>
+<span id="cb64-449"><a href="#cb64-449"></a>Parcheo de serie original y reconstruída</span>
+<span id="cb64-450"><a href="#cb64-450"></a></span>
+<span id="cb64-453"><a href="#cb64-453"></a><span class="in">```{python}</span></span>
+<span id="cb64-454"><a href="#cb64-454"></a><span class="co"># patch original with filled (one map)</span></span>
+<span id="cb64-455"><a href="#cb64-455"></a>NDVI_ORIG <span class="op">=</span> <span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI_filt&quot;</span></span>
+<span id="cb64-456"><a href="#cb64-456"></a>NDVI_HANTS <span class="op">=</span> <span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_NDVI_filt_hants&quot;</span></span>
+<span id="cb64-457"><a href="#cb64-457"></a></span>
+<span id="cb64-458"><a href="#cb64-458"></a>gs.run_command(<span class="st">&quot;r.patch&quot;</span>,</span>
+<span id="cb64-459"><a href="#cb64-459"></a>               <span class="bu">input</span><span class="op">=</span>[NDVI_ORIG, NDVI_HANTS],</span>
+<span id="cb64-460"><a href="#cb64-460"></a>               output<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>NDVI_HANTS<span class="sc">}</span><span class="ss">_patch&quot;</span>)</span>
+<span id="cb64-461"><a href="#cb64-461"></a><span class="in">```</span></span>
+<span id="cb64-462"><a href="#cb64-462"></a></span>
+<span id="cb64-463"><a href="#cb64-463"></a>Parcheo de serie original y reconstruída</span>
+<span id="cb64-464"><a href="#cb64-464"></a></span>
+<span id="cb64-467"><a href="#cb64-467"></a><span class="in">```{python}</span></span>
+<span id="cb64-468"><a href="#cb64-468"></a><span class="co"># list of maps</span></span>
+<span id="cb64-469"><a href="#cb64-469"></a>ORIG <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-470"><a href="#cb64-470"></a>                     pattern<span class="op">=</span><span class="st">&quot;*_filt&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-471"><a href="#cb64-471"></a>FILL <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-472"><a href="#cb64-472"></a>                       pattern<span class="op">=</span><span class="st">&quot;*_hants&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-473"><a href="#cb64-473"></a><span class="in">```</span></span>
+<span id="cb64-474"><a href="#cb64-474"></a></span>
+<span id="cb64-477"><a href="#cb64-477"></a><span class="in">```{python}</span></span>
+<span id="cb64-478"><a href="#cb64-478"></a><span class="co"># patching</span></span>
+<span id="cb64-479"><a href="#cb64-479"></a><span class="cf">for</span> i,j <span class="kw">in</span> <span class="bu">zip</span>(ORIG,FILL):</span>
+<span id="cb64-480"><a href="#cb64-480"></a>    <span class="bu">print</span>(i, j)</span>
+<span id="cb64-481"><a href="#cb64-481"></a>    out<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>j<span class="sc">}</span><span class="ss">_patch&quot;</span></span>
+<span id="cb64-482"><a href="#cb64-482"></a>    gs.run_command(<span class="st">&quot;r.patch&quot;</span>,</span>
+<span id="cb64-483"><a href="#cb64-483"></a>                   <span class="bu">input</span><span class="op">=</span>[i, j],</span>
+<span id="cb64-484"><a href="#cb64-484"></a>                   output<span class="op">=</span>out)</span>
+<span id="cb64-485"><a href="#cb64-485"></a><span class="in">```</span></span>
+<span id="cb64-486"><a href="#cb64-486"></a></span>
+<span id="cb64-487"><a href="#cb64-487"></a>Crear serie de tiempo con los datos parcheados</span>
+<span id="cb64-488"><a href="#cb64-488"></a></span>
+<span id="cb64-491"><a href="#cb64-491"></a><span class="in">```{python}</span></span>
+<span id="cb64-492"><a href="#cb64-492"></a><span class="co"># create new time series </span></span>
+<span id="cb64-493"><a href="#cb64-493"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
+<span id="cb64-494"><a href="#cb64-494"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
+<span id="cb64-495"><a href="#cb64-495"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
+<span id="cb64-496"><a href="#cb64-496"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
+<span id="cb64-497"><a href="#cb64-497"></a>               title<span class="op">=</span><span class="st">&quot;Patched monthly NDVI&quot;</span>,</span>
+<span id="cb64-498"><a href="#cb64-498"></a>               description<span class="op">=</span><span class="st">&quot;Filtered, gap-filled and patched monthly NDVI - MOD13C2 - Cordoba, 2015-2019&quot;</span>)</span>
+<span id="cb64-499"><a href="#cb64-499"></a><span class="in">```</span></span>
+<span id="cb64-500"><a href="#cb64-500"></a></span>
+<span id="cb64-501"><a href="#cb64-501"></a>Registrar los mapas en la serie de tiempo</span>
+<span id="cb64-502"><a href="#cb64-502"></a></span>
+<span id="cb64-505"><a href="#cb64-505"></a><span class="in">```{python}</span></span>
+<span id="cb64-506"><a href="#cb64-506"></a><span class="co"># list NDVI patched files</span></span>
+<span id="cb64-507"><a href="#cb64-507"></a>patched_maps <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-508"><a href="#cb64-508"></a>                               pattern<span class="op">=</span><span class="st">&quot;*patch&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-509"><a href="#cb64-509"></a>patched_maps[:<span class="dv">5</span>]</span>
+<span id="cb64-510"><a href="#cb64-510"></a><span class="in">```</span></span>
+<span id="cb64-511"><a href="#cb64-511"></a></span>
+<span id="cb64-514"><a href="#cb64-514"></a><span class="in">```{python}</span></span>
+<span id="cb64-515"><a href="#cb64-515"></a><span class="co"># register maps</span></span>
+<span id="cb64-516"><a href="#cb64-516"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
+<span id="cb64-517"><a href="#cb64-517"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>,</span>
+<span id="cb64-518"><a href="#cb64-518"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
+<span id="cb64-519"><a href="#cb64-519"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-520"><a href="#cb64-520"></a>               maps<span class="op">=</span>patched_maps,</span>
+<span id="cb64-521"><a href="#cb64-521"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
+<span id="cb64-522"><a href="#cb64-522"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>)</span>
+<span id="cb64-523"><a href="#cb64-523"></a><span class="in">```</span></span>
+<span id="cb64-524"><a href="#cb64-524"></a></span>
+<span id="cb64-525"><a href="#cb64-525"></a>Imprimir información de la serie de tiempo</span>
+<span id="cb64-526"><a href="#cb64-526"></a></span>
+<span id="cb64-529"><a href="#cb64-529"></a><span class="in">```{python}</span></span>
+<span id="cb64-530"><a href="#cb64-530"></a><span class="co"># print time series info</span></span>
+<span id="cb64-531"><a href="#cb64-531"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
+<span id="cb64-532"><a href="#cb64-532"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>))</span>
+<span id="cb64-533"><a href="#cb64-533"></a><span class="in">```</span></span>
+<span id="cb64-534"><a href="#cb64-534"></a></span>
+<span id="cb64-535"><a href="#cb64-535"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-536"><a href="#cb64-536"></a><span class="ss">- </span>Evaluar gráficamente los resultados de la reconstrucción de HANTS en pixeles con mayor porcentaje de datos faltantes </span>
+<span id="cb64-537"><a href="#cb64-537"></a><span class="ss">- </span>Obtener estadísticas univariadas para las nuevas series temporales</span>
+<span id="cb64-538"><a href="#cb64-538"></a>:::</span>
+<span id="cb64-539"><a href="#cb64-539"></a></span>
+<span id="cb64-540"><a href="#cb64-540"></a><span class="al">![](https://www.mdpi.com/remotesensing/remotesensing-09-01333/article_deploy/html/images/remotesensing-09-01333-ag.png)</span></span>
+<span id="cb64-541"><a href="#cb64-541"></a></span>
+<span id="cb64-542"><a href="#cb64-542"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-543"><a href="#cb64-543"></a><span class="ss">- </span>Ver la sección de métodos en @metz_new_2017 </span>
+<span id="cb64-544"><a href="#cb64-544"></a><span class="ss">- </span>Qué otros algoritmos existen o qué otra aproximación podría seguirse?</span>
+<span id="cb64-545"><a href="#cb64-545"></a>:::</span>
+<span id="cb64-546"><a href="#cb64-546"></a></span>
+<span id="cb64-547"><a href="#cb64-547"></a><span class="fu">## Agregación con granularidad</span></span>
+<span id="cb64-548"><a href="#cb64-548"></a></span>
+<span id="cb64-549"><a href="#cb64-549"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-550"><a href="#cb64-550"></a><span class="ss">- </span>Obtener el promedio de NDVI cada dos meses</span>
+<span id="cb64-551"><a href="#cb64-551"></a><span class="ss">- </span>Visualizar la serie de tiempo resultante con <span class="in">`TimeSeriesMap`</span></span>
+<span id="cb64-552"><a href="#cb64-552"></a>:::</span>
+<span id="cb64-553"><a href="#cb64-553"></a></span>
+<span id="cb64-554"><a href="#cb64-554"></a><span class="fu">## Indicadores de fenología</span></span>
+<span id="cb64-555"><a href="#cb64-555"></a></span>
+<span id="cb64-556"><a href="#cb64-556"></a><span class="fu">### Fecha de ocurrencia de máximos y mínimos</span></span>
+<span id="cb64-557"><a href="#cb64-557"></a></span>
+<span id="cb64-558"><a href="#cb64-558"></a>Identificamos primero los máximos y mínimos de la serie, luego reemplazamos </span>
+<span id="cb64-559"><a href="#cb64-559"></a>con <span class="in">`start_month()`</span> los valores en la STRDS si coinciden con el mínimo o </span>
+<span id="cb64-560"><a href="#cb64-560"></a>máximo global y finalmente obtenemos el primer mes en el que aparecieron </span>
+<span id="cb64-561"><a href="#cb64-561"></a>el máximo y el mínimo.</span>
+<span id="cb64-562"><a href="#cb64-562"></a></span>
+<span id="cb64-565"><a href="#cb64-565"></a><span class="in">```{python}</span></span>
+<span id="cb64-566"><a href="#cb64-566"></a>methods <span class="op">=</span> [<span class="st">&quot;maximum&quot;</span>,<span class="st">&quot;minimum&quot;</span>]</span>
+<span id="cb64-567"><a href="#cb64-567"></a></span>
+<span id="cb64-568"><a href="#cb64-568"></a><span class="cf">for</span> me <span class="kw">in</span> methods:</span>
+<span id="cb64-569"><a href="#cb64-569"></a>    <span class="co"># get maximum and minimum</span></span>
+<span id="cb64-570"><a href="#cb64-570"></a>    gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
+<span id="cb64-571"><a href="#cb64-571"></a>                   <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
+<span id="cb64-572"><a href="#cb64-572"></a>                   method<span class="op">=</span>me,</span>
+<span id="cb64-573"><a href="#cb64-573"></a>                   output<span class="op">=</span><span class="ss">f&quot;ndvi_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb64-574"><a href="#cb64-574"></a>    <span class="co"># get month of maximum and minimum</span></span>
+<span id="cb64-575"><a href="#cb64-575"></a>    gs.run_command(<span class="st">&quot;t.rast.mapcalc&quot;</span>,</span>
+<span id="cb64-576"><a href="#cb64-576"></a>                   inputs<span class="op">=</span><span class="st">&quot;ndvi_monthly_patch&quot;</span>,</span>
+<span id="cb64-577"><a href="#cb64-577"></a>                   output<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>,</span>
+<span id="cb64-578"><a href="#cb64-578"></a>                   expression<span class="op">=</span><span class="ss">f&quot;if(ndvi_monthly_patch == ndvi_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">, start_month(), null())&quot;</span>,</span>
+<span id="cb64-579"><a href="#cb64-579"></a>                   basename<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
+<span id="cb64-580"><a href="#cb64-580"></a>    <span class="co"># get the earliest month in which the maximum and minimum appeared</span></span>
+<span id="cb64-581"><a href="#cb64-581"></a>    gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
+<span id="cb64-582"><a href="#cb64-582"></a>                   <span class="bu">input</span><span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>,</span>
+<span id="cb64-583"><a href="#cb64-583"></a>                   method<span class="op">=</span><span class="st">&quot;minimum&quot;</span>,</span>
+<span id="cb64-584"><a href="#cb64-584"></a>                   output<span class="op">=</span><span class="ss">f&quot;earliest_month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
+<span id="cb64-585"><a href="#cb64-585"></a>    <span class="co"># remove intermediate strds </span></span>
+<span id="cb64-586"><a href="#cb64-586"></a>    gs.run_command(<span class="st">&quot;t.remove&quot;</span>,</span>
+<span id="cb64-587"><a href="#cb64-587"></a>                   flags<span class="op">=</span><span class="st">&quot;rfd&quot;</span>,</span>
+<span id="cb64-588"><a href="#cb64-588"></a>                   inputs<span class="op">=</span><span class="ss">f&quot;month_</span><span class="sc">{</span>me<span class="sc">}</span><span class="ss">_ndvi&quot;</span>)</span>
+<span id="cb64-589"><a href="#cb64-589"></a><span class="in">```</span></span>
+<span id="cb64-590"><a href="#cb64-590"></a></span>
+<span id="cb64-591"><a href="#cb64-591"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-592"><a href="#cb64-592"></a><span class="ss">- </span>Mostrar los mapas resultantes con <span class="in">`InteractiveMap`</span></span>
+<span id="cb64-593"><a href="#cb64-593"></a><span class="ss">- </span>Cuándo se observan los mínimos y máximos? Hay algun patrón? A qué se podría deber?</span>
+<span id="cb64-594"><a href="#cb64-594"></a>:::</span>
+<span id="cb64-595"><a href="#cb64-595"></a></span>
+<span id="cb64-596"><a href="#cb64-596"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-597"><a href="#cb64-597"></a><span class="ss">- </span>Asociar el máximo de LST con el máximo de NDVI y, la fecha de la máxima LST con la fecha del máximo NDVI</span>
+<span id="cb64-598"><a href="#cb64-598"></a><span class="ss">- </span>Agregar el mapset <span class="in">`modis_lst`</span> a los mapsets accesibles.</span>
+<span id="cb64-599"><a href="#cb64-599"></a><span class="ss">- </span>Ver el módulo <span class="co">[</span><span class="ot">r.covar</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/r.covar.html)</span></span>
+<span id="cb64-600"><a href="#cb64-600"></a>:::</span>
+<span id="cb64-601"><a href="#cb64-601"></a></span>
+<span id="cb64-602"><a href="#cb64-602"></a><span class="fu">### Tasa de crecimiento</span></span>
+<span id="cb64-603"><a href="#cb64-603"></a></span>
+<span id="cb64-604"><a href="#cb64-604"></a>Obtener series temporales de pendientes entre mapas consecutivos</span>
+<span id="cb64-605"><a href="#cb64-605"></a></span>
+<span id="cb64-608"><a href="#cb64-608"></a><span class="in">```{python}</span></span>
+<span id="cb64-609"><a href="#cb64-609"></a><span class="co"># time series of slopes</span></span>
+<span id="cb64-610"><a href="#cb64-610"></a>expression <span class="op">=</span> <span class="st">&quot;slope_ndvi = (ndvi_monthly_patch[1] - ndvi_monthly_patch[0]) / td(ndvi_monthly_patch)&quot;</span></span>
+<span id="cb64-611"><a href="#cb64-611"></a></span>
+<span id="cb64-612"><a href="#cb64-612"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>, </span>
+<span id="cb64-613"><a href="#cb64-613"></a>               expression<span class="op">=</span>expression,</span>
+<span id="cb64-614"><a href="#cb64-614"></a>               basename<span class="op">=</span><span class="st">&quot;slope_ndvi&quot;</span>,</span>
+<span id="cb64-615"><a href="#cb64-615"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>)</span>
+<span id="cb64-616"><a href="#cb64-616"></a><span class="in">```</span></span>
+<span id="cb64-617"><a href="#cb64-617"></a></span>
+<span id="cb64-618"><a href="#cb64-618"></a>Obtener la máxima pendiente por año</span>
+<span id="cb64-619"><a href="#cb64-619"></a></span>
+<span id="cb64-622"><a href="#cb64-622"></a><span class="in">```{python}</span></span>
+<span id="cb64-623"><a href="#cb64-623"></a><span class="co"># get max slope per year</span></span>
+<span id="cb64-624"><a href="#cb64-624"></a>gs.run_command(<span class="st">&quot;t.rast.aggregate&quot;</span>,</span>
+<span id="cb64-625"><a href="#cb64-625"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;slope_ndvi&quot;</span>,</span>
+<span id="cb64-626"><a href="#cb64-626"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_slope_yearly&quot;</span>,</span>
+<span id="cb64-627"><a href="#cb64-627"></a>               basename<span class="op">=</span><span class="st">&quot;NDVI_max_slope_year&quot;</span>,</span>
+<span id="cb64-628"><a href="#cb64-628"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
+<span id="cb64-629"><a href="#cb64-629"></a>               method<span class="op">=</span><span class="st">&quot;maximum&quot;</span>,</span>
+<span id="cb64-630"><a href="#cb64-630"></a>               granularity<span class="op">=</span><span class="st">&quot;1 years&quot;</span>)</span>
+<span id="cb64-631"><a href="#cb64-631"></a><span class="in">```</span></span>
+<span id="cb64-632"><a href="#cb64-632"></a></span>
+<span id="cb64-633"><a href="#cb64-633"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-634"><a href="#cb64-634"></a><span class="ss">- </span>Obtener un mapa con la mayor tasa de crecimiento por píxel en el período 2015-2019</span>
+<span id="cb64-635"><a href="#cb64-635"></a><span class="ss">- </span>Qué modulo usarían?</span>
+<span id="cb64-636"><a href="#cb64-636"></a>:::</span>
+<span id="cb64-637"><a href="#cb64-637"></a></span>
+<span id="cb64-638"><a href="#cb64-638"></a><span class="fu">### Período de crecimiento</span></span>
+<span id="cb64-639"><a href="#cb64-639"></a></span>
+<span id="cb64-640"><a href="#cb64-640"></a>Instalar la extensión *r.seasons*</span>
+<span id="cb64-641"><a href="#cb64-641"></a></span>
+<span id="cb64-644"><a href="#cb64-644"></a><span class="in">```{python}</span></span>
+<span id="cb64-645"><a href="#cb64-645"></a><span class="co"># install extension</span></span>
+<span id="cb64-646"><a href="#cb64-646"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
+<span id="cb64-647"><a href="#cb64-647"></a>               extension<span class="op">=</span><span class="st">&quot;r.seasons&quot;</span>)</span>
+<span id="cb64-648"><a href="#cb64-648"></a><span class="in">```</span></span>
+<span id="cb64-649"><a href="#cb64-649"></a></span>
+<span id="cb64-650"><a href="#cb64-650"></a>Determinar el comienzo, el final y la duración del período de crecimiento</span>
+<span id="cb64-651"><a href="#cb64-651"></a></span>
+<span id="cb64-654"><a href="#cb64-654"></a><span class="in">```{python}</span></span>
+<span id="cb64-655"><a href="#cb64-655"></a><span class="co"># start, end and length of growing season</span></span>
+<span id="cb64-656"><a href="#cb64-656"></a>gs.run_command(<span class="st">&quot;r.seasons&quot;</span>,</span>
+<span id="cb64-657"><a href="#cb64-657"></a>               <span class="bu">input</span><span class="op">=</span>patched_maps,</span>
+<span id="cb64-658"><a href="#cb64-658"></a>               prefix<span class="op">=</span><span class="st">&quot;ndvi_season&quot;</span>,</span>
+<span id="cb64-659"><a href="#cb64-659"></a>               n<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb64-660"><a href="#cb64-660"></a>               nout<span class="op">=</span><span class="st">&quot;ndvi_season&quot;</span>,</span>
+<span id="cb64-661"><a href="#cb64-661"></a>               threshold_value<span class="op">=</span><span class="dv">3000</span>,</span>
+<span id="cb64-662"><a href="#cb64-662"></a>               min_length<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb64-663"><a href="#cb64-663"></a><span class="in">```</span></span>
+<span id="cb64-664"><a href="#cb64-664"></a></span>
+<span id="cb64-665"><a href="#cb64-665"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-666"><a href="#cb64-666"></a><span class="ss">- </span>Qué nos dice cada mapa? Dónde es más larga la estación de crecimiento?</span>
+<span id="cb64-667"><a href="#cb64-667"></a><span class="ss">- </span>Exportar los mapas resultantes como .png</span>
+<span id="cb64-668"><a href="#cb64-668"></a>:::</span>
+<span id="cb64-669"><a href="#cb64-669"></a></span>
+<span id="cb64-670"><a href="#cb64-670"></a>Crear un mapa de umbrales para usar en *r.seasons*</span>
+<span id="cb64-671"><a href="#cb64-671"></a></span>
+<span id="cb64-674"><a href="#cb64-674"></a><span class="in">```{python}</span></span>
+<span id="cb64-675"><a href="#cb64-675"></a><span class="co"># create a threshold map: min ndvi + 0.1*ndvi</span></span>
+<span id="cb64-676"><a href="#cb64-676"></a>gs.mapcalc(exp<span class="op">=</span><span class="st">&quot;threshold_ndvi = ndvi_min * 1.1&quot;</span>)</span>
+<span id="cb64-677"><a href="#cb64-677"></a><span class="in">```</span></span>
+<span id="cb64-678"><a href="#cb64-678"></a></span>
+<span id="cb64-679"><a href="#cb64-679"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-680"><a href="#cb64-680"></a>Utilizar el mapa de umbrales en <span class="co">[</span><span class="ot">r.seasons</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/addons/r.seasons.html)</span> y comparar los mapas de salida con los resultados de utilizar sólo un valor de umbral</span>
+<span id="cb64-681"><a href="#cb64-681"></a>:::</span>
+<span id="cb64-682"><a href="#cb64-682"></a></span>
+<span id="cb64-683"><a href="#cb64-683"></a><span class="fu">## Serie de tiempo de NDWI</span></span>
+<span id="cb64-684"><a href="#cb64-684"></a></span>
+<span id="cb64-685"><a href="#cb64-685"></a>Listas de mapas de reflectancia</span>
+<span id="cb64-686"><a href="#cb64-686"></a></span>
+<span id="cb64-689"><a href="#cb64-689"></a><span class="in">```{python}</span></span>
+<span id="cb64-690"><a href="#cb64-690"></a>list_nir <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
+<span id="cb64-691"><a href="#cb64-691"></a>                           pattern<span class="op">=</span><span class="st">&quot;*NIR*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-692"><a href="#cb64-692"></a>list_mir <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>, </span>
+<span id="cb64-693"><a href="#cb64-693"></a>                           pattern<span class="op">=</span><span class="st">&quot;*MIR*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
 <span id="cb64-694"><a href="#cb64-694"></a></span>
-<span id="cb64-695"><a href="#cb64-695"></a>Asignamos *semantic labels* correspondientes a las bandas</span>
-<span id="cb64-696"><a href="#cb64-696"></a></span>
-<span id="cb64-699"><a href="#cb64-699"></a><span class="in">```{python}</span></span>
-<span id="cb64-700"><a href="#cb64-700"></a><span class="co"># asign semantic labels to NIR and MIR maps</span></span>
-<span id="cb64-701"><a href="#cb64-701"></a><span class="cf">for</span> i <span class="kw">in</span> list_nir:</span>
-<span id="cb64-702"><a href="#cb64-702"></a>    gs.run_command(<span class="st">&quot;r.support&quot;</span>,</span>
-<span id="cb64-703"><a href="#cb64-703"></a>                   <span class="bu">map</span><span class="op">=</span>i,</span>
-<span id="cb64-704"><a href="#cb64-704"></a>                   semantic_label<span class="op">=</span><span class="st">&quot;nir&quot;</span>)</span>
-<span id="cb64-705"><a href="#cb64-705"></a></span>
-<span id="cb64-706"><a href="#cb64-706"></a><span class="cf">for</span> i <span class="kw">in</span> list_mir:</span>
-<span id="cb64-707"><a href="#cb64-707"></a>    gs.run_command(<span class="st">&quot;r.support&quot;</span>,</span>
-<span id="cb64-708"><a href="#cb64-708"></a>                   <span class="bu">map</span><span class="op">=</span>i,</span>
-<span id="cb64-709"><a href="#cb64-709"></a>                   semantic_label<span class="op">=</span><span class="st">&quot;mir&quot;</span>)</span>
-<span id="cb64-710"><a href="#cb64-710"></a><span class="in">```</span></span>
-<span id="cb64-711"><a href="#cb64-711"></a></span>
-<span id="cb64-714"><a href="#cb64-714"></a><span class="in">```{python}</span></span>
-<span id="cb64-715"><a href="#cb64-715"></a><span class="co"># check</span></span>
-<span id="cb64-716"><a href="#cb64-716"></a>gs.raster_info(<span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_MIR_reflectance&quot;</span>)[<span class="st">&quot;semantic_label&quot;</span>]</span>
-<span id="cb64-717"><a href="#cb64-717"></a><span class="in">```</span></span>
-<span id="cb64-718"><a href="#cb64-718"></a></span>
-<span id="cb64-719"><a href="#cb64-719"></a>Crear series temporales de NIR y MIR</span>
-<span id="cb64-720"><a href="#cb64-720"></a></span>
-<span id="cb64-723"><a href="#cb64-723"></a><span class="in">```{python}</span></span>
-<span id="cb64-724"><a href="#cb64-724"></a><span class="co"># create time series of NIR and MIR altogether</span></span>
-<span id="cb64-725"><a href="#cb64-725"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
-<span id="cb64-726"><a href="#cb64-726"></a>               output<span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
-<span id="cb64-727"><a href="#cb64-727"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
-<span id="cb64-728"><a href="#cb64-728"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
-<span id="cb64-729"><a href="#cb64-729"></a>               title<span class="op">=</span><span class="st">&quot;Monthly surface reflectance, NIR and MIR&quot;</span>,</span>
-<span id="cb64-730"><a href="#cb64-730"></a>               description<span class="op">=</span><span class="st">&quot;NIR and MIR monthly - MOD13C2 - 2015-2019&quot;</span>)</span>
-<span id="cb64-731"><a href="#cb64-731"></a><span class="in">```</span></span>
-<span id="cb64-732"><a href="#cb64-732"></a></span>
-<span id="cb64-733"><a href="#cb64-733"></a>Registrar mapas</span>
-<span id="cb64-734"><a href="#cb64-734"></a></span>
-<span id="cb64-737"><a href="#cb64-737"></a><span class="in">```{python}</span></span>
-<span id="cb64-738"><a href="#cb64-738"></a><span class="co"># register maps</span></span>
-<span id="cb64-739"><a href="#cb64-739"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
-<span id="cb64-740"><a href="#cb64-740"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
-<span id="cb64-741"><a href="#cb64-741"></a>               maps<span class="op">=</span>list_nir,</span>
-<span id="cb64-742"><a href="#cb64-742"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
-<span id="cb64-743"><a href="#cb64-743"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
-<span id="cb64-744"><a href="#cb64-744"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
-<span id="cb64-745"><a href="#cb64-745"></a></span>
-<span id="cb64-746"><a href="#cb64-746"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
-<span id="cb64-747"><a href="#cb64-747"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
-<span id="cb64-748"><a href="#cb64-748"></a>               maps<span class="op">=</span>list_mir,</span>
-<span id="cb64-749"><a href="#cb64-749"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
-<span id="cb64-750"><a href="#cb64-750"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
-<span id="cb64-751"><a href="#cb64-751"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
-<span id="cb64-752"><a href="#cb64-752"></a><span class="in">```</span></span>
-<span id="cb64-753"><a href="#cb64-753"></a></span>
-<span id="cb64-754"><a href="#cb64-754"></a>Imprimir información de la serie de tiempo</span>
-<span id="cb64-755"><a href="#cb64-755"></a></span>
-<span id="cb64-758"><a href="#cb64-758"></a><span class="in">```{python}</span></span>
-<span id="cb64-759"><a href="#cb64-759"></a><span class="co"># print time series info</span></span>
-<span id="cb64-760"><a href="#cb64-760"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
-<span id="cb64-761"><a href="#cb64-761"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>))</span>
-<span id="cb64-762"><a href="#cb64-762"></a><span class="in">```</span></span>
-<span id="cb64-763"><a href="#cb64-763"></a></span>
-<span id="cb64-766"><a href="#cb64-766"></a><span class="in">```{python}</span></span>
-<span id="cb64-767"><a href="#cb64-767"></a><span class="co"># List only NIR maps</span></span>
-<span id="cb64-768"><a href="#cb64-768"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.list&quot;</span>, </span>
-<span id="cb64-769"><a href="#cb64-769"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf.nir&quot;</span>, </span>
-<span id="cb64-770"><a href="#cb64-770"></a>                      columns<span class="op">=</span><span class="st">&quot;name,semantic_label&quot;</span>))</span>
-<span id="cb64-771"><a href="#cb64-771"></a><span class="in">```</span></span>
-<span id="cb64-772"><a href="#cb64-772"></a></span>
-<span id="cb64-773"><a href="#cb64-773"></a>Estimación de la serie temporal de NDWI</span>
-<span id="cb64-774"><a href="#cb64-774"></a></span>
-<span id="cb64-777"><a href="#cb64-777"></a><span class="in">```{python}</span></span>
-<span id="cb64-778"><a href="#cb64-778"></a><span class="co"># extract nir and mir strds</span></span>
-<span id="cb64-779"><a href="#cb64-779"></a>sls <span class="op">=</span> [<span class="st">&quot;nir&quot;</span>, <span class="st">&quot;mir&quot;</span>]</span>
-<span id="cb64-780"><a href="#cb64-780"></a></span>
-<span id="cb64-781"><a href="#cb64-781"></a><span class="cf">for</span> sl <span class="kw">in</span> sls:</span>
-<span id="cb64-782"><a href="#cb64-782"></a>    gs.run_command(<span class="st">&quot;t.rast.extract&quot;</span>,</span>
-<span id="cb64-783"><a href="#cb64-783"></a>                   <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
-<span id="cb64-784"><a href="#cb64-784"></a>                   where<span class="op">=</span><span class="ss">f&quot;semantic_label == &#39;</span><span class="sc">{</span>sl<span class="sc">}</span><span class="ss">&#39;&quot;</span>,</span>
-<span id="cb64-785"><a href="#cb64-785"></a>                   output<span class="op">=</span>sl)</span>
-<span id="cb64-786"><a href="#cb64-786"></a><span class="in">```</span></span>
-<span id="cb64-787"><a href="#cb64-787"></a></span>
-<span id="cb64-790"><a href="#cb64-790"></a><span class="in">```{python}</span></span>
-<span id="cb64-791"><a href="#cb64-791"></a><span class="co"># estimate NDWI time series</span></span>
-<span id="cb64-792"><a href="#cb64-792"></a>expression<span class="op">=</span><span class="st">&quot;ndwi_monthly = if(nir &gt; 0 &amp;&amp; mir &gt; 0, (float(nir - mir) / float(nir + mir)), null())&quot;</span></span>
-<span id="cb64-793"><a href="#cb64-793"></a></span>
-<span id="cb64-794"><a href="#cb64-794"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>,</span>
-<span id="cb64-795"><a href="#cb64-795"></a>               basename<span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>,</span>
-<span id="cb64-796"><a href="#cb64-796"></a>               expression<span class="op">=</span>expression,</span>
-<span id="cb64-797"><a href="#cb64-797"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
-<span id="cb64-798"><a href="#cb64-798"></a>               flags<span class="op">=</span><span class="st">&quot;n&quot;</span>)</span>
-<span id="cb64-799"><a href="#cb64-799"></a><span class="in">```</span></span>
-<span id="cb64-800"><a href="#cb64-800"></a></span>
-<span id="cb64-803"><a href="#cb64-803"></a><span class="in">```{python}</span></span>
-<span id="cb64-804"><a href="#cb64-804"></a><span class="co"># estimate NDWI time series</span></span>
-<span id="cb64-805"><a href="#cb64-805"></a><span class="co">#gs.run_command(&quot;t.rast.mapcalc&quot;, </span></span>
-<span id="cb64-806"><a href="#cb64-806"></a><span class="co">#               inputs=&quot;modis_surf.mir,modis_surf.nir&quot;, </span></span>
-<span id="cb64-807"><a href="#cb64-807"></a><span class="co">#               output=&quot;ndwi_monthly&quot;, </span></span>
-<span id="cb64-808"><a href="#cb64-808"></a><span class="co">#               basename=&quot;ndwi&quot;,</span></span>
-<span id="cb64-809"><a href="#cb64-809"></a><span class="co">#               expression=&quot;float(modis_surf.nir - modis_surf.mir) / (modis_surf.nir + modis_surf.mir)&quot;)</span></span>
-<span id="cb64-810"><a href="#cb64-810"></a><span class="in">```</span></span>
-<span id="cb64-811"><a href="#cb64-811"></a></span>
-<span id="cb64-814"><a href="#cb64-814"></a><span class="in">```{python}</span></span>
-<span id="cb64-815"><a href="#cb64-815"></a>gs.run_command(<span class="st">&quot;t.rast.colors&quot;</span>, </span>
-<span id="cb64-816"><a href="#cb64-816"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>, </span>
-<span id="cb64-817"><a href="#cb64-817"></a>               color<span class="op">=</span><span class="st">&quot;ndwi&quot;</span>)</span>
-<span id="cb64-818"><a href="#cb64-818"></a><span class="in">```</span></span>
-<span id="cb64-819"><a href="#cb64-819"></a></span>
-<span id="cb64-822"><a href="#cb64-822"></a><span class="in">```{python}</span></span>
-<span id="cb64-823"><a href="#cb64-823"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
-<span id="cb64-824"><a href="#cb64-824"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>))</span>
-<span id="cb64-825"><a href="#cb64-825"></a><span class="in">```</span></span>
-<span id="cb64-826"><a href="#cb64-826"></a></span>
-<span id="cb64-827"><a href="#cb64-827"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-828"><a href="#cb64-828"></a>Obtener valores máximos y mínimos para cada mapa de NDWI y explorar el trazado de la serie de tiempo en diferentes puntos de forma interactiva</span>
+<span id="cb64-695"><a href="#cb64-695"></a><span class="bu">len</span>(list_nir,list_mir)</span>
+<span id="cb64-696"><a href="#cb64-696"></a><span class="in">```</span></span>
+<span id="cb64-697"><a href="#cb64-697"></a></span>
+<span id="cb64-698"><a href="#cb64-698"></a>Asignamos *semantic labels* correspondientes a las bandas</span>
+<span id="cb64-699"><a href="#cb64-699"></a></span>
+<span id="cb64-702"><a href="#cb64-702"></a><span class="in">```{python}</span></span>
+<span id="cb64-703"><a href="#cb64-703"></a><span class="co"># asign semantic labels to NIR and MIR maps</span></span>
+<span id="cb64-704"><a href="#cb64-704"></a><span class="cf">for</span> i <span class="kw">in</span> list_nir:</span>
+<span id="cb64-705"><a href="#cb64-705"></a>    gs.run_command(<span class="st">&quot;r.support&quot;</span>,</span>
+<span id="cb64-706"><a href="#cb64-706"></a>                   <span class="bu">map</span><span class="op">=</span>i,</span>
+<span id="cb64-707"><a href="#cb64-707"></a>                   semantic_label<span class="op">=</span><span class="st">&quot;nir&quot;</span>)</span>
+<span id="cb64-708"><a href="#cb64-708"></a></span>
+<span id="cb64-709"><a href="#cb64-709"></a><span class="cf">for</span> i <span class="kw">in</span> list_mir:</span>
+<span id="cb64-710"><a href="#cb64-710"></a>    gs.run_command(<span class="st">&quot;r.support&quot;</span>,</span>
+<span id="cb64-711"><a href="#cb64-711"></a>                   <span class="bu">map</span><span class="op">=</span>i,</span>
+<span id="cb64-712"><a href="#cb64-712"></a>                   semantic_label<span class="op">=</span><span class="st">&quot;mir&quot;</span>)</span>
+<span id="cb64-713"><a href="#cb64-713"></a><span class="in">```</span></span>
+<span id="cb64-714"><a href="#cb64-714"></a></span>
+<span id="cb64-717"><a href="#cb64-717"></a><span class="in">```{python}</span></span>
+<span id="cb64-718"><a href="#cb64-718"></a><span class="co"># check</span></span>
+<span id="cb64-719"><a href="#cb64-719"></a>gs.raster_info(<span class="st">&quot;MOD13C2.A2015001.006.single_Monthly_MIR_reflectance&quot;</span>)[<span class="st">&quot;semantic_label&quot;</span>]</span>
+<span id="cb64-720"><a href="#cb64-720"></a><span class="in">```</span></span>
+<span id="cb64-721"><a href="#cb64-721"></a></span>
+<span id="cb64-722"><a href="#cb64-722"></a>Crear series temporales de NIR y MIR</span>
+<span id="cb64-723"><a href="#cb64-723"></a></span>
+<span id="cb64-726"><a href="#cb64-726"></a><span class="in">```{python}</span></span>
+<span id="cb64-727"><a href="#cb64-727"></a><span class="co"># create time series of NIR and MIR altogether</span></span>
+<span id="cb64-728"><a href="#cb64-728"></a>gs.run_command(<span class="st">&quot;t.create&quot;</span>,</span>
+<span id="cb64-729"><a href="#cb64-729"></a>               output<span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
+<span id="cb64-730"><a href="#cb64-730"></a>               <span class="bu">type</span><span class="op">=</span><span class="st">&quot;strds&quot;</span>,</span>
+<span id="cb64-731"><a href="#cb64-731"></a>               temporaltype<span class="op">=</span><span class="st">&quot;absolute&quot;</span>,</span>
+<span id="cb64-732"><a href="#cb64-732"></a>               title<span class="op">=</span><span class="st">&quot;Monthly surface reflectance, NIR and MIR&quot;</span>,</span>
+<span id="cb64-733"><a href="#cb64-733"></a>               description<span class="op">=</span><span class="st">&quot;NIR and MIR monthly - MOD13C2 - 2015-2019&quot;</span>)</span>
+<span id="cb64-734"><a href="#cb64-734"></a><span class="in">```</span></span>
+<span id="cb64-735"><a href="#cb64-735"></a></span>
+<span id="cb64-736"><a href="#cb64-736"></a>Registrar mapas</span>
+<span id="cb64-737"><a href="#cb64-737"></a></span>
+<span id="cb64-740"><a href="#cb64-740"></a><span class="in">```{python}</span></span>
+<span id="cb64-741"><a href="#cb64-741"></a><span class="co"># register maps</span></span>
+<span id="cb64-742"><a href="#cb64-742"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
+<span id="cb64-743"><a href="#cb64-743"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
+<span id="cb64-744"><a href="#cb64-744"></a>               maps<span class="op">=</span>list_nir,</span>
+<span id="cb64-745"><a href="#cb64-745"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
+<span id="cb64-746"><a href="#cb64-746"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
+<span id="cb64-747"><a href="#cb64-747"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
+<span id="cb64-748"><a href="#cb64-748"></a></span>
+<span id="cb64-749"><a href="#cb64-749"></a>gs.run_command(<span class="st">&quot;t.register&quot;</span>,</span>
+<span id="cb64-750"><a href="#cb64-750"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
+<span id="cb64-751"><a href="#cb64-751"></a>               maps<span class="op">=</span>list_mir,</span>
+<span id="cb64-752"><a href="#cb64-752"></a>               start<span class="op">=</span><span class="st">&quot;2015-01-01&quot;</span>,</span>
+<span id="cb64-753"><a href="#cb64-753"></a>               increment<span class="op">=</span><span class="st">&quot;1 months&quot;</span>,</span>
+<span id="cb64-754"><a href="#cb64-754"></a>               flags<span class="op">=</span><span class="st">&quot;i&quot;</span>)</span>
+<span id="cb64-755"><a href="#cb64-755"></a><span class="in">```</span></span>
+<span id="cb64-756"><a href="#cb64-756"></a></span>
+<span id="cb64-757"><a href="#cb64-757"></a>Imprimir información de la serie de tiempo</span>
+<span id="cb64-758"><a href="#cb64-758"></a></span>
+<span id="cb64-761"><a href="#cb64-761"></a><span class="in">```{python}</span></span>
+<span id="cb64-762"><a href="#cb64-762"></a><span class="co"># print time series info</span></span>
+<span id="cb64-763"><a href="#cb64-763"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
+<span id="cb64-764"><a href="#cb64-764"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>))</span>
+<span id="cb64-765"><a href="#cb64-765"></a><span class="in">```</span></span>
+<span id="cb64-766"><a href="#cb64-766"></a></span>
+<span id="cb64-769"><a href="#cb64-769"></a><span class="in">```{python}</span></span>
+<span id="cb64-770"><a href="#cb64-770"></a><span class="co"># List only NIR maps</span></span>
+<span id="cb64-771"><a href="#cb64-771"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.rast.list&quot;</span>, </span>
+<span id="cb64-772"><a href="#cb64-772"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf.nir&quot;</span>, </span>
+<span id="cb64-773"><a href="#cb64-773"></a>                      columns<span class="op">=</span><span class="st">&quot;name,semantic_label&quot;</span>))</span>
+<span id="cb64-774"><a href="#cb64-774"></a><span class="in">```</span></span>
+<span id="cb64-775"><a href="#cb64-775"></a></span>
+<span id="cb64-776"><a href="#cb64-776"></a>Estimación de la serie temporal de NDWI</span>
+<span id="cb64-777"><a href="#cb64-777"></a></span>
+<span id="cb64-780"><a href="#cb64-780"></a><span class="in">```{python}</span></span>
+<span id="cb64-781"><a href="#cb64-781"></a><span class="co"># extract nir and mir strds</span></span>
+<span id="cb64-782"><a href="#cb64-782"></a>sls <span class="op">=</span> [<span class="st">&quot;nir&quot;</span>, <span class="st">&quot;mir&quot;</span>]</span>
+<span id="cb64-783"><a href="#cb64-783"></a></span>
+<span id="cb64-784"><a href="#cb64-784"></a><span class="cf">for</span> sl <span class="kw">in</span> sls:</span>
+<span id="cb64-785"><a href="#cb64-785"></a>    gs.run_command(<span class="st">&quot;t.rast.extract&quot;</span>,</span>
+<span id="cb64-786"><a href="#cb64-786"></a>                   <span class="bu">input</span><span class="op">=</span><span class="st">&quot;modis_surf&quot;</span>,</span>
+<span id="cb64-787"><a href="#cb64-787"></a>                   where<span class="op">=</span><span class="ss">f&quot;semantic_label == &#39;</span><span class="sc">{</span>sl<span class="sc">}</span><span class="ss">&#39;&quot;</span>,</span>
+<span id="cb64-788"><a href="#cb64-788"></a>                   output<span class="op">=</span>sl)</span>
+<span id="cb64-789"><a href="#cb64-789"></a><span class="in">```</span></span>
+<span id="cb64-790"><a href="#cb64-790"></a></span>
+<span id="cb64-793"><a href="#cb64-793"></a><span class="in">```{python}</span></span>
+<span id="cb64-794"><a href="#cb64-794"></a><span class="co"># estimate NDWI time series</span></span>
+<span id="cb64-795"><a href="#cb64-795"></a>expression<span class="op">=</span><span class="st">&quot;ndwi_monthly = if(nir &gt; 0 &amp;&amp; mir &gt; 0, (float(nir - mir) / float(nir + mir)), null())&quot;</span></span>
+<span id="cb64-796"><a href="#cb64-796"></a></span>
+<span id="cb64-797"><a href="#cb64-797"></a>gs.run_command(<span class="st">&quot;t.rast.algebra&quot;</span>,</span>
+<span id="cb64-798"><a href="#cb64-798"></a>               basename<span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>,</span>
+<span id="cb64-799"><a href="#cb64-799"></a>               expression<span class="op">=</span>expression,</span>
+<span id="cb64-800"><a href="#cb64-800"></a>               suffix<span class="op">=</span><span class="st">&quot;gran&quot;</span>,</span>
+<span id="cb64-801"><a href="#cb64-801"></a>               flags<span class="op">=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb64-802"><a href="#cb64-802"></a><span class="in">```</span></span>
+<span id="cb64-803"><a href="#cb64-803"></a></span>
+<span id="cb64-806"><a href="#cb64-806"></a><span class="in">```{python}</span></span>
+<span id="cb64-807"><a href="#cb64-807"></a><span class="co"># estimate NDWI time series</span></span>
+<span id="cb64-808"><a href="#cb64-808"></a><span class="co">#gs.run_command(&quot;t.rast.mapcalc&quot;, </span></span>
+<span id="cb64-809"><a href="#cb64-809"></a><span class="co">#               inputs=&quot;modis_surf.mir,modis_surf.nir&quot;, </span></span>
+<span id="cb64-810"><a href="#cb64-810"></a><span class="co">#               output=&quot;ndwi_monthly&quot;, </span></span>
+<span id="cb64-811"><a href="#cb64-811"></a><span class="co">#               basename=&quot;ndwi&quot;,</span></span>
+<span id="cb64-812"><a href="#cb64-812"></a><span class="co">#               expression=&quot;float(modis_surf.nir - modis_surf.mir) / (modis_surf.nir + modis_surf.mir)&quot;)</span></span>
+<span id="cb64-813"><a href="#cb64-813"></a><span class="in">```</span></span>
+<span id="cb64-814"><a href="#cb64-814"></a></span>
+<span id="cb64-817"><a href="#cb64-817"></a><span class="in">```{python}</span></span>
+<span id="cb64-818"><a href="#cb64-818"></a>gs.run_command(<span class="st">&quot;t.rast.colors&quot;</span>, </span>
+<span id="cb64-819"><a href="#cb64-819"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>, </span>
+<span id="cb64-820"><a href="#cb64-820"></a>               color<span class="op">=</span><span class="st">&quot;ndwi&quot;</span>)</span>
+<span id="cb64-821"><a href="#cb64-821"></a><span class="in">```</span></span>
+<span id="cb64-822"><a href="#cb64-822"></a></span>
+<span id="cb64-825"><a href="#cb64-825"></a><span class="in">```{python}</span></span>
+<span id="cb64-826"><a href="#cb64-826"></a><span class="bu">print</span>(gs.read_command(<span class="st">&quot;t.info&quot;</span>, </span>
+<span id="cb64-827"><a href="#cb64-827"></a>                      <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>))</span>
+<span id="cb64-828"><a href="#cb64-828"></a><span class="in">```</span></span>
 <span id="cb64-829"><a href="#cb64-829"></a></span>
-<span id="cb64-830"><a href="#cb64-830"></a>Ver el manual de <span class="co">[</span><span class="ot">t.rast.univar</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/t.rast.univar.html)</span></span>
-<span id="cb64-831"><a href="#cb64-831"></a>:::</span>
+<span id="cb64-830"><a href="#cb64-830"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-831"><a href="#cb64-831"></a>Obtener valores máximos y mínimos para cada mapa de NDWI y explorar el trazado de la serie de tiempo en diferentes puntos de forma interactiva</span>
 <span id="cb64-832"><a href="#cb64-832"></a></span>
-<span id="cb64-833"><a href="#cb64-833"></a><span class="fu">### Frecuencia de inundación</span></span>
-<span id="cb64-834"><a href="#cb64-834"></a></span>
-<span id="cb64-835"><a href="#cb64-835"></a>Reclasificar los mapas según un umbral</span>
-<span id="cb64-836"><a href="#cb64-836"></a></span>
-<span id="cb64-839"><a href="#cb64-839"></a><span class="in">```{python}</span></span>
-<span id="cb64-840"><a href="#cb64-840"></a><span class="co"># reclassify</span></span>
-<span id="cb64-841"><a href="#cb64-841"></a>gs.run_command(<span class="st">&quot;t.rast.mapcalc&quot;</span>,</span>
-<span id="cb64-842"><a href="#cb64-842"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>,</span>
-<span id="cb64-843"><a href="#cb64-843"></a>               output<span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
-<span id="cb64-844"><a href="#cb64-844"></a>               basename<span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
-<span id="cb64-845"><a href="#cb64-845"></a>               expression<span class="op">=</span><span class="st">&quot;if(ndwi_monthly &gt; 0.8, 1, null())&quot;</span>,</span>
-<span id="cb64-846"><a href="#cb64-846"></a>               flags<span class="op">=</span><span class="st">&quot;n&quot;</span>)</span>
-<span id="cb64-847"><a href="#cb64-847"></a><span class="in">```</span></span>
-<span id="cb64-848"><a href="#cb64-848"></a></span>
-<span id="cb64-849"><a href="#cb64-849"></a>Obtener frecuencia de inundación</span>
-<span id="cb64-850"><a href="#cb64-850"></a></span>
-<span id="cb64-853"><a href="#cb64-853"></a><span class="in">```{python}</span></span>
-<span id="cb64-854"><a href="#cb64-854"></a><span class="co"># flooding frequency</span></span>
-<span id="cb64-855"><a href="#cb64-855"></a>gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
-<span id="cb64-856"><a href="#cb64-856"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
-<span id="cb64-857"><a href="#cb64-857"></a>               output<span class="op">=</span><span class="st">&quot;flood_freq&quot;</span>,</span>
-<span id="cb64-858"><a href="#cb64-858"></a>               method<span class="op">=</span><span class="st">&quot;sum&quot;</span>)</span>
-<span id="cb64-859"><a href="#cb64-859"></a><span class="in">```</span></span>
-<span id="cb64-860"><a href="#cb64-860"></a></span>
-<span id="cb64-861"><a href="#cb64-861"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-862"><a href="#cb64-862"></a>Cuáles son las áreas que se han inundado con más frecuencia?</span>
-<span id="cb64-863"><a href="#cb64-863"></a>:::</span>
-<span id="cb64-864"><a href="#cb64-864"></a></span>
-<span id="cb64-865"><a href="#cb64-865"></a><span class="fu">## Regresión NDVI-NDWI</span></span>
-<span id="cb64-866"><a href="#cb64-866"></a></span>
-<span id="cb64-867"><a href="#cb64-867"></a>Instalar la extensión *r.regression.series*</span>
-<span id="cb64-868"><a href="#cb64-868"></a></span>
-<span id="cb64-871"><a href="#cb64-871"></a><span class="in">```{python}</span></span>
-<span id="cb64-872"><a href="#cb64-872"></a><span class="co"># install extension</span></span>
-<span id="cb64-873"><a href="#cb64-873"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
-<span id="cb64-874"><a href="#cb64-874"></a>               extension<span class="op">=</span><span class="st">&quot;r.regression.series&quot;</span>)</span>
-<span id="cb64-875"><a href="#cb64-875"></a><span class="in">```</span></span>
-<span id="cb64-876"><a href="#cb64-876"></a></span>
-<span id="cb64-877"><a href="#cb64-877"></a>Realizar una regresión entre las series temporales de NDVI y NDWI</span>
-<span id="cb64-878"><a href="#cb64-878"></a></span>
-<span id="cb64-881"><a href="#cb64-881"></a><span class="in">```{python}</span></span>
-<span id="cb64-882"><a href="#cb64-882"></a>xseries <span class="op">=</span> patched_maps[<span class="dv">1</span>:]</span>
-<span id="cb64-883"><a href="#cb64-883"></a>yseries <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
-<span id="cb64-884"><a href="#cb64-884"></a>                          pattern<span class="op">=</span><span class="st">&quot;ndwi_monthly*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
-<span id="cb64-885"><a href="#cb64-885"></a></span>
-<span id="cb64-886"><a href="#cb64-886"></a>gs.run_command(<span class="st">&quot;r.regression.series&quot;</span>,</span>
-<span id="cb64-887"><a href="#cb64-887"></a>               xseries<span class="op">=</span>xseries,</span>
-<span id="cb64-888"><a href="#cb64-888"></a>               yseries<span class="op">=</span>yseries,</span>
-<span id="cb64-889"><a href="#cb64-889"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_ndwi_rsq&quot;</span>,</span>
-<span id="cb64-890"><a href="#cb64-890"></a>               method<span class="op">=</span><span class="st">&quot;rsq&quot;</span>)</span>
-<span id="cb64-891"><a href="#cb64-891"></a><span class="in">```</span></span>
-<span id="cb64-892"><a href="#cb64-892"></a></span>
-<span id="cb64-895"><a href="#cb64-895"></a><span class="in">```{python}</span></span>
-<span id="cb64-896"><a href="#cb64-896"></a>rsq <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">400</span>, use_region<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb64-897"><a href="#cb64-897"></a>rsq.add_raster(<span class="st">&quot;ndvi_ndwi_rsq&quot;</span>, opacity<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb64-898"><a href="#cb64-898"></a>rsq.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
-<span id="cb64-899"><a href="#cb64-899"></a>rsq.show()</span>
-<span id="cb64-900"><a href="#cb64-900"></a><span class="in">```</span></span>
-<span id="cb64-901"><a href="#cb64-901"></a></span>
-<span id="cb64-902"><a href="#cb64-902"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
-<span id="cb64-903"><a href="#cb64-903"></a>Determinar dónde está la mayor correlación entre NDVI y NDWI</span>
-<span id="cb64-904"><a href="#cb64-904"></a>:::</span>
-<span id="cb64-905"><a href="#cb64-905"></a></span>
-<span id="cb64-906"><a href="#cb64-906"></a><span class="fu">## Recursos (muy) útiles </span></span>
-<span id="cb64-907"><a href="#cb64-907"></a></span>
-<span id="cb64-908"><a href="#cb64-908"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Temporal data processing wiki</span><span class="co">](https://grasswiki.osgeo.org/wiki/Temporal_data_processing)</span></span>
-<span id="cb64-909"><a href="#cb64-909"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS and R for time series processing wiki</span><span class="co">](https://grasswiki.osgeo.org/wiki/Temporal_data_processing/GRASS_R_raster_time_series_processing)</span></span>
-<span id="cb64-910"><a href="#cb64-910"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS temporal workshop at NCSU</span><span class="co">](http://ncsu-geoforall-lab.github.io/grass-temporal-workshop/)</span></span>
-<span id="cb64-911"><a href="#cb64-911"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS course IRSAE 2018</span><span class="co">](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/index.html)</span></span>
-<span id="cb64-912"><a href="#cb64-912"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS workshop held in Jena 2023</span><span class="co">](https://training.gismentors.eu/grass-gis-workshop-jena/)</span></span>
-<span id="cb64-913"><a href="#cb64-913"></a></span>
-<span id="cb64-914"><a href="#cb64-914"></a><span class="fu">## Referencias</span></span>
-<span id="cb64-915"><a href="#cb64-915"></a></span>
-<span id="cb64-916"><a href="#cb64-916"></a>::: {#refs .tiny}</span>
-<span id="cb64-917"><a href="#cb64-917"></a>:::</span>
+<span id="cb64-833"><a href="#cb64-833"></a>Ver el manual de <span class="co">[</span><span class="ot">t.rast.univar</span><span class="co">](https://grass.osgeo.org/grass-stable/manuals/t.rast.univar.html)</span></span>
+<span id="cb64-834"><a href="#cb64-834"></a>:::</span>
+<span id="cb64-835"><a href="#cb64-835"></a></span>
+<span id="cb64-836"><a href="#cb64-836"></a><span class="fu">### Frecuencia de inundación</span></span>
+<span id="cb64-837"><a href="#cb64-837"></a></span>
+<span id="cb64-838"><a href="#cb64-838"></a>Reclasificar los mapas según un umbral</span>
+<span id="cb64-839"><a href="#cb64-839"></a></span>
+<span id="cb64-842"><a href="#cb64-842"></a><span class="in">```{python}</span></span>
+<span id="cb64-843"><a href="#cb64-843"></a><span class="co"># reclassify</span></span>
+<span id="cb64-844"><a href="#cb64-844"></a>gs.run_command(<span class="st">&quot;t.rast.mapcalc&quot;</span>,</span>
+<span id="cb64-845"><a href="#cb64-845"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;ndwi_monthly&quot;</span>,</span>
+<span id="cb64-846"><a href="#cb64-846"></a>               output<span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
+<span id="cb64-847"><a href="#cb64-847"></a>               basename<span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
+<span id="cb64-848"><a href="#cb64-848"></a>               expression<span class="op">=</span><span class="st">&quot;if(ndwi_monthly &gt; 0.8, 1, null())&quot;</span>,</span>
+<span id="cb64-849"><a href="#cb64-849"></a>               flags<span class="op">=</span><span class="st">&quot;n&quot;</span>)</span>
+<span id="cb64-850"><a href="#cb64-850"></a><span class="in">```</span></span>
+<span id="cb64-851"><a href="#cb64-851"></a></span>
+<span id="cb64-852"><a href="#cb64-852"></a>Obtener frecuencia de inundación</span>
+<span id="cb64-853"><a href="#cb64-853"></a></span>
+<span id="cb64-856"><a href="#cb64-856"></a><span class="in">```{python}</span></span>
+<span id="cb64-857"><a href="#cb64-857"></a><span class="co"># flooding frequency</span></span>
+<span id="cb64-858"><a href="#cb64-858"></a>gs.run_command(<span class="st">&quot;t.rast.series&quot;</span>,</span>
+<span id="cb64-859"><a href="#cb64-859"></a>               <span class="bu">input</span><span class="op">=</span><span class="st">&quot;flood&quot;</span>,</span>
+<span id="cb64-860"><a href="#cb64-860"></a>               output<span class="op">=</span><span class="st">&quot;flood_freq&quot;</span>,</span>
+<span id="cb64-861"><a href="#cb64-861"></a>               method<span class="op">=</span><span class="st">&quot;sum&quot;</span>)</span>
+<span id="cb64-862"><a href="#cb64-862"></a><span class="in">```</span></span>
+<span id="cb64-863"><a href="#cb64-863"></a></span>
+<span id="cb64-864"><a href="#cb64-864"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-865"><a href="#cb64-865"></a>Cuáles son las áreas que se han inundado con más frecuencia?</span>
+<span id="cb64-866"><a href="#cb64-866"></a>:::</span>
+<span id="cb64-867"><a href="#cb64-867"></a></span>
+<span id="cb64-868"><a href="#cb64-868"></a><span class="fu">## Regresión NDVI-NDWI</span></span>
+<span id="cb64-869"><a href="#cb64-869"></a></span>
+<span id="cb64-870"><a href="#cb64-870"></a>Instalar la extensión *r.regression.series*</span>
+<span id="cb64-871"><a href="#cb64-871"></a></span>
+<span id="cb64-874"><a href="#cb64-874"></a><span class="in">```{python}</span></span>
+<span id="cb64-875"><a href="#cb64-875"></a><span class="co"># install extension</span></span>
+<span id="cb64-876"><a href="#cb64-876"></a>gs.run_command(<span class="st">&quot;g.extension&quot;</span>,</span>
+<span id="cb64-877"><a href="#cb64-877"></a>               extension<span class="op">=</span><span class="st">&quot;r.regression.series&quot;</span>)</span>
+<span id="cb64-878"><a href="#cb64-878"></a><span class="in">```</span></span>
+<span id="cb64-879"><a href="#cb64-879"></a></span>
+<span id="cb64-880"><a href="#cb64-880"></a>Realizar una regresión entre las series temporales de NDVI y NDWI</span>
+<span id="cb64-881"><a href="#cb64-881"></a></span>
+<span id="cb64-884"><a href="#cb64-884"></a><span class="in">```{python}</span></span>
+<span id="cb64-885"><a href="#cb64-885"></a>xseries <span class="op">=</span> patched_maps[<span class="dv">1</span>:]</span>
+<span id="cb64-886"><a href="#cb64-886"></a>yseries <span class="op">=</span> gs.list_grouped(<span class="bu">type</span><span class="op">=</span><span class="st">&quot;raster&quot;</span>,</span>
+<span id="cb64-887"><a href="#cb64-887"></a>                          pattern<span class="op">=</span><span class="st">&quot;ndwi_monthly*&quot;</span>)[<span class="st">&quot;modis_ndvi&quot;</span>]</span>
+<span id="cb64-888"><a href="#cb64-888"></a></span>
+<span id="cb64-889"><a href="#cb64-889"></a>gs.run_command(<span class="st">&quot;r.regression.series&quot;</span>,</span>
+<span id="cb64-890"><a href="#cb64-890"></a>               xseries<span class="op">=</span>xseries,</span>
+<span id="cb64-891"><a href="#cb64-891"></a>               yseries<span class="op">=</span>yseries,</span>
+<span id="cb64-892"><a href="#cb64-892"></a>               output<span class="op">=</span><span class="st">&quot;ndvi_ndwi_rsq&quot;</span>,</span>
+<span id="cb64-893"><a href="#cb64-893"></a>               method<span class="op">=</span><span class="st">&quot;rsq&quot;</span>)</span>
+<span id="cb64-894"><a href="#cb64-894"></a><span class="in">```</span></span>
+<span id="cb64-895"><a href="#cb64-895"></a></span>
+<span id="cb64-898"><a href="#cb64-898"></a><span class="in">```{python}</span></span>
+<span id="cb64-899"><a href="#cb64-899"></a>rsq <span class="op">=</span> gj.InteractiveMap(width <span class="op">=</span> <span class="dv">400</span>, use_region<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb64-900"><a href="#cb64-900"></a>rsq.add_raster(<span class="st">&quot;ndvi_ndwi_rsq&quot;</span>, opacity<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb64-901"><a href="#cb64-901"></a>rsq.add_layer_control(position <span class="op">=</span> <span class="st">&quot;bottomright&quot;</span>)</span>
+<span id="cb64-902"><a href="#cb64-902"></a>rsq.show()</span>
+<span id="cb64-903"><a href="#cb64-903"></a><span class="in">```</span></span>
+<span id="cb64-904"><a href="#cb64-904"></a></span>
+<span id="cb64-905"><a href="#cb64-905"></a>:::{.callout-warning title=&quot;Tarea&quot;}</span>
+<span id="cb64-906"><a href="#cb64-906"></a>Determinar dónde está la mayor correlación entre NDVI y NDWI</span>
+<span id="cb64-907"><a href="#cb64-907"></a>:::</span>
+<span id="cb64-908"><a href="#cb64-908"></a></span>
+<span id="cb64-909"><a href="#cb64-909"></a><span class="fu">## Recursos (muy) útiles </span></span>
+<span id="cb64-910"><a href="#cb64-910"></a></span>
+<span id="cb64-911"><a href="#cb64-911"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Temporal data processing wiki</span><span class="co">](https://grasswiki.osgeo.org/wiki/Temporal_data_processing)</span></span>
+<span id="cb64-912"><a href="#cb64-912"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS and R for time series processing wiki</span><span class="co">](https://grasswiki.osgeo.org/wiki/Temporal_data_processing/GRASS_R_raster_time_series_processing)</span></span>
+<span id="cb64-913"><a href="#cb64-913"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS temporal workshop at NCSU</span><span class="co">](http://ncsu-geoforall-lab.github.io/grass-temporal-workshop/)</span></span>
+<span id="cb64-914"><a href="#cb64-914"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS course IRSAE 2018</span><span class="co">](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/index.html)</span></span>
+<span id="cb64-915"><a href="#cb64-915"></a><span class="ss">- </span><span class="co">[</span><span class="ot">GRASS GIS workshop held in Jena 2023</span><span class="co">](https://training.gismentors.eu/grass-gis-workshop-jena/)</span></span>
+<span id="cb64-916"><a href="#cb64-916"></a></span>
+<span id="cb64-917"><a href="#cb64-917"></a><span class="fu">## Referencias</span></span>
+<span id="cb64-918"><a href="#cb64-918"></a></span>
+<span id="cb64-919"><a href="#cb64-919"></a>::: {#refs .tiny}</span>
+<span id="cb64-920"><a href="#cb64-920"></a>:::</span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

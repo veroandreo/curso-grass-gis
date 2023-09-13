@@ -60,6 +60,9 @@ import os
 # data directory
 homedir = "/content/drive/MyDrive/curso_grass_2023"
 
+# change to homedir so output files will be saved there
+os.chdir(homedir)
+
 # GRASS GIS database variables
 grassdata = os.path.join(homedir, "grassdata")
 project = "posgar2007_4_cba"
