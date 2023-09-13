@@ -62,7 +62,8 @@ paquete de python que nos permite hacer interfaz con R.
 Chequeamos nuestra sesión de R.
 
 ```{python}
-%R sessionInfo()
+%%R 
+sessionInfo()
 ```
 
 Instalamos todos los paquetes necesarios para este ejercicio. 
@@ -244,13 +245,6 @@ print(gs.read_command("r.univar",
 ```
 
 ```{python}
-# bands list
-pansharp = gs.list_grouped(type="raster",
-                           pattern="*PANSHARP*")["obia_spot"]
-pansharp
-```
-
-```{python}
 # joint stats for all the bands
 print(gs.read_command("r.univar",
                       map=pansharp))
@@ -276,15 +270,17 @@ gs.run_command("i.vi",
 ```
 
 ```{python}
+# install i.wi
+gs.run_command("g.extension", 
+               extension="i.wi")
+               
 # estimate water index
 gs.run_command("i.wi", 
                green="SPOT_20180621_PANSHARP.2", 
                nir="SPOT_20180621_PANSHARP.4", 
                output="SPOT_20180621_NDWI", 
                winame="ndwi_mf")
-```
 
-```{python}
 # set ndwi color palette
 gs.run_command("r.colors", 
                map="SPOT_20180621_NDWI", 
