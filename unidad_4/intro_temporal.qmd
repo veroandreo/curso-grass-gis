@@ -203,9 +203,10 @@ Establecemos la región computacional
 
 ```{python}
 # set region to Cba boundaries with LST maps' resolution
-gs.region_env(vector="provincia_cba",
-              align="MOD11B3.A2015001.h12v12.single_LST_Day_6km",
-              flags="p")
+print(gs.read_command("g.region", 
+                      vector="provincia_cba",
+                      align="MOD11B3.A2015001.h12v12.single_LST_Day_6km",
+                      flags="p"))
 ```
 
 Aplicamos la máscara con los límites de la provincia de Córdoba
@@ -475,7 +476,7 @@ Graficamos las series del promedio, mínimo y máximo por mapa:
 import pandas as pd
 
 lst = pd.read_csv(os.path.join(homedir,"ext_stats_LST_Day_monthly_celsius.csv"))
-lst['start'] = pd.to_datetime(ndvi.start, format="%Y-%m-%d", exact=False)
+lst['start'] = pd.to_datetime(lst.start, format="%Y-%m-%d", exact=False)
 lst.plot.line(1, [3,4,5], subplots=False)
 ```
 
@@ -930,8 +931,27 @@ suhi_long
 ```
 
 :::{.callout-warning title="Tarea"}
-Se animan a hacer algunos gráficos con librerías de Python?
+Se animan a hacer un gráfico de barras con librerías de Python para representar los 
+valores promedios por año para la zona urbana y alrededores?
 :::
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+suhi_long['setting'] = np.where(suhi_long['cat']== 1, 'Non Urban', 'Urban')
+```
+
+```{python}
+plt.figure(figsize=(10, 10))
+g = sns.barplot(data= suhi_long, x="date", y="LST_Day_mean_3month_average",  hue="setting")
+g.set_xticklabels(["2015", "2016", "2017", "2018", "2019"])
+plt.xlabel("Year")
+plt.ylabel("LST Day mean 3month average")
+sns.move_legend(g, "upper right", title= "Setting")
+plt.show()
+```
 
 # Recursos (muy) útiles 
 
@@ -940,6 +960,8 @@ Se animan a hacer algunos gráficos con librerías de Python?
 - [GRASS GIS temporal workshop at NCSU](http://ncsu-geoforall-lab.github.io/grass-temporal-workshop/)
 - [GRASS GIS course IRSAE 2018](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/index.html)
 - [GRASS GIS workshop held in Jena 2023](https://training.gismentors.eu/grass-gis-workshop-jena/)
+- [Using Satellite Data for Species Distribution Modeling with GRASS GIS and R](https://veroandreo.github.io/grass_ncsu_2023/studio_index.html). Workshop en 
+NCSU. Abril, 2023.
 
 # Referencias
 

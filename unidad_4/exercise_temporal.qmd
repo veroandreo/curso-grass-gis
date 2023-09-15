@@ -43,7 +43,8 @@ apt remove libproj22
 ## Datos para el ejercicio
 
 - Producto MODIS: <a href="https://lpdaac.usgs.gov/products/mod13c2v006/">MOD13C2 Collection 6</a>
-- Composiciones globales mensuales 
+- Composiciones globales mensuales
+- Período: Enero 2015 - Diciembre 2019
 - Resolución espacial: 5600 m
 - Mapset `modis_ndvi` 
 
@@ -52,7 +53,7 @@ apt remove libproj22
 
 ## Iniciamos GRASS
 
-Definimos las rutas y el mapset *`modis_ndvi`*
+Definimos las rutas y el mapset *`modis_ndvi`* donde vamos a trabajar.
 
 ```{python}
 import os
@@ -80,7 +81,7 @@ sys.path.append(
 )
 ```
 
-Importamos los paquetes de GRASS e iniciamos una sesión:
+Importamos los paquetes de GRASS e iniciamos una sesión.
 
 ```{python}
 # import the GRASS GIS packages we need
@@ -118,7 +119,7 @@ print(gs.read_command("r.univar",
 
 :::{.callout-warning title="Tarea"}
 - Mostrar los mapas de NDVI, NIR y pixel reliability.
-- Obtener información sobre los valores mínimos y máximos
+- Obtener información sobre los valores mínimos y máximos.
 - ¿Qué se puede decir sobre los valores de cada banda?
 - ¿Hay valores nulos?
 :::
@@ -129,9 +130,10 @@ Definir la región computacional
 
 ```{python}
 # set computational region
-gs.region_env(vector="provincia_cba",
-              align="MOD13C2.A2015001.006.single_Monthly_NDVI",
-              flags="p")
+print(gs.read_command("g.region",
+                      vector="provincia_cba",
+                      align="MOD13C2.A2015001.006.single_Monthly_NDVI",
+                      flags="p"))
 ```
 
 Establecer los límites provinciales como máscara
@@ -145,10 +147,11 @@ gs.run_command("r.mask",
 :::{.callout-warning title="Tarea"}
 - Leer acerca de la banda de confiabilidad en la [Guía de usuario](https://lpdaac.usgs.gov/documents/103/MOD13_User_Guide_V6.pdf) de MOD13 (pag 27).
 - Para una misma fecha mapear la banda de confiabilidad y el NDVI.
-- Seleccionar sólo los pixeles con valor 0 (Buena calidad) en la banda de confiabilidad. ¿Qué se observa?
+- Seleccionar sólo los pixeles con valor 0 (Buena calidad) en la banda de confiabilidad. 
+¿Qué se observa?
 :::
 
-Mantener sólo los pixeles de la mejor calidad
+Vamos a mantener sólo los pixeles de la mejor calidad para un mapa.
 
 ```{python}
 # keep only NDVI most reliable pixels (one map)
@@ -165,7 +168,7 @@ ndvi_filt.add_raster("MOD13C2.A2015274.006.single_Monthly_NDVI_filt")
 ndvi_filt.show()
 ```
 
-Mantener sólo los pixeles de la mejor calidad para todos los mapas
+Ahora hacemos lo mismo para todos los mapas de NDVI.
 
 ```{python}
 # list of maps
@@ -224,7 +227,7 @@ gs.read_command("t.list",
                 type="strds")
 ```
 
-Crear archivo con lista de mapas
+Creamos la lista de mapas
 
 ```{python}
 # list NDVI filtered files
@@ -261,7 +264,8 @@ print(gs.read_command("t.rast.list",
                       input="ndvi_monthly"))
 ```
 
-También podemos obtener los valores para un único pixel
+También podemos obtener los valores para un único pixel o para un vector de puntos. Para eso
+usamos [t.rast.what](https://grass.osgeo.org/grass-stable/manuals/t.rast.what.html).
 
 ```{python}
 # Get region center coordinates for query 
@@ -270,17 +274,45 @@ gs.region(complete=True)
 
 ```{python}
 # Query map at center coordinates
-print(gs.read_command("t.rast.what", 
-                      strds="s2_ndvi", 
-                      coordinates="637500,221750", 
-                      layout="col", 
-                      flags="n"))
+gs.read_command("t.rast.what", 
+                strds="ndvi_monthly", 
+                coordinates="4426800,6428800", 
+                layout="col", 
+                flags="n",
+                output="ts.csv",
+                separator="comma",
+                null_value=" ")
 ```
 
 :::{.callout-warning title="Tarea"}
 Explorar visualmente los valores de las series temporales en diferentes puntos. 
 Usar [g.gui.tplot](https://grass.osgeo.org/grass-stable/manuals/g.gui.tplot.html) y seleccionar diferentes puntos interactivamente.
 :::
+
+```{python}
+import pandas as pd
+
+# abrir archivo ts.csv como DataFrame
+df = pd.read_csv('ts.csv')
+
+# crear columna data y llenarla con el anio y mes de la columna start
+df['date'] = df['start'].str.extract('(^[0-9]*-[0-9]*)')
+
+# eliminar Nan
+df = df.dropna()
+
+# cambiar nombre de la columna
+df.rename(columns = {'4426800.0000000000;6428800.0000000000':'NDVI'}, inplace = True)
+```
+
+```{python}
+# crear gráfico
+import matplotlib.pyplot as plt
+plt.figure(figsize=(15, 7))
+plt.plot(df['date'],df['NDVI'])
+plt.xticks(rotation = 90) 
+plt.show();
+```
 
 ## Datos faltantes
 
@@ -323,8 +355,7 @@ gs.mapcalc(exp=f"ndvi_missing = (({n} - ndvi_count_valid) * 100.0)/{n}")
 ```
 
 :::{.callout-warning title="Tarea"}
-- Mostrar el mapa que representa el porcentaje de datos faltantes y explorar 
-los valores. 
+- Mostrar el mapa que representa el porcentaje de datos faltantes. 
 - Obtener estadísticas univariadas de este mapa.
 - Dónde estan los mayores porcentajes de datos faltantes? Por qué creen que 
 puede ser?
@@ -380,7 +411,7 @@ Probar diferentes ajustes de parámetros en
 comparar los resultados
 :::
 
-Parcheo de serie original y reconstruída
+Parcheamos un mapa de la serie original y con el reconstruido
 
 ```{python}
 # patch original with filled (one map)
@@ -392,7 +423,7 @@ gs.run_command("r.patch",
                output=f"{NDVI_HANTS}_patch")
 ```
 
-Parcheo de serie original y reconstruída
+Ahora parcheamos todos los mapas de la serie original y reconstruida
 
 ```{python}
 # list of maps
@@ -412,7 +443,7 @@ for i,j in zip(ORIG,FILL):
                    output=out)
 ```
 
-Crear serie de tiempo con los datos parcheados
+Creamos la serie de tiempo con los datos parcheados y registramos los mapas.
 
 ```{python}
 # create new time series 
@@ -423,8 +454,6 @@ gs.run_command("t.create",
                title="Patched monthly NDVI",
                description="Filtered, gap-filled and patched monthly NDVI - MOD13C2 - Cordoba, 2015-2019")
 ```
-
-Registrar los mapas en la serie de tiempo
 
 ```{python}
 # list NDVI patched files
@@ -514,7 +543,7 @@ for me in methods:
 :::{.callout-warning title="Tarea"}
 - Asociar el máximo de LST con el máximo de NDVI y, la fecha de la máxima LST con la fecha del máximo NDVI
 - Agregar el mapset `modis_lst` a los mapsets accesibles.
-- Ver el módulo [r.covar](https://grass.osgeo.org/grass-stable/manuals/r.covar.html)
+- Ver el módulo [r.covar](https://grass.osgeo.org/grass-stable/manuals/r.covar.html).
 :::
 
 ### Tasa de crecimiento
@@ -581,11 +610,11 @@ Crear un mapa de umbrales para usar en *r.seasons*
 
 ```{python}
 # create a threshold map: min ndvi + 0.1*ndvi
-gs.mapcalc(exp="threshold_ndvi = ndvi_min * 1.1")
+gs.mapcalc(exp="threshold_ndvi = ndvi_minimum * 1.1")
 ```
 
 :::{.callout-warning title="Tarea"}
-Utilizar el mapa de umbrales en [r.seasons](https://grass.osgeo.org/grass-stable/manuals/addons/r.seasons.html) y comparar los mapas de salida con los resultados de utilizar sólo un valor de umbral
+Utilizar el mapa de umbrales en [r.seasons](https://grass.osgeo.org/grass-stable/manuals/addons/r.seasons.html) y comparar los mapas de salida con los resultados de utilizar sólo un valor de umbral.
 :::
 
 ## Serie de tiempo de NDWI
@@ -712,7 +741,8 @@ print(gs.read_command("t.info",
 ```
 
 :::{.callout-warning title="Tarea"}
-Obtener valores máximos y mínimos para cada mapa de NDWI y explorar el trazado de la serie de tiempo en diferentes puntos de forma interactiva
+Obtener valores máximos y mínimos para cada mapa de NDWI y explorar el trazado 
+de la serie de tiempo en diferentes puntos de forma interactiva
 
 Ver el manual de [t.rast.univar](https://grass.osgeo.org/grass-stable/manuals/t.rast.univar.html)
 :::
@@ -758,7 +788,7 @@ gs.run_command("g.extension",
 Realizar una regresión entre las series temporales de NDVI y NDWI
 
 ```{python}
-xseries = patched_maps[1:]
+xseries = patched_maps
 yseries = gs.list_grouped(type="raster",
                           pattern="ndwi_monthly*")["modis_ndvi"]
 
@@ -787,6 +817,8 @@ Determinar dónde está la mayor correlación entre NDVI y NDWI
 - [GRASS GIS temporal workshop at NCSU](http://ncsu-geoforall-lab.github.io/grass-temporal-workshop/)
 - [GRASS GIS course IRSAE 2018](http://training.gismentors.eu/grass-gis-irsae-winter-course-2018/index.html)
 - [GRASS GIS workshop held in Jena 2023](https://training.gismentors.eu/grass-gis-workshop-jena/)
+- [Using Satellite Data for Species Distribution Modeling with GRASS GIS and R](https://veroandreo.github.io/grass_ncsu_2023/studio_index.html). Workshop en 
+NCSU. Abril, 2023.
 
 ## Referencias
 
