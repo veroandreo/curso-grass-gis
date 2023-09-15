@@ -18,8 +18,8 @@ apliquen los conocimientos adquiridos durante el desarrollo del curso.
 
 Se proponen 3 modalidades diferentes:
 
-1. Informe y presentación de trabajo final abordando algún problema/pregunta de 
-su interés utilizando herramientas de GRASS GIS.
+1. Informe abordando algún problema/pregunta de su interés utilizando
+herramientas de GRASS GIS.
 1. Tutorial abordando algún problema/pregunta de interés utilizando herramientas
 de GRASS GIS o demostrando el uso/aplicación de algún conjunto de módulos de 
 GRASS.
@@ -109,6 +109,6 @@ ver la noticia publicada luego del taller de 2021:
 ### Fecha de entrega
 
 El plazo límite para la entrega de los trabajos en cualquiera de
-sus formatos es el día **29/09/2023 a las 18:00** via email a la 
+sus formatos es el día **12/10/2023 a las 18:00** via email a la 
 docente. 
 

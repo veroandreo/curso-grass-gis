@@ -117,7 +117,7 @@ La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilm
 e iniciar una sesión de GRASS allí sin problemas. 
 La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda 
 donde ejecutemos comando de R necesitamos escribir el comando mágico `%%R` para 
-varias líneas de código o `%R` cuando es una única línea de código en
+líneas de código en 
 R^[Ver <https://www.thediar.com/es/blog/google-colab-drive-r/> y <https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html>].
 
 ```{python}
@@ -165,7 +165,7 @@ os.chdir(homedir)
 Descargamos el archivo para los días 2 a 5 via su "id"
 
 ```{python}
-!gdown "1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB"
+!gdown "1zj4bxx0PUsg9dihKfQZfOp550BlMFMIu"
 ```
 
 Lo descomprimimos en el `homedir` 
@@ -174,7 +174,7 @@ Lo descomprimimos en el `homedir`
 from zipfile import ZipFile
 import os
 
-with ZipFile('datos_curso_grass_dia2a5.zip', 'r') as f:
+with ZipFile('datos_curso_grass_dia_2a5.zip', 'r') as f:
   #extract in current directory
   f.extractall()
   f.close()

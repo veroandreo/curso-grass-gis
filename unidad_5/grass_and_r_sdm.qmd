@@ -77,8 +77,8 @@ install.packages("biomod2")
 install.packages("dismo")
 install.packages("usdm")
 install.packages("SDMtune")
+install.packages("glmnet")
 install.packages("zeallot")
-install.packages("rJava")
 install.packages("ggpubr")
 install.packages("tmap")
 install.packages("tmaptools")
@@ -163,6 +163,7 @@ datos fuera de la base de datos de GRASS; de ahí que algunos prefieran
 crear proyectos (i.e., *locations*) desechables o temporarios. Por ejemplo:
 
 ```{r}
+# No ejecutar, solo a modo de ejemplo
 library(terra)
 
 f <- system.file("ex/elev.tif", package="terra")
@@ -204,8 +205,6 @@ más detalles y tutoriales:
 ## Cargamos los paquetes de R
 
 ```{python}
-#| label: load_libraries
-#| message: false
 %%R
 library(rgrass)
 library(sf)
@@ -226,9 +225,6 @@ mapset existentes. Notar las similitudes con `gj.init()` de `grass.jupyter`
 y `gs.setup.init()` de `grass.script`.
 
 ```{python}
-#| label: grass_init
-#| message: false
-#| results: hide
 %%R
 # path to GRASS binaries (run `grass --config path`)
 grassbin <- system("grass --config path", intern = TRUE)
@@ -260,6 +256,23 @@ v <- execGRASS("g.list",
                                  mapset = "."))
 ```
 
+Tenemos alguna máscara?
+
+```{python}
+%%R
+execGRASS("r.mask", flags="r")
+```
+
+Lo siguiente antes de comenzar es establecer la región computacional.
+
+```{python}
+%%R
+execGRASS("g.region", 
+          parameters = list(vector="provincia_cba",
+                            align="elevation"),
+          flags="p")
+```
+
 ## Datos de presencia/ocurrencia
 
 Para este ejercicio vamos a generar los puntos de ocurrencia del mosquito 
@@ -269,10 +282,6 @@ de 850 m. Notar que estamos trabajando en la base de datos de GRASS GIS, pero
 desde R.
 
 ```{python}
-#| label: create_presences
-#| message: false
-#| warning: false
-#| results: hide
 %%R
 # Extract centroids from built-up area polygons
 execGRASS("v.extract", 
@@ -305,17 +314,12 @@ Ahora leemos desde GRASS los datos de ocurrencia que generamos, los convertimos
 en un objeto `sf`, y los graficamos.
 
 ```{python}
-#| label: read_vectors
-#| message: false
-#| warning: false
-#| results: hide
 %%R
 # Read vector layers
 presence <- st_as_sf(read_VECT("aedes_aegypti"))
 ```
 
 ```{python}
-#| warning: false
 %%R
 # Display presence vector
 plot(presence)
@@ -325,7 +329,6 @@ Podemos usar la función `plot()` para visualizar la geometría o la
 geometría y los atributos (o una selección de los mismos) de los objetos `sf`.
 
 ```{python}
-#| label: plot_with_sf
 %%R
 # Plot only the geometry 
 plot(st_geometry(presence))
@@ -452,13 +455,10 @@ distancia a fuentes de agua y rutas y caminos, respectivamente. Para eso,
 vamos a usar mapas ya disponibles en el mapset PERMANENT. 
 
 ```{python}
-#| label: create_rasters_water
 %%R
 # Patch water lines + water bodies
 execGRASS("v.patch",
-          parameters = list(input="lineas_aguas_continentales_perennes_cba,
-                            areas_aguas_continentales_perennes_cba,
-                            embalses",
+          parameters = list(input="lineas_aguas_continentales,areas_aguas_continentales,embalses",
                             output="lineas_y_cuerpos_de_agua_cba"))
 
 # Convert to raster
@@ -474,11 +474,10 @@ execGRASS("r.grow.distance",
 ```
 
 ```{python}
-#| label: create_rasters_roads
 %%R
 # Patch primary + secondary roads
 execGRASS("v.patch",
-          parameters = list(input="vial_primaria_cba,vial_secundaria_cba",
+          parameters = list(input="vial_primaria,vial_secundaria",
                             output="red_vial_cba"))
 # Convert to raster
 execGRASS("v.to.rast",
@@ -496,7 +495,6 @@ Leemos los mapas generados y los visualizamos con `plot()`, que en este caso
 reconoce los objetos `SpatRast`.
 
 ```{python}
-#| label: read_distance_maps
 %%R
 
 distancia_agua <- read_RAST("distancia_agua")
@@ -547,16 +545,14 @@ LST y NDVI. Primero, necesitamos aplicar la máscara de los límites de la
 provincia.
 
 ```{python}
-%R execGRASS("r.mask", parameters = list(vector="provincia_cba"))
+%%R 
+execGRASS("r.mask", 
+          parameters = list(vector="provincia_cba"))
 ```
 
 ```{python}
-#| label: read_rasters
-#| message: false
-#| warning: false
-#| results: hide
 %%R
-# List rasters to import
+# List rasters to import (modify as you want)
 to_import <- c("LST_Day_minimum",
                "LST_Day_maximum",
                "LST_Day_average",
@@ -595,9 +591,6 @@ coordenadas de presencia y background más los valores correspondientes a las
 variables predictoras para cada punto.
 
 ```{python}
-#| label: data_prep1
-#| message: false
-#| warning: false
 %%R
 # Variables for models
 sp <- "Aedes aegypti"
@@ -624,7 +617,7 @@ trabajo:
 seed=123
 perc_test = 0.2
 k = 4
-method="Maxent"
+method="Maxnet" # open source implementation of MaxEnt
 cor_th=0.7
 perm=10
 imp_th=10
@@ -647,11 +640,11 @@ c(train_sp, test_sp) %<-%
 ```
 
 ```{python}
-%R train_sp
+%%R train_sp
 ```
 
 ```{python}
-%R test_sp
+%%R test_sp
 ```
 
 ## Creación de *folds* para validación cruzada
@@ -679,8 +672,6 @@ los predictores, y de allí eliminaremos aquellos que estén altamente
 correlacionados y cuya contribución a la predicción no sea importante.
 
 ```{python}
-#| message: false
-#| warning: false
 %%R
 # Train a full model
 full_model_sp <- train(method = method,
@@ -713,7 +704,6 @@ rendimiento y eliminaremos las variables correlacionadas solo si el AUC disminuy
 si las mantenemos.
 
 ```{python}
-#| warning: false
 %%R
 # Prepare background locations to test correlation
 bg_sp <- prepareSWD(species = sp, 
@@ -734,7 +724,7 @@ vs_sp <- varSel(full_model_sp,
 Exploremos el objeto de salida
 
 ```{python}
-%R vs_sp@data
+%%R vs_sp@data
 ```
 
 ### Remover variables de menor importancia
@@ -812,11 +802,11 @@ Hagamos las predicciones en el espacio geográfico y exploremos el resultado
 
 ```{python}
 %%R
-map_sp_maxent <- predict(final_model_sp,
-                         data = env, 
-                         type = "cloglog")
+map_sp <- predict(final_model_sp,
+                  data = env, 
+                  type = "cloglog")
 
-plot(map_sp_maxent)
+plot(map_sp)
 ```
 
 ## Guardamos la predicción en GRASS 
@@ -826,8 +816,8 @@ base de datos de GRASS.
 
 ```{python}
 %%R
-write_RAST(map_sp_maxent, 
-           "Aedes_aegypti_maxent", 
+write_RAST(map_sp, 
+           paste0("Aedes_aegypti_",method), 
            flags = c("o","overwrite"))
 ```
 
@@ -851,8 +841,8 @@ AUC es lo que llamamos una métrica de evaluación independiente de umbral.
 ```{python}
 %%R
 # AUC
-auc_maxent <- auc(final_model_sp, test = test_sp)
-auc_maxent
+auc <- auc(final_model_sp, test = test_sp)
+auc
 ```
 
 Normalmente el resultado del SDM se convierte en mapas de presencia/ausencia. 
@@ -862,23 +852,23 @@ umbral.
 ```{python}
 %%R
 # Threshold dependent evaluation
-th_maxent <- thresholds(final_model_sp, 
-                        type = "cloglog", 
-                        test = test_sp)
+thres <- thresholds(final_model_sp, 
+                    type = "cloglog", 
+                    test = test_sp)
 
-knitr::kable(th_maxent, format = 'html', digits = 2)
+knitr::kable(thres, format = 'html', digits = 2)
 ```
 
 Elegimos un umbral y creamos un mapa binario, i.e., de presencia y ausencia
 
 ```{python}
 %%R
-p = map_sp_maxent >= 0.5
-a = map_sp_maxent < 0.5
-map_sp_maxent[p] <- 1
-map_sp_maxent[a] <- 0
+p = map_sp >= 0.5
+a = map_sp < 0.5
+map_sp[p] <- 1
+map_sp[a] <- 0
 
-plot(map_sp_maxent)
+plot(map_sp)
 ```
 
 
@@ -889,12 +879,13 @@ a la predicción.
 
 ```{python}
 %%R
-vi_model_sp <- maxentVarImp(final_model_sp)
+vi_model_sp <- varImp(final_model_sp)
 vi_model_sp
 ```
 
 ```{python}
-%R plotVarImp(vi_model_sp)
+%%R 
+plotVarImp(vi_model_sp)
 ```
 
 

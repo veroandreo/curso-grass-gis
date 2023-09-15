@@ -4654,7 +4654,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Fecha de publicación</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">12 de septiembre de 2023</p>
+      <p class="date">15 de septiembre de 2023</p>
     </div>
   </div>
   
@@ -4737,7 +4737,7 @@ Nota
 <span id="cb6-15"><a href="#cb6-15"></a><span class="co"># list content</span></span>
 <span id="cb6-16"><a href="#cb6-16"></a>drive_ls()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno un paquete de python, <a href="https://rpy2.github.io/">rpy2</a>, que nos permite hacer interfaz con R. La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente e iniciar una sesión de GRASS allí sin problemas. La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda donde ejecutemos comando de R necesitamos escribir el comando mágico <code>%%R</code> para varias líneas de código o <code>%R</code> cuando es una única línea de código en R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>La segunda opción, que usaremos en este curso, es instalar y cargar en el entorno un paquete de python, <a href="https://rpy2.github.io/">rpy2</a>, que nos permite hacer interfaz con R. La ventaja de esta aproximación es que podemos montar nuestro drive muy fácilmente e iniciar una sesión de GRASS allí sin problemas. La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda donde ejecutemos comando de R necesitamos escribir el comando mágico <code>%%R</code> para líneas de código en R<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 <div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="op">!</span>pip install rpy2<span class="op">==</span><span class="fl">3.5.1</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="op">%</span>reload_ext rpy2.ipython</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4769,14 +4769,14 @@ Nota
 </div>
 <p>Descargamos el archivo para los días 2 a 5 via su “id”</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="op">!</span>gdown <span class="st">&quot;1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="op">!</span>gdown <span class="st">&quot;1zj4bxx0PUsg9dihKfQZfOp550BlMFMIu&quot;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Lo descomprimimos en el <code>homedir</code></p>
 <div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="im">from</span> zipfile <span class="im">import</span> ZipFile</span>
 <span id="cb12-2"><a href="#cb12-2"></a><span class="im">import</span> os</span>
 <span id="cb12-3"><a href="#cb12-3"></a></span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia_2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
 <span id="cb12-5"><a href="#cb12-5"></a>  <span class="co">#extract in current directory</span></span>
 <span id="cb12-6"><a href="#cb12-6"></a>  f.extractall()</span>
 <span id="cb12-7"><a href="#cb12-7"></a>  f.close()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -5313,7 +5313,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-129"><a href="#cb13-129"></a>e iniciar una sesión de GRASS allí sin problemas. </span>
 <span id="cb13-130"><a href="#cb13-130"></a>La desventaja es que, como no cambiamos el entorno de ejecución, en cada celda </span>
 <span id="cb13-131"><a href="#cb13-131"></a>donde ejecutemos comando de R necesitamos escribir el comando mágico <span class="in">`%%R`</span> para </span>
-<span id="cb13-132"><a href="#cb13-132"></a>varias líneas de código o <span class="in">`%R`</span> cuando es una única línea de código en</span>
+<span id="cb13-132"><a href="#cb13-132"></a>líneas de código en </span>
 <span id="cb13-133"><a href="#cb13-133"></a>R^<span class="co">[</span><span class="ot">Ver &lt;https://www.thediar.com/es/blog/google-colab-drive-r/&gt; y &lt;https://blog.revolutionanalytics.com/2016/01/pipelining-r-python.html&gt;</span><span class="co">]</span>.</span>
 <span id="cb13-134"><a href="#cb13-134"></a></span>
 <span id="cb13-137"><a href="#cb13-137"></a><span class="in">```{python}</span></span>
@@ -5361,7 +5361,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-185"><a href="#cb13-185"></a>Descargamos el archivo para los días 2 a 5 via su &quot;id&quot;</span>
 <span id="cb13-186"><a href="#cb13-186"></a></span>
 <span id="cb13-189"><a href="#cb13-189"></a><span class="in">```{python}</span></span>
-<span id="cb13-190"><a href="#cb13-190"></a><span class="op">!</span>gdown <span class="st">&quot;1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB&quot;</span></span>
+<span id="cb13-190"><a href="#cb13-190"></a><span class="op">!</span>gdown <span class="st">&quot;1zj4bxx0PUsg9dihKfQZfOp550BlMFMIu&quot;</span></span>
 <span id="cb13-191"><a href="#cb13-191"></a><span class="in">```</span></span>
 <span id="cb13-192"><a href="#cb13-192"></a></span>
 <span id="cb13-193"><a href="#cb13-193"></a>Lo descomprimimos en el <span class="in">`homedir`</span> </span>
@@ -5370,7 +5370,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-198"><a href="#cb13-198"></a><span class="im">from</span> zipfile <span class="im">import</span> ZipFile</span>
 <span id="cb13-199"><a href="#cb13-199"></a><span class="im">import</span> os</span>
 <span id="cb13-200"><a href="#cb13-200"></a></span>
-<span id="cb13-201"><a href="#cb13-201"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb13-201"><a href="#cb13-201"></a><span class="cf">with</span> ZipFile(<span class="st">&#39;datos_curso_grass_dia_2a5.zip&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
 <span id="cb13-202"><a href="#cb13-202"></a>  <span class="co">#extract in current directory</span></span>
 <span id="cb13-203"><a href="#cb13-203"></a>  f.extractall()</span>
 <span id="cb13-204"><a href="#cb13-204"></a>  f.close()</span>

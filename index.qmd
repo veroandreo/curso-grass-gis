@@ -211,7 +211,7 @@ mágico `%%R`.
 
 #### Datos necesarios
 
-* Usaremos el siguiente [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1rMzsUMQM6wIL7hhuWDJkhvffq5WgO3wB/view?usp=sharing) 
+* Usaremos el siguiente [archivo comprimido (~ 3.5 Gb)](https://drive.google.com/file/d/1zj4bxx0PUsg9dihKfQZfOp550BlMFMIu/view?usp=sharing) 
 con diferentes datos para las sesiones y un proyecto de GRASS GIS listo para 
 usar. 
 
@@ -228,7 +228,7 @@ Para quienes usen The Whole Tale, los datos ya están subidos en el entorno.
   sentinelsat
 * **R >= 4.2** con los siguientes paquetes:
   * rgrass, sf, terra, raster, mapview, tmap, tmaptools, SDMtune, biomod2, dismo,
-  usdm, zeallot, ggpubr, rJava, caret, kernlab, e1071, randomForest, rpart, 
+  usdm, glmnet, zeallot, ggpubr, caret, kernlab, e1071, randomForest, rpart, 
   doParallel
 * **QGIS**
 
