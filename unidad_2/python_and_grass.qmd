@@ -107,8 +107,52 @@ script.core.list_grouped(): `gs.list_grouped(type=['raster'])`
 `gs.region()`
 
 :::{.callout-note}
-Para más detalles, ver la documentación del paquete en: 
+Para más detalles, ver la documentación del paquete en:
 <https://grass.osgeo.org/grass-stable/manuals/libpython/script_intro.html>
+:::
+
+## `grass.tools`
+
+**grass.tools** es la nueva API de Python de GRASS GIS (disponible desde
+GRASS GIS 8.5) y la forma recomendada de llamar a los módulos de GRASS desde
+Python de acá en adelante, en reemplazo gradual de `grass.script`. En lugar de
+funciones genéricas como `run_command`, `read_command`, `parse_command` o
+`write_command`, expone cada módulo de GRASS como un método de un objeto
+`Tools`, usando snake_case, por ejemplo, `r.slope.aspect` se llama como
+`tools.r_slope_aspect(...)`.
+
+Algunas ventajas frente a `grass.script`:
+
+- El entorno/sesión de GRASS se configura **una sola vez** al crear el objeto
+`Tools` (`Tools(session=session)`), en vez de pasar `env=session.env` en cada
+llamada.
+- Las salidas son objetos con atributos "inteligentes": `.text` (texto limpio,
+sin espacios sobrantes), `.stdout` (salida cruda), `.keyval` (diccionario con
+tipos ya convertidos) o acceso directo tipo diccionario cuando el formato es
+JSON.
+- Se puede pasar un objeto `io.StringIO` como entrada de un módulo, lo que
+reemplaza al mecanismo `stdin=` de `write_command`.
+- Opciones como `overwrite` se configuran una sola vez en el objeto `Tools` y
+aplican a todas las llamadas siguientes, en lugar de repetirlas en cada
+comando.
+- Por defecto, lanza excepciones de Python cuando un módulo falla, en lugar de
+que el usuario deba chequear códigos de retorno.
+
+```python
+from grass.tools import Tools
+
+tools = Tools(session=session, overwrite=True)
+
+tools.r_slope_aspect(elevation="elevation", slope="slope")
+info = tools.g_region(flags="p", format="json")
+print(info["rows"])
+```
+
+:::{.callout-note}
+Para más detalles, ver la documentación del paquete en:
+<https://grass.osgeo.org/grass85/manuals/libpython/grass.tools.html>, y la
+guía de migración desde `grass.script`:
+<https://grass.osgeo.org/grass-devel/manuals/migration_to_grass_tools_python_api.html>
 :::
 
 ## `grass.jupyter`
